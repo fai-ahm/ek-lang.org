@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ek Lenses — One language, three views</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: #0d0d0d; color: #c9c9c9;
+      min-height: 100vh; display: flex; flex-direction: column;
+    }
+
+    header {
+      display: flex; align-items: center; gap: 20px;
+      padding: 20px 32px; border-bottom: 1px solid #1e1e1e; flex-shrink: 0;
+    }
+    header .brand {
+      font-size: 26px; font-weight: 700; color: #fff; letter-spacing: -1px;
+    }
+    header .brand span { color: #a89ee8; }
+    header .tagline { font-size: 13px; color: #444; font-weight: 400; flex: 1; letter-spacing: 0.02em; }
+
+    .view-toggle {
+      font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500;
+      color: #555; background: none; border: 1px solid #2a2a2a; border-radius: 6px;
+      padding: 7px 16px; cursor: pointer; transition: color 0.15s, border-color 0.15s, background 0.15s;
+      letter-spacing: 0.03em;
+    }
+    .view-toggle:hover { color: #ccc; border-color: #555; background: #161616; }
+
+    .tab-bar {
+      display: flex; align-items: center; border-bottom: 1px solid #1e1e1e;
+      padding: 0 24px; gap: 4px; flex-shrink: 0;
+    }
+    body.split .tab-bar { display: none; }
+
+    .tab-btn {
+      font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 500;
+      background: none; border: none; border-bottom: 2px solid transparent;
+      padding: 14px 18px 12px; cursor: pointer; color: #444;
+      letter-spacing: 0.05em; transition: color 0.15s; margin-bottom: -1px;
+    }
+    .tab-btn:hover { color: #888; }
+    .tab-btn[data-lens="real"].active    { color: #a89ee8; border-bottom-color: #a89ee8; }
+    .tab-btn[data-lens="dev"].active     { color: #5ecba1; border-bottom-color: #5ecba1; }
+    .tab-btn[data-lens="normie"].active  { color: #d4a056; border-bottom-color: #d4a056; }
+
+    .panel-wrap { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    body.split .panel-wrap { flex-direction: row; }
+
+    .panel { display: none; flex: 1; flex-direction: column; min-width: 0; overflow: hidden; }
+    .panel.active { display: flex; }
+    body.split .panel { display: flex; }
+    body.split .panel[data-lens="real"]   { border-top: 2px solid #a89ee8; }
+    body.split .panel[data-lens="dev"]    { border-top: 2px solid #5ecba1; }
+    body.split .panel[data-lens="normie"] { border-top: 2px solid #d4a056; }
+
+    /* resize handle between panels */
+    .resize-handle {
+      display: none; flex-shrink: 0;
+      width: 4px; cursor: col-resize;
+      background: #1e1e1e; position: relative;
+      transition: background 0.15s;
+    }
+    .resize-handle::after {
+      content: ''; position: absolute; inset: 0 -4px;
+    }
+    .resize-handle:hover, .resize-handle.dragging { background: #444; }
+    body.split .resize-handle { display: block; }
+
+    .panel-label {
+      display: none; align-items: center; justify-content: space-between;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 12px 14px 11px 18px; border-bottom: 1px solid #1a1a1a; flex-shrink: 0;
+    }
+    body.split .panel-label { display: flex; }
+    .panel[data-lens="real"]   .panel-label { color: #a89ee8; background: rgba(168,158,232,0.04); }
+    .panel[data-lens="dev"]    .panel-label { color: #5ecba1; background: rgba(94,203,161,0.04); }
+    .panel[data-lens="normie"] .panel-label { color: #d4a056; background: rgba(212,160,86,0.04); }
+    .panel-label .label-sub {
+      font-size: 10px; font-weight: 400; letter-spacing: 0.06em;
+      opacity: 0.45; margin-left: 10px; text-transform: none; margin-top: 1px;
+    }
+
+    .panel-toolbar { display: none; }
+
+    .copy-btn {
+      font-size: 14px; line-height: 1;
+      color: #444; background: none; border: 1px solid #2a2a2a; border-radius: 5px;
+      padding: 4px 8px; cursor: pointer;
+      transition: color 0.15s, border-color 0.15s, background 0.15s; flex-shrink: 0;
+    }
+    .panel[data-lens="real"]   .copy-btn:hover { color: #a89ee8; border-color: #a89ee8; background: rgba(168,158,232,0.06); }
+    .panel[data-lens="dev"]    .copy-btn:hover { color: #5ecba1; border-color: #5ecba1; background: rgba(94,203,161,0.06); }
+    .panel[data-lens="normie"] .copy-btn:hover { color: #d4a056; border-color: #d4a056; background: rgba(212,160,86,0.06); }
+    .copy-btn.copied { color: #5ecba1; border-color: #5ecba1; }
+
+    /* ── Editor ── */
+    .panel-editor { position: relative; flex: 1; overflow: hidden; background: #0d0d0d; }
+
+    /* overlay: sits on top, renders token spans */
+    .hl-layer {
+      position: absolute; top: 0; left: 0; right: 0;
+      z-index: 2; pointer-events: none;
+      font-family: 'JetBrains Mono', monospace; font-size: 16.8px; line-height: 1.75;
+      color: #d4d4d4; padding: 20px 24px;
+      white-space: pre-wrap; overflow-wrap: break-word;
+      overflow: hidden;
+    }
+
+    /* token spans inside overlay */
+    .tok { pointer-events: auto; border-radius: 2px; cursor: text; display: inline-block; transition: transform 0.1s, background 0.1s; }
+    .tok:hover, .tok.lit { background: rgba(255, 210, 0, 0.28); transform: scale(1.2); }
+
+    /* textarea: transparent text, caret still visible */
+    textarea {
+      position: absolute; inset: 0; z-index: 1;
+      background: transparent; border: none; resize: none;
+      font-family: 'JetBrains Mono', monospace; font-size: 16.8px; line-height: 1.75;
+      color: transparent; caret-color: #aaa;
+      padding: 20px 24px; outline: none; tab-size: 2; overflow-y: scroll;
+    }
+    textarea[readonly] { caret-color: transparent; }
+    body.split textarea { scrollbar-width: none; }
+    body.split textarea::-webkit-scrollbar { display: none; }
+
+    /* shared scrollbar in split view */
+    .shared-scrollbar {
+      display: none; flex-shrink: 0;
+      width: 8px; background: #111;
+      position: relative; cursor: pointer;
+    }
+    body.split .shared-scrollbar { display: block; }
+    .shared-scroll-thumb {
+      position: absolute; left: 1px; right: 1px;
+      background: #333; border-radius: 4px;
+      min-height: 20px; cursor: grab; transition: background 0.15s;
+    }
+    .shared-scroll-thumb:hover, .shared-scroll-thumb.dragging { background: #555; }
+
+    footer {
+      padding: 10px 32px; border-top: 1px solid #1a1a1a;
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 12px; color: #2e2e2e; flex-shrink: 0; letter-spacing: 0.04em;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <span class="brand">Ek <span>Lenses</span></span>
+    <span class="tagline">one language &mdash; three ways to read it</span>
+    <button class="view-toggle" id="viewToggle">⊟ split view</button>
+  </header>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" data-lens="real">Real Lens</button>
+    <button class="tab-btn" data-lens="dev">Dev Lens</button>
+    <button class="tab-btn" data-lens="normie">Normie Lens</button>
+  </div>
+
+  <div class="panel-wrap">
+    <div class="panel active" data-lens="real">
+      <div class="panel-label">Real Lens<span class="label-sub">for AI</span><button class="copy-btn" data-lens="real">⧉</button></div>
+      <div class="panel-toolbar"></div>
+      <div class="panel-editor">
+        <div class="hl-layer" data-lens="real"></div>
+        <textarea data-lens="real" placeholder=":: add(ℤ a, ℝ b) -> 𝔹 {}" spellcheck="false" readonly></textarea>
+      </div>
+    </div>
+    <div class="resize-handle" data-between="real-dev"></div>
+    <div class="panel" data-lens="dev">
+      <div class="panel-label">Dev Lens<span class="label-sub">for engineers</span><button class="copy-btn" data-lens="dev">⧉</button></div>
+      <div class="panel-toolbar"></div>
+      <div class="panel-editor">
+        <div class="hl-layer" data-lens="dev"></div>
+        <textarea data-lens="dev" placeholder="fn add(int a, float b) -> bool {}" spellcheck="false"></textarea>
+      </div>
+    </div>
+    <div class="resize-handle" data-between="dev-normie"></div>
+    <div class="panel" data-lens="normie">
+      <div class="panel-label">Normie Lens<span class="label-sub">for humans</span><button class="copy-btn" data-lens="normie">⧉</button></div>
+      <div class="panel-toolbar"></div>
+      <div class="panel-editor">
+        <div class="hl-layer" data-lens="normie"></div>
+        <textarea data-lens="normie" placeholder="function add(integer a, float b) returnType boolean {}" spellcheck="false"></textarea>
+      </div>
+    </div>
+    <div class="shared-scrollbar" id="sharedScrollbar">
+      <div class="shared-scroll-thumb" id="sharedThumb"></div>
+    </div>
+  </div>
+
+  <footer>
+    <span>ek v0.1</span>
+    <span>experimental — symbols subject to change</span>
+  </footer>
+
+  <script src="translator.js"></script>
+  <script>
+    const textareas  = document.querySelectorAll('textarea[data-lens]')
+    const tabBtns    = document.querySelectorAll('.tab-btn')
+    const panels     = document.querySelectorAll('.panel')
+    const viewToggle = document.getElementById('viewToggle')
+
+    // ── Tab switching ──
+    let scrollPct = 0
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabBtns.forEach(b => b.classList.remove('active'))
+        panels.forEach(p => p.classList.remove('active'))
+        btn.classList.add('active')
+        document.querySelector(`.panel[data-lens="${btn.dataset.lens}"]`).classList.add('active')
+        // restore scroll position on the newly visible textarea
+        const ta = document.querySelector(`textarea[data-lens="${btn.dataset.lens}"]`)
+        ta.scrollTop = scrollPct * (ta.scrollHeight - ta.clientHeight)
+        ta.previousElementSibling.style.transform = `translateY(-${ta.scrollTop}px)`
+      })
+    })
+
+    // ── Split / tab toggle ──
+    let isSplit = true
+    document.body.classList.add('split')
+    viewToggle.textContent = '⊞ tab view'
+
+    viewToggle.addEventListener('click', () => {
+      isSplit = !isSplit
+      document.body.classList.toggle('split', isSplit)
+      viewToggle.textContent = isSplit ? '⊞ tab view' : '⊟ split view'
+      if (isSplit) resetPanelWidths()
+    })
+
+    function resetPanelWidths() {
+      document.querySelectorAll('.panel').forEach(p => { p.style.flex = '1 1 0' })
+    }
+
+    // ── Resize handles ──
+    document.querySelectorAll('.resize-handle').forEach(handle => {
+      handle.addEventListener('mousedown', e => {
+        if (!isSplit) return
+        e.preventDefault()
+        const wrap      = handle.parentElement
+        const panelA    = handle.previousElementSibling
+        const panelB    = handle.nextElementSibling
+        const startX    = e.clientX
+        const startAW   = panelA.getBoundingClientRect().width
+        const startBW   = panelB.getBoundingClientRect().width
+        handle.classList.add('dragging')
+        document.body.style.cursor = 'col-resize'
+        document.body.style.userSelect = 'none'
+
+        function onMove(e) {
+          const dx   = e.clientX - startX
+          const minW = 80
+          const newA = Math.max(minW, startAW + dx)
+          const newB = Math.max(minW, startBW - dx)
+          panelA.style.flex = `0 0 ${newA}px`
+          panelB.style.flex = `0 0 ${newB}px`
+        }
+
+        function onUp() {
+          handle.classList.remove('dragging')
+          document.body.style.cursor = ''
+          document.body.style.userSelect = ''
+          document.removeEventListener('mousemove', onMove)
+          document.removeEventListener('mouseup', onUp)
+        }
+
+        document.addEventListener('mousemove', onMove)
+        document.addEventListener('mouseup', onUp)
+      })
+    })
+
+    // ── Shared scrollbar ──
+    const sharedBar   = document.getElementById('sharedScrollbar')
+    const sharedThumb = document.getElementById('sharedThumb')
+
+    function updateThumb() {
+      const ref = textareas[0]
+      const ratio     = ref.clientHeight / (ref.scrollHeight || 1)
+      const thumbH    = Math.max(20, sharedBar.clientHeight * ratio)
+      const maxTop    = sharedBar.clientHeight - thumbH
+      sharedThumb.style.height = thumbH + 'px'
+      sharedThumb.style.top    = (scrollPct * maxTop) + 'px'
+    }
+
+    function applyScroll(pct) {
+      scrollPct = Math.max(0, Math.min(1, pct))
+      textareas.forEach(ta => {
+        ta.scrollTop = scrollPct * (ta.scrollHeight - ta.clientHeight)
+        ta.previousElementSibling.style.transform = `translateY(-${ta.scrollTop}px)`
+      })
+      updateThumb()
+    }
+
+    // drag thumb
+    sharedThumb.addEventListener('mousedown', e => {
+      e.preventDefault()
+      sharedThumb.classList.add('dragging')
+      const startY     = e.clientY
+      const startPct   = scrollPct
+      const ref        = textareas[0]
+      const ratio      = ref.clientHeight / (ref.scrollHeight || 1)
+      const thumbH     = Math.max(20, sharedBar.clientHeight * ratio)
+      const maxTop     = sharedBar.clientHeight - thumbH
+
+      function onMove(e) {
+        const dy = e.clientY - startY
+        applyScroll(startPct + dy / maxTop)
+      }
+      function onUp() {
+        sharedThumb.classList.remove('dragging')
+        document.removeEventListener('mousemove', onMove)
+        document.removeEventListener('mouseup', onUp)
+      }
+      document.addEventListener('mousemove', onMove)
+      document.addEventListener('mouseup', onUp)
+    })
+
+    // click track to jump
+    sharedBar.addEventListener('mousedown', e => {
+      if (e.target === sharedThumb) return
+      const rect   = sharedBar.getBoundingClientRect()
+      const ref    = textareas[0]
+      const ratio  = ref.clientHeight / (ref.scrollHeight || 1)
+      const thumbH = Math.max(20, sharedBar.clientHeight * ratio)
+      const maxTop = sharedBar.clientHeight - thumbH
+      applyScroll((e.clientY - rect.top - thumbH / 2) / maxTop)
+    })
+
+    // ── Scroll sync (textarea → overlay + other textareas) ──
+    let scrolling = false
+    textareas.forEach(ta => {
+      const overlay = ta.previousElementSibling
+      ta.addEventListener('scroll', () => {
+        overlay.style.transform = `translateY(-${ta.scrollTop}px)`
+        scrollPct = ta.scrollTop / (ta.scrollHeight - ta.clientHeight || 1)
+        if (scrolling) return
+        scrolling = true
+        textareas.forEach(other => {
+          if (other === ta) return
+          other.scrollTop = scrollPct * (other.scrollHeight - other.clientHeight)
+          other.previousElementSibling.style.transform = `translateY(-${other.scrollTop}px)`
+        })
+        updateThumb()
+        requestAnimationFrame(() => { scrolling = false })
+      })
+    })
+
+    // update thumb on resize
+    new ResizeObserver(updateThumb).observe(sharedBar)
+
+    // ── Overlay rendering ──
+    function escHtml(s) {
+      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    }
+
+    function renderOverlay(lens) {
+      const ta      = document.querySelector(`textarea[data-lens="${lens}"]`)
+      const overlay = document.querySelector(`.hl-layer[data-lens="${lens}"]`)
+      const tokens  = getTokens(ta.value, lens)
+      overlay.innerHTML = tokens.map(tok => {
+        const txt = escHtml(tok.value)
+        if (tok.symbolName)
+          return `<span class="tok" data-sym="${tok.symbolName}">${txt}</span>`
+        if (tok.type === 'unknown' && /[A-Za-z0-9_]/.test(tok.value))
+          return `<span class="tok" data-word="${escHtml(tok.value)}">${txt}</span>`
+        return txt
+      }).join('')
+    }
+
+    function renderAll() {
+      ['real','dev','normie'].forEach(renderOverlay)
+    }
+
+    // ── Token hover: highlight matching spans in all overlays ──
+    document.addEventListener('mouseover', e => {
+      const tok = e.target.closest('.tok')
+      document.querySelectorAll('.tok.lit').forEach(el => el.classList.remove('lit'))
+      if (!tok) return
+      if (tok.dataset.sym)
+        document.querySelectorAll(`.tok[data-sym="${tok.dataset.sym}"]`).forEach(el => el.classList.add('lit'))
+      else if (tok.dataset.word)
+        tok.classList.add('lit')
+    })
+
+    // clicking a span should focus the textarea in that panel
+    document.addEventListener('mousedown', e => {
+      const tok = e.target.closest('.tok')
+      if (!tok) return
+      tok.closest('.panel-editor').querySelector('textarea').focus({ preventScroll: true })
+    })
+
+    // ── Translation ──
+    fetch('symbols.json')
+      .then(r => { if (!r.ok) throw new Error('symbols.json ' + r.status); return r.json() })
+      .then(symbols => {
+        initTranslator(symbols)
+        renderAll()
+
+        textareas.forEach(ta => {
+          ta.addEventListener('input', () => {
+            const from = ta.dataset.lens
+            const code = ta.value
+            textareas.forEach(other => {
+              if (other.dataset.lens === from) return
+              other.value = translate(code, from, other.dataset.lens)
+            })
+            renderAll()
+          })
+        })
+
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const ta = document.querySelector(`textarea[data-lens="${btn.dataset.lens}"]`)
+            navigator.clipboard.writeText(ta.value).then(() => {
+              btn.textContent = 'Copied!'
+              btn.classList.add('copied')
+              setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied') }, 1500)
+            })
+          })
+        })
+      })
+      .catch(err => {
+        document.querySelector('footer').textContent = 'error: ' + err.message
+      })
+  </script>
+</body>
+</html>

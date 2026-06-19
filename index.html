@@ -3,199 +3,365 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ek Lenses — One language, three views</title>
+  <title>Ek — One language, three views</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    :root {
+      --bg:       #f7f5f2;
+      --bg2:      #f0ede8;
+      --border:   #ddd9d3;
+      --border2:  #ccc8c2;
+      --text:     #1c1a18;
+      --muted:    #8a857e;
+      --muted2:   #b8b3ac;
+      --real:     #7c6fcd;
+      --dev:      #2a9d6f;
+      --normie:   #c07a2a;
+      --accent:   #e8632a;
+      --c-color:  #c0404a;
+      --ek-color: #7c6fcd;
+    }
+
     body {
       font-family: 'JetBrains Mono', monospace;
-      background: #0d0d0d; color: #c9c9c9;
+      font-feature-settings: "liga" 0, "calt" 0;
+      font-variant-ligatures: none;
+      background: var(--bg); color: var(--text);
       min-height: 100vh; display: flex; flex-direction: column;
     }
 
+    /* ── Header ── */
     header {
-      display: flex; align-items: center; gap: 20px;
-      padding: 20px 32px; border-bottom: 1px solid #1e1e1e; flex-shrink: 0;
+      display: flex; align-items: center; gap: 28px;
+      padding: 18px 32px; border-bottom: 1px solid var(--border);
+      background: #fff; flex-shrink: 0; position: sticky; top: 0; z-index: 100;
     }
-    header .brand {
-      font-size: 26px; font-weight: 700; color: #fff; letter-spacing: -1px;
+    .brand {
+      font-size: 24px; font-weight: 700; color: var(--text); letter-spacing: -1px;
+      text-decoration: none;
     }
-    header .brand span { color: #a89ee8; }
-    header .tagline { font-size: 13px; color: #444; font-weight: 400; flex: 1; letter-spacing: 0.02em; }
+    .brand:hover { color: var(--accent); }
+    nav { display: flex; gap: 4px; flex: 1; }
+    nav a {
+      font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500;
+      color: var(--muted); text-decoration: none; padding: 6px 14px; border-radius: 6px;
+      letter-spacing: 0.04em; transition: color 0.15s, background 0.15s;
+    }
+    nav a:hover { color: var(--text); background: var(--bg2); }
+    nav a.active { color: var(--text); background: var(--bg2); }
 
     .view-toggle {
       font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500;
-      color: #555; background: none; border: 1px solid #2a2a2a; border-radius: 6px;
-      padding: 7px 16px; cursor: pointer; transition: color 0.15s, border-color 0.15s, background 0.15s;
+      color: var(--muted); background: none; border: 1px solid var(--border2); border-radius: 6px;
+      padding: 6px 14px; cursor: pointer; transition: color 0.15s, border-color 0.15s, background 0.15s;
       letter-spacing: 0.03em;
     }
-    .view-toggle:hover { color: #ccc; border-color: #555; background: #161616; }
+    .view-toggle:hover { color: var(--text); border-color: var(--muted); background: var(--bg2); }
 
-    .tab-bar {
-      display: flex; align-items: center; border-bottom: 1px solid #1e1e1e;
-      padding: 0 24px; gap: 4px; flex-shrink: 0;
+    /* ── Demo section ── */
+    #demo {
+      border-bottom: 1px solid var(--border);
+      display: flex; justify-content: center;
     }
-    body.split .tab-bar { display: none; }
-
-    .tab-btn {
-      font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 500;
-      background: none; border: none; border-bottom: 2px solid transparent;
-      padding: 14px 18px 12px; cursor: pointer; color: #444;
-      letter-spacing: 0.05em; transition: color 0.15s; margin-bottom: -1px;
+    #demo > .demo-inner {
+      padding: 40px 32px 36px; display: flex; flex-direction: column; gap: 20px;
+      max-width: 920px; width: 100%;
     }
-    .tab-btn:hover { color: #888; }
-    .tab-btn[data-lens="real"].active    { color: #a89ee8; border-bottom-color: #a89ee8; }
-    .tab-btn[data-lens="dev"].active     { color: #5ecba1; border-bottom-color: #5ecba1; }
-    .tab-btn[data-lens="normie"].active  { color: #d4a056; border-bottom-color: #d4a056; }
+    .demo-header { display: flex; align-items: baseline; gap: 14px; }
+    .demo-title { font-size: 13px; font-weight: 700; color: var(--text); letter-spacing: 0.06em; text-transform: uppercase; }
+    .demo-sub { font-size: 12px; color: var(--muted); }
 
-    .panel-wrap { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-    body.split .panel-wrap { flex-direction: row; }
+    .prompt-row { display: flex; gap: 12px; align-items: stretch; }
+    .prompt-input {
+      flex: 1; font-family: 'JetBrains Mono', monospace; font-size: 14px;
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--muted); padding: 12px 16px; outline: none; cursor: default;
+    }
+    .run-btn {
+      font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700;
+      background: var(--accent); color: #fff; border: none; border-radius: 8px;
+      padding: 12px 24px; cursor: pointer; letter-spacing: 0.04em;
+      transition: background 0.15s, opacity 0.15s; white-space: nowrap;
+    }
+    .run-btn:hover { background: #cf5520; }
+    .run-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    .panel { display: none; flex: 1; flex-direction: column; min-width: 0; overflow: hidden; }
-    .panel.active { display: flex; }
-    body.split .panel { display: flex; }
-    body.split .panel[data-lens="real"]   { border-top: 2px solid #a89ee8; }
-    body.split .panel[data-lens="dev"]    { border-top: 2px solid #5ecba1; }
-    body.split .panel[data-lens="normie"] { border-top: 2px solid #d4a056; }
+    .key-row { display: flex; gap: 10px; align-items: center; font-size: 12px; color: var(--muted2); }
+    .key-input {
+      font-family: 'JetBrains Mono', monospace; font-size: 12px;
+      background: #fff; border: 1px solid var(--border); border-radius: 6px;
+      color: var(--muted); padding: 6px 12px; outline: none; width: 300px;
+      transition: border-color 0.15s;
+    }
+    .key-input:focus { border-color: var(--border2); color: var(--text); }
 
-    /* resize handle between panels */
+    .demo-panels { display: flex; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); min-height: 280px; }
+    .code-panel { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .code-panel:first-child { border-right: 1px solid var(--border); }
+    .code-panel[data-lang="ek"] { border-top: 2px solid var(--ek-color); }
+    .code-panel[data-lang="c"]  { border-top: 2px solid var(--c-color); }
+
+    .code-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 18px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+    }
+    .code-panel[data-lang="ek"] .code-header { background: rgba(124,111,205,0.04); }
+    .code-panel[data-lang="c"]  .code-header { background: rgba(192,64,74,0.04); }
+
+    .code-lang { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
+    .code-panel[data-lang="ek"] .code-lang { color: var(--ek-color); }
+    .code-panel[data-lang="c"]  .code-lang { color: var(--c-color); }
+    .code-desc { font-size: 10px; color: var(--muted2); letter-spacing: 0.04em; margin-left: 10px; }
+
+    .code-status { font-size: 11px; color: var(--muted2); letter-spacing: 0.04em; }
+    .code-status.streaming { color: var(--dev); }
+    .code-status.done      { color: var(--muted2); }
+    .code-status.error     { color: var(--c-color); }
+
+    .code-body {
+      flex: 1; overflow-y: auto; padding: 18px 20px;
+      font-size: 13.5px; line-height: 1.75; white-space: pre-wrap; word-break: break-word;
+      color: #2a2622; background: var(--bg);
+      scrollbar-width: thin; scrollbar-color: var(--border2) transparent;
+    }
+    .code-body::-webkit-scrollbar { width: 5px; }
+    .code-body::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+    .code-body .placeholder { color: var(--muted2); font-style: italic; }
+
+    .stream-cursor {
+      display: inline-block; width: 2px; height: 1em;
+      background: var(--accent); vertical-align: text-bottom;
+      animation: blink 0.8s step-end infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    .explanation {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+    }
+    .explain-block {
+      background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 20px 22px;
+    }
+    .explain-block h3 {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px;
+    }
+    .explain-block[data-lang="ek"] h3 { color: var(--ek-color); }
+    .explain-block[data-lang="c"]  h3 { color: var(--c-color); }
+    .explain-block p { font-size: 12px; color: var(--muted); line-height: 1.8; }
+    .explain-block p strong { color: var(--text); font-weight: 500; }
+
+    .disclaimer {
+      border: 1px solid #e8d9c0; background: rgba(192,122,42,0.05); border-radius: 8px;
+      padding: 12px 16px; font-size: 11.5px; color: #8a6030; line-height: 1.7;
+    }
+    .disclaimer strong { color: var(--normie); }
+
+    /* ── Split view section ── */
+    #splitview {
+      flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 400px;
+    }
+
+    .lenses-header {
+      padding: 40px 26px 26px; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px;
+      max-width: 920px; width: 100%; margin: 0 auto;
+    }
+    .lenses-title { font-size: 26px; font-weight: 700; color: var(--text); letter-spacing: -0.6px; }
+    .lenses-sub { font-size: 13px; color: var(--muted); letter-spacing: 0.01em; line-height: 1.6; max-width: 680px; }
+
+    .panel-wrap { flex: 1; display: flex; flex-direction: row; overflow: hidden; min-height: 280px; }
+
+    .panel { display: flex; flex: 1; flex-direction: column; min-width: 0; overflow: hidden; }
+    .panel[data-lens="real"]   { border-top: 2px solid var(--real); }
+    .panel[data-lens="dev"]    { border-top: 2px solid var(--dev); }
+    .panel[data-lens="normie"] { border-top: 2px solid var(--normie); }
+
     .resize-handle {
-      display: none; flex-shrink: 0;
-      width: 4px; cursor: col-resize;
-      background: #1e1e1e; position: relative;
-      transition: background 0.15s;
+      flex-shrink: 0; width: 4px; cursor: col-resize;
+      background: var(--border); position: relative; transition: background 0.15s;
     }
-    .resize-handle::after {
-      content: ''; position: absolute; inset: 0 -4px;
-    }
-    .resize-handle:hover, .resize-handle.dragging { background: #444; }
-    body.split .resize-handle { display: block; }
+    .resize-handle::after { content: ''; position: absolute; inset: 0 -4px; }
+    .resize-handle:hover, .resize-handle.dragging { background: var(--border2); }
 
     .panel-label {
-      display: none; align-items: center; justify-content: space-between;
-      font-size: 11px; font-weight: 700; letter-spacing: 0.14em;
-      text-transform: uppercase;
-      padding: 12px 14px 11px 18px; border-bottom: 1px solid #1a1a1a; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+      padding: 12px 14px 11px 18px; border-bottom: 1px solid var(--border); flex-shrink: 0;
     }
-    body.split .panel-label { display: flex; }
-    .panel[data-lens="real"]   .panel-label { color: #a89ee8; background: rgba(168,158,232,0.04); }
-    .panel[data-lens="dev"]    .panel-label { color: #5ecba1; background: rgba(94,203,161,0.04); }
-    .panel[data-lens="normie"] .panel-label { color: #d4a056; background: rgba(212,160,86,0.04); }
+    .panel-label .label-name { text-transform: uppercase; }
     .panel-label .label-sub {
-      font-size: 10px; font-weight: 400; letter-spacing: 0.06em;
-      opacity: 0.45; margin-left: 10px; text-transform: none; margin-top: 1px;
+      font-weight: 400; letter-spacing: 0.02em; opacity: 0.6; text-transform: none; margin-left: 4px;
     }
+    .panel[data-lens="real"]   .panel-label { color: var(--real);   background: rgba(124,111,205,0.04); }
+    .panel[data-lens="dev"]    .panel-label { color: var(--dev);    background: rgba(42,157,111,0.04); }
+    .panel[data-lens="normie"] .panel-label { color: var(--normie); background: rgba(192,122,42,0.04); }
 
     .panel-toolbar { display: none; }
 
     .copy-btn {
       font-size: 14px; line-height: 1;
-      color: #444; background: none; border: 1px solid #2a2a2a; border-radius: 5px;
+      color: var(--muted2); background: none; border: 1px solid var(--border); border-radius: 5px;
       padding: 4px 8px; cursor: pointer;
       transition: color 0.15s, border-color 0.15s, background 0.15s; flex-shrink: 0;
     }
-    .panel[data-lens="real"]   .copy-btn:hover { color: #a89ee8; border-color: #a89ee8; background: rgba(168,158,232,0.06); }
-    .panel[data-lens="dev"]    .copy-btn:hover { color: #5ecba1; border-color: #5ecba1; background: rgba(94,203,161,0.06); }
-    .panel[data-lens="normie"] .copy-btn:hover { color: #d4a056; border-color: #d4a056; background: rgba(212,160,86,0.06); }
-    .copy-btn.copied { color: #5ecba1; border-color: #5ecba1; }
+    .panel[data-lens="real"]   .copy-btn:hover { color: var(--real);   border-color: var(--real);   background: rgba(124,111,205,0.06); }
+    .panel[data-lens="dev"]    .copy-btn:hover { color: var(--dev);    border-color: var(--dev);    background: rgba(42,157,111,0.06); }
+    .panel[data-lens="normie"] .copy-btn:hover { color: var(--normie); border-color: var(--normie); background: rgba(192,122,42,0.06); }
+    .copy-btn.copied { color: var(--dev); border-color: var(--dev); }
 
-    /* ── Editor ── */
-    .panel-editor { position: relative; flex: 1; overflow: hidden; background: #0d0d0d; }
+    .panel-editor { position: relative; flex: 1; overflow: hidden; background: var(--bg); }
 
-    /* overlay: sits on top, renders token spans */
     .hl-layer {
       position: absolute; top: 0; left: 0; right: 0;
       z-index: 2; pointer-events: none;
       font-family: 'JetBrains Mono', monospace; font-size: 16.8px; line-height: 1.75;
-      color: #d4d4d4; padding: 20px 24px;
-      white-space: pre-wrap; overflow-wrap: break-word;
-      overflow: hidden;
+      color: #2a2622; padding: 20px 24px;
+      white-space: pre-wrap; overflow-wrap: break-word; overflow: hidden;
     }
 
-    /* token spans inside overlay */
     .tok { pointer-events: auto; border-radius: 2px; cursor: text; display: inline-block; transition: transform 0.1s, background 0.1s; }
-    .tok:hover, .tok.lit { background: rgba(255, 210, 0, 0.28); transform: scale(1.2); }
+    .tok:hover, .tok.lit { background: rgba(232,99,42,0.15); transform: scale(1.2); }
 
-    /* textarea: transparent text, caret still visible */
     textarea {
       position: absolute; inset: 0; z-index: 1;
       background: transparent; border: none; resize: none;
       font-family: 'JetBrains Mono', monospace; font-size: 16.8px; line-height: 1.75;
-      color: transparent; caret-color: #aaa;
+      color: transparent; caret-color: var(--muted);
       padding: 20px 24px; outline: none; tab-size: 2; overflow-y: scroll;
+      scrollbar-width: none;
     }
     textarea[readonly] { caret-color: transparent; }
-    body.split textarea { scrollbar-width: none; }
-    body.split textarea::-webkit-scrollbar { display: none; }
+    textarea::-webkit-scrollbar { display: none; }
 
-    /* shared scrollbar in split view */
     .shared-scrollbar {
-      display: none; flex-shrink: 0;
-      width: 8px; background: #111;
-      position: relative; cursor: pointer;
+      flex-shrink: 0; width: 8px; background: var(--bg2); position: relative; cursor: pointer;
     }
-    body.split .shared-scrollbar { display: block; }
     .shared-scroll-thumb {
       position: absolute; left: 1px; right: 1px;
-      background: #333; border-radius: 4px;
+      background: var(--border2); border-radius: 4px;
       min-height: 20px; cursor: grab; transition: background 0.15s;
     }
-    .shared-scroll-thumb:hover, .shared-scroll-thumb.dragging { background: #555; }
+    .shared-scroll-thumb:hover, .shared-scroll-thumb.dragging { background: var(--muted); }
 
+    /* ── Footer ── */
     footer {
-      padding: 10px 32px; border-top: 1px solid #1a1a1a;
+      padding: 10px 32px; border-top: 1px solid var(--border); background: #fff;
       display: flex; justify-content: space-between; align-items: center;
-      font-size: 12px; color: #2e2e2e; flex-shrink: 0; letter-spacing: 0.04em;
+      font-size: 12px; color: var(--muted2); flex-shrink: 0; letter-spacing: 0.04em;
     }
   </style>
 </head>
 <body>
+
   <header>
-    <span class="brand">Ek <span>Lenses</span></span>
-    <span class="tagline">one language &mdash; three ways to read it</span>
-    <button class="view-toggle" id="viewToggle">⊟ split view</button>
+    <a href="#" class="brand">Ek</a>
+    <nav>
+      <a href="playground.html">playground</a>
+      <a href="syntax.html">syntax</a>
+      <a href="spec.html">spec</a>
+    </nav>
   </header>
 
-  <div class="tab-bar">
-    <button class="tab-btn active" data-lens="real">Real Lens</button>
-    <button class="tab-btn" data-lens="dev">Dev Lens</button>
-    <button class="tab-btn" data-lens="normie">Normie Lens</button>
-  </div>
+  <!-- ── Demo ── -->
+  <section id="demo">
+  <div class="demo-inner">
+    <div class="demo-header">
+      <span class="demo-title">Live Comparison</span>
+      <span class="demo-sub">same prompt — C vs Ek</span>
+    </div>
 
-  <div class="panel-wrap">
-    <div class="panel active" data-lens="real">
-      <div class="panel-label">Real Lens<span class="label-sub">for AI</span><button class="copy-btn" data-lens="real">⧉</button></div>
-      <div class="panel-toolbar"></div>
-      <div class="panel-editor">
-        <div class="hl-layer" data-lens="real"></div>
-        <textarea data-lens="real" placeholder=":: add(ℤ a, ℝ b) -> 𝔹 {}" spellcheck="false" readonly></textarea>
+    <div class="prompt-row">
+      <input class="prompt-input" id="promptInput" readonly
+        value="Write a function that copies user-provided input into a fixed-size buffer." />
+      <button class="run-btn" id="runBtn">Run Comparison</button>
+    </div>
+
+    <div class="key-row">
+      <span>OpenAI key:</span>
+      <input class="key-input" id="apiKeyInput" type="password" placeholder="sk-..." autocomplete="off" />
+      <span>— saved to localStorage only</span>
+    </div>
+
+    <div class="demo-panels">
+      <div class="code-panel" data-lang="ek">
+        <div class="code-header">
+          <div style="display:flex;align-items:baseline">
+            <span class="code-lang">Ek</span>
+            <span class="code-desc">grammar-constrained</span>
+          </div>
+          <span class="code-status" id="statusEk">waiting</span>
+        </div>
+        <div class="code-body" id="bodyEk"><span class="placeholder">Ek code will appear here…</span></div>
+      </div>
+      <div class="code-panel" data-lang="c">
+        <div class="code-header">
+          <div style="display:flex;align-items:baseline">
+            <span class="code-lang">C</span>
+            <span class="code-desc">unconstrained</span>
+          </div>
+          <span class="code-status" id="statusC">waiting</span>
+        </div>
+        <div class="code-body" id="bodyC"><span class="placeholder">C code will appear here…</span></div>
       </div>
     </div>
-    <div class="resize-handle" data-between="real-dev"></div>
-    <div class="panel" data-lens="dev">
-      <div class="panel-label">Dev Lens<span class="label-sub">for engineers</span><button class="copy-btn" data-lens="dev">⧉</button></div>
-      <div class="panel-toolbar"></div>
-      <div class="panel-editor">
-        <div class="hl-layer" data-lens="dev"></div>
-        <textarea data-lens="dev" placeholder="fn add(int a, float b) -> bool {}" spellcheck="false"></textarea>
+
+    <div class="explanation">
+      <div class="explain-block" data-lang="ek">
+        <h3>Ek — grammar-constrained</h3>
+        <p>Ek has <strong>no construct for an unchecked write</strong>. Every buffer is declared with an explicit bounded size (<strong>⟦τ type, σ size⟧</strong>) and the grammar has no unbounded copy primitive. When the model is forced to stay within Ek's grammar, the unsafe pattern has no valid surface to land on.</p>
+      </div>
+      <div class="explain-block" data-lang="c">
+        <h3>C — unconstrained</h3>
+        <p>C's <strong>strcpy</strong> and similar functions perform no bounds checking. A fixed-size buffer like <strong>char buf[64]</strong> can be overwritten past its end if the input is longer. This is the root cause of vulnerabilities like <strong>Heartbleed</strong>. The model is free to write it because C allows it.</p>
       </div>
     </div>
-    <div class="resize-handle" data-between="dev-normie"></div>
-    <div class="panel" data-lens="normie">
-      <div class="panel-label">Normie Lens<span class="label-sub">for humans</span><button class="copy-btn" data-lens="normie">⧉</button></div>
-      <div class="panel-toolbar"></div>
-      <div class="panel-editor">
-        <div class="hl-layer" data-lens="normie"></div>
-        <textarea data-lens="normie" placeholder="function add(integer a, float b) returnType boolean {}" spellcheck="false"></textarea>
-      </div>
-    </div>
-    <div class="shared-scrollbar" id="sharedScrollbar">
-      <div class="shared-scroll-thumb" id="sharedThumb"></div>
+
+    <div class="disclaimer">
+      <strong>Disclaimer:</strong> Ek does not yet have a working compiler or parser. This demo shows that constraining an LLM's output to Ek's grammar changes what unsafe code the model produces — it does not yet show mathematically enforced safety, which requires a real parser and is a future milestone.
     </div>
   </div>
+  </section>
+
+  <!-- ── Split view ── -->
+  <section id="splitview">
+    <div class="lenses-header">
+      <span class="lenses-title">Lenses</span>
+      <span class="lenses-sub">optimized for readability — because in the future you won't write code, you'll mostly read it. Ek has lenses, so you can read the same code in whichever lens you want</span>
+    </div>
+    <div class="panel-wrap">
+      <div class="panel active" data-lens="real">
+        <div class="panel-label"><span><span class="label-name">Real Lens</span><span class="label-sub">(for AI)</span></span><button class="copy-btn" data-lens="real">⧉</button></div>
+        <div class="panel-toolbar"></div>
+        <div class="panel-editor">
+          <div class="hl-layer" data-lens="real"></div>
+          <textarea data-lens="real" placeholder="add hint code" spellcheck="false" readonly></textarea>
+        </div>
+      </div>
+      <div class="resize-handle" data-between="real-dev"></div>
+      <div class="panel" data-lens="dev">
+        <div class="panel-label"><span><span class="label-name">Dev Lens</span><span class="label-sub">(for engineers)</span></span><button class="copy-btn" data-lens="dev">⧉</button></div>
+        <div class="panel-toolbar"></div>
+        <div class="panel-editor">
+          <div class="hl-layer" data-lens="dev"></div>
+          <textarea data-lens="dev" placeholder="add hint code" spellcheck="false"></textarea>
+        </div>
+      </div>
+      <div class="resize-handle" data-between="dev-normie"></div>
+      <div class="panel" data-lens="normie">
+        <div class="panel-label"><span><span class="label-name">Normie Lens</span><span class="label-sub">(for humans)</span></span><button class="copy-btn" data-lens="normie">⧉</button></div>
+        <div class="panel-toolbar"></div>
+        <div class="panel-editor">
+          <div class="hl-layer" data-lens="normie"></div>
+          <textarea data-lens="normie" placeholder="add hint code" spellcheck="false"></textarea>
+        </div>
+      </div>
+      <div class="shared-scrollbar" id="sharedScrollbar">
+        <div class="shared-scroll-thumb" id="sharedThumb"></div>
+      </div>
+    </div>
+  </section>
 
   <footer>
     <span>ek v0.1</span>
@@ -204,67 +370,27 @@
 
   <script src="translator.js"></script>
   <script>
-    const textareas  = document.querySelectorAll('textarea[data-lens]')
-    const tabBtns    = document.querySelectorAll('.tab-btn')
-    const panels     = document.querySelectorAll('.panel')
-    const viewToggle = document.getElementById('viewToggle')
+    // ── Split view ───────────────────────────────────────────────────────────
+    const textareas = document.querySelectorAll('textarea[data-lens]')
 
-    // ── Tab switching ──
     let scrollPct = 0
 
-    tabBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        tabBtns.forEach(b => b.classList.remove('active'))
-        panels.forEach(p => p.classList.remove('active'))
-        btn.classList.add('active')
-        document.querySelector(`.panel[data-lens="${btn.dataset.lens}"]`).classList.add('active')
-        // restore scroll position on the newly visible textarea
-        const ta = document.querySelector(`textarea[data-lens="${btn.dataset.lens}"]`)
-        ta.scrollTop = scrollPct * (ta.scrollHeight - ta.clientHeight)
-        ta.previousElementSibling.style.transform = `translateY(-${ta.scrollTop}px)`
-      })
-    })
-
-    // ── Split / tab toggle ──
-    let isSplit = true
-    document.body.classList.add('split')
-    viewToggle.textContent = '⊞ tab view'
-
-    viewToggle.addEventListener('click', () => {
-      isSplit = !isSplit
-      document.body.classList.toggle('split', isSplit)
-      viewToggle.textContent = isSplit ? '⊞ tab view' : '⊟ split view'
-      if (isSplit) resetPanelWidths()
-    })
-
-    function resetPanelWidths() {
-      document.querySelectorAll('.panel').forEach(p => { p.style.flex = '1 1 0' })
-    }
-
-    // ── Resize handles ──
     document.querySelectorAll('.resize-handle').forEach(handle => {
       handle.addEventListener('mousedown', e => {
-        if (!isSplit) return
         e.preventDefault()
-        const wrap      = handle.parentElement
-        const panelA    = handle.previousElementSibling
-        const panelB    = handle.nextElementSibling
-        const startX    = e.clientX
-        const startAW   = panelA.getBoundingClientRect().width
-        const startBW   = panelB.getBoundingClientRect().width
+        const panelA  = handle.previousElementSibling
+        const panelB  = handle.nextElementSibling
+        const startX  = e.clientX
+        const startAW = panelA.getBoundingClientRect().width
+        const startBW = panelB.getBoundingClientRect().width
         handle.classList.add('dragging')
         document.body.style.cursor = 'col-resize'
         document.body.style.userSelect = 'none'
-
         function onMove(e) {
-          const dx   = e.clientX - startX
-          const minW = 80
-          const newA = Math.max(minW, startAW + dx)
-          const newB = Math.max(minW, startBW - dx)
-          panelA.style.flex = `0 0 ${newA}px`
-          panelB.style.flex = `0 0 ${newB}px`
+          const dx = e.clientX - startX
+          panelA.style.flex = `0 0 ${Math.max(80, startAW + dx)}px`
+          panelB.style.flex = `0 0 ${Math.max(80, startBW - dx)}px`
         }
-
         function onUp() {
           handle.classList.remove('dragging')
           document.body.style.cursor = ''
@@ -272,21 +398,19 @@
           document.removeEventListener('mousemove', onMove)
           document.removeEventListener('mouseup', onUp)
         }
-
         document.addEventListener('mousemove', onMove)
         document.addEventListener('mouseup', onUp)
       })
     })
 
-    // ── Shared scrollbar ──
     const sharedBar   = document.getElementById('sharedScrollbar')
     const sharedThumb = document.getElementById('sharedThumb')
 
     function updateThumb() {
-      const ref = textareas[0]
-      const ratio     = ref.clientHeight / (ref.scrollHeight || 1)
-      const thumbH    = Math.max(20, sharedBar.clientHeight * ratio)
-      const maxTop    = sharedBar.clientHeight - thumbH
+      const ref    = textareas[0]
+      const ratio  = ref.clientHeight / (ref.scrollHeight || 1)
+      const thumbH = Math.max(20, sharedBar.clientHeight * ratio)
+      const maxTop = sharedBar.clientHeight - thumbH
       sharedThumb.style.height = thumbH + 'px'
       sharedThumb.style.top    = (scrollPct * maxTop) + 'px'
     }
@@ -300,21 +424,16 @@
       updateThumb()
     }
 
-    // drag thumb
     sharedThumb.addEventListener('mousedown', e => {
       e.preventDefault()
       sharedThumb.classList.add('dragging')
-      const startY     = e.clientY
-      const startPct   = scrollPct
-      const ref        = textareas[0]
-      const ratio      = ref.clientHeight / (ref.scrollHeight || 1)
-      const thumbH     = Math.max(20, sharedBar.clientHeight * ratio)
-      const maxTop     = sharedBar.clientHeight - thumbH
-
-      function onMove(e) {
-        const dy = e.clientY - startY
-        applyScroll(startPct + dy / maxTop)
-      }
+      const startY   = e.clientY
+      const startPct = scrollPct
+      const ref      = textareas[0]
+      const ratio    = ref.clientHeight / (ref.scrollHeight || 1)
+      const thumbH   = Math.max(20, sharedBar.clientHeight * ratio)
+      const maxTop   = sharedBar.clientHeight - thumbH
+      function onMove(e) { applyScroll(startPct + (e.clientY - startY) / maxTop) }
       function onUp() {
         sharedThumb.classList.remove('dragging')
         document.removeEventListener('mousemove', onMove)
@@ -324,7 +443,6 @@
       document.addEventListener('mouseup', onUp)
     })
 
-    // click track to jump
     sharedBar.addEventListener('mousedown', e => {
       if (e.target === sharedThumb) return
       const rect   = sharedBar.getBoundingClientRect()
@@ -335,7 +453,6 @@
       applyScroll((e.clientY - rect.top - thumbH / 2) / maxTop)
     })
 
-    // ── Scroll sync (textarea → overlay + other textareas) ──
     let scrolling = false
     textareas.forEach(ta => {
       const overlay = ta.previousElementSibling
@@ -354,10 +471,8 @@
       })
     })
 
-    // update thumb on resize
     new ResizeObserver(updateThumb).observe(sharedBar)
 
-    // ── Overlay rendering ──
     function escHtml(s) {
       return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
     }
@@ -376,11 +491,8 @@
       }).join('')
     }
 
-    function renderAll() {
-      ['real','dev','normie'].forEach(renderOverlay)
-    }
+    function renderAll() { ['real','dev','normie'].forEach(renderOverlay) }
 
-    // ── Token hover: highlight matching spans in all overlays ──
     document.addEventListener('mouseover', e => {
       const tok = e.target.closest('.tok')
       document.querySelectorAll('.tok.lit').forEach(el => el.classList.remove('lit'))
@@ -391,20 +503,17 @@
         tok.classList.add('lit')
     })
 
-    // clicking a span should focus the textarea in that panel
     document.addEventListener('mousedown', e => {
       const tok = e.target.closest('.tok')
       if (!tok) return
       tok.closest('.panel-editor').querySelector('textarea').focus({ preventScroll: true })
     })
 
-    // ── Translation ──
     fetch('symbols.json')
       .then(r => { if (!r.ok) throw new Error('symbols.json ' + r.status); return r.json() })
       .then(symbols => {
         initTranslator(symbols)
         renderAll()
-
         textareas.forEach(ta => {
           ta.addEventListener('input', () => {
             const from = ta.dataset.lens
@@ -416,21 +525,107 @@
             renderAll()
           })
         })
-
         document.querySelectorAll('.copy-btn').forEach(btn => {
           btn.addEventListener('click', () => {
             const ta = document.querySelector(`textarea[data-lens="${btn.dataset.lens}"]`)
             navigator.clipboard.writeText(ta.value).then(() => {
               btn.textContent = 'Copied!'
               btn.classList.add('copied')
-              setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied') }, 1500)
+              setTimeout(() => { btn.textContent = '⧉'; btn.classList.remove('copied') }, 1500)
             })
           })
         })
       })
-      .catch(err => {
-        document.querySelector('footer').textContent = 'error: ' + err.message
-      })
+      .catch(err => console.error('symbols.json:', err.message))
+
+    // ── Demo ─────────────────────────────────────────────────────────────────
+    const EK_SYNTAX_REFERENCE = `
+[SYNTAX_TABLE_PLACEHOLDER — paste the Ek master symbol table here]
+`
+    const SYSTEM_C = `You are a C programmer. Write idiomatic C code for the following request. Output only the code, no explanation, no markdown fences.`
+    const SYSTEM_EK = `You are a programmer writing in Ek, a custom language with a strict grammar. Follow this grammar exactly and produce only valid Ek code. Output only the code, no explanation, no markdown fences.
+
+Ek grammar reference:
+${EK_SYNTAX_REFERENCE}`
+
+    const runBtn      = document.getElementById('runBtn')
+    const apiKeyInput = document.getElementById('apiKeyInput')
+    const bodyEk      = document.getElementById('bodyEk')
+    const bodyC       = document.getElementById('bodyC')
+    const statusEk    = document.getElementById('statusEk')
+    const statusC     = document.getElementById('statusC')
+
+    apiKeyInput.value = localStorage.getItem('ek_openai_key') || ''
+    apiKeyInput.addEventListener('change', () => localStorage.setItem('ek_openai_key', apiKeyInput.value.trim()))
+
+    runBtn.addEventListener('click', async () => {
+      const apiKey = apiKeyInput.value.trim()
+      if (!apiKey) { alert('Enter your OpenAI API key first.'); return }
+      localStorage.setItem('ek_openai_key', apiKey)
+      runBtn.disabled = true
+      resetPanel(bodyEk, statusEk)
+      resetPanel(bodyC, statusC)
+      await Promise.all([
+        streamCompletion(apiKey, SYSTEM_EK, bodyEk, statusEk),
+        streamCompletion(apiKey, SYSTEM_C,  bodyC,  statusC),
+      ])
+      runBtn.disabled = false
+    })
+
+    function resetPanel(body, status) {
+      body.textContent = ''
+      status.textContent = 'waiting'
+      status.className = 'code-status'
+    }
+
+    async function streamCompletion(apiKey, system, body, status) {
+      const prompt = document.getElementById('promptInput').value
+      status.textContent = 'streaming…'
+      status.className = 'code-status streaming'
+      const cursor = document.createElement('span')
+      cursor.className = 'stream-cursor'
+      body.appendChild(cursor)
+      try {
+        const res = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+          body: JSON.stringify({
+            model: 'gpt-4.1-mini', stream: true,
+            messages: [{ role: 'system', content: system }, { role: 'user', content: prompt }],
+          }),
+        })
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}))
+          throw new Error(err?.error?.message || `HTTP ${res.status}`)
+        }
+        const reader = res.body.getReader()
+        const dec    = new TextDecoder()
+        let buf = ''
+        while (true) {
+          const { done, value } = await reader.read()
+          if (done) break
+          buf += dec.decode(value, { stream: true })
+          const lines = buf.split('\n')
+          buf = lines.pop()
+          for (const line of lines) {
+            const t = line.trim()
+            if (!t || t === 'data: [DONE]' || !t.startsWith('data: ')) continue
+            try {
+              const delta = JSON.parse(t.slice(6)).choices?.[0]?.delta?.content
+              if (delta) { body.insertBefore(document.createTextNode(delta), cursor); body.scrollTop = body.scrollHeight }
+            } catch {}
+          }
+        }
+        cursor.remove()
+        status.textContent = 'done'
+        status.className = 'code-status done'
+      } catch (err) {
+        cursor.remove()
+        status.textContent = 'error'
+        status.className = 'code-status error'
+        body.textContent = `Error: ${err.message}`
+      }
+    }
   </script>
 </body>
 </html>

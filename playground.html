@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ek — Playground</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #f7f5f2;
+      --bg2:      #f0ede8;
+      --border:   #ddd9d3;
+      --border2:  #ccc8c2;
+      --text:     #1c1a18;
+      --muted:    #8a857e;
+      --muted2:   #b8b3ac;
+      --real:     #7c6fcd;
+      --dev:      #2a9d6f;
+      --normie:   #c07a2a;
+      --accent:   #e8632a;
+    }
+
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      font-feature-settings: "liga" 0, "calt" 0;
+      font-variant-ligatures: none;
+      background: var(--bg); color: var(--text);
+      min-height: 100vh; display: flex; flex-direction: column;
+    }
+
+    header {
+      display: flex; align-items: center; gap: 28px;
+      padding: 18px 32px; border-bottom: 1px solid var(--border);
+      background: #fff; flex-shrink: 0; position: sticky; top: 0; z-index: 100;
+    }
+    .brand {
+      font-size: 24px; font-weight: 700; color: var(--text); letter-spacing: -1px;
+      text-decoration: none;
+    }
+    .brand:hover { color: var(--accent); }
+    nav { display: flex; gap: 4px; flex: 1; }
+    nav a {
+      font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500;
+      color: var(--muted); text-decoration: none; padding: 6px 14px; border-radius: 6px;
+      letter-spacing: 0.04em; transition: color 0.15s, background 0.15s;
+    }
+    nav a:hover { color: var(--text); background: var(--bg2); }
+    nav a.active { color: var(--text); background: var(--bg2); }
+
+    .view-toggle {
+      font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500;
+      color: var(--muted); background: none; border: 1px solid var(--border2); border-radius: 6px;
+      padding: 6px 14px; cursor: pointer; transition: color 0.15s, border-color 0.15s, background 0.15s;
+      letter-spacing: 0.03em;
+    }
+    .view-toggle:hover { color: var(--text); border-color: var(--muted); background: var(--bg2); }
+
+    #playground {
+      flex: 1; display: flex; flex-direction: column; overflow: hidden;
+    }
+
+    .tab-bar {
+      display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px; flex-shrink: 0; background: #fff;
+    }
+    .tab-bar .tabs { display: flex; gap: 4px; grid-column: 2; justify-self: center; }
+    body.split .tab-bar .tabs { visibility: hidden; }
+    .tab-bar .view-toggle { grid-column: 3; justify-self: end; }
+
+    .tab-btn {
+      font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 500;
+      background: none; border: none; border-bottom: 2px solid transparent;
+      padding: 14px 18px 12px; cursor: pointer; color: var(--muted2);
+      letter-spacing: 0.05em; transition: color 0.15s; margin-bottom: -1px;
+    }
+    .tab-btn:hover { color: var(--muted); }
+    .tab-btn .tab-sub { font-weight: 400; opacity: 0.65; letter-spacing: 0.02em; margin-left: 4px; }
+    .tab-btn[data-lens="real"].active   { color: var(--real);   border-bottom-color: var(--real); }
+    .tab-btn[data-lens="dev"].active    { color: var(--dev);    border-bottom-color: var(--dev); }
+    .tab-btn[data-lens="normie"].active { color: var(--normie); border-bottom-color: var(--normie); }
+
+    .panel-wrap {
+      flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 280px;
+    }
+    body.split .panel-wrap { flex-direction: row; }
+
+    /* tab view: center the single visible panel like a card */
+    body:not(.split) .panel-wrap { align-items: center; padding: 24px 32px; background: var(--bg); }
+    body:not(.split) .panel {
+      max-width: 820px; width: 100%; flex: 1; min-height: 0;
+      border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: #fff;
+    }
+
+    /* ── Output window (console) ── */
+    .output-window {
+      flex-shrink: 0; display: flex; justify-content: center;
+      border-top: 1px solid var(--border); background: var(--bg);
+      padding: 18px 32px;
+    }
+    .output-console {
+      max-width: 820px; width: 100%; display: flex; flex-direction: column;
+      border-radius: 10px; overflow: hidden; border: 1px solid #2a2a2a;
+      background: #1b1a18; height: 200px;
+    }
+    .output-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 9px 16px; flex-shrink: 0;
+    }
+    .output-title {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #8a857e;
+    }
+    .output-note { font-size: 10px; color: #5a5650; letter-spacing: 0.02em; }
+    .output-body {
+      flex: 1; overflow-y: auto; padding: 0 18px 18px;
+      font-size: 13px; line-height: 1.7; color: #c9c5be;
+      background: #1b1a18;
+      scrollbar-width: thin; scrollbar-color: #3a3834 transparent;
+    }
+    .output-body::-webkit-scrollbar { width: 5px; }
+    .output-body::-webkit-scrollbar-thumb { background: #3a3834; border-radius: 3px; }
+    .output-body .placeholder { color: #5a5650; font-style: italic; }
+
+    .panel { display: none; flex: 1; flex-direction: column; min-width: 0; overflow: hidden; }
+    .panel.active { display: flex; }
+    body.split .panel { display: flex; }
+    body.split .panel[data-lens="real"]   { border-top: 2px solid var(--real); }
+    body.split .panel[data-lens="dev"]    { border-top: 2px solid var(--dev); }
+    body.split .panel[data-lens="normie"] { border-top: 2px solid var(--normie); }
+
+    .resize-handle {
+      display: none; flex-shrink: 0;
+      width: 4px; cursor: col-resize;
+      background: var(--border); position: relative; transition: background 0.15s;
+    }
+    .resize-handle::after { content: ''; position: absolute; inset: 0 -4px; }
+    .resize-handle:hover, .resize-handle.dragging { background: var(--border2); }
+    body.split .resize-handle { display: block; }
+
+    .panel-label {
+      display: none; align-items: center; justify-content: space-between;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+      padding: 12px 14px 11px 18px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+    }
+    body.split .panel-label { display: flex; }
+    .panel-label .label-name { text-transform: uppercase; }
+    .panel-label .label-sub {
+      font-weight: 400; letter-spacing: 0.02em; opacity: 0.6; text-transform: none; margin-left: 4px;
+    }
+    .panel[data-lens="real"]   .panel-label { color: var(--real);   background: rgba(124,111,205,0.04); }
+    .panel[data-lens="dev"]    .panel-label { color: var(--dev);    background: rgba(42,157,111,0.04); }
+    .panel[data-lens="normie"] .panel-label { color: var(--normie); background: rgba(192,122,42,0.04); }
+
+    .panel-toolbar { display: none; }
+
+    .copy-btn {
+      font-size: 14px; line-height: 1;
+      color: var(--muted2); background: none; border: 1px solid var(--border); border-radius: 5px;
+      padding: 4px 8px; cursor: pointer;
+      transition: color 0.15s, border-color 0.15s, background 0.15s; flex-shrink: 0;
+    }
+    .panel[data-lens="real"]   .copy-btn:hover { color: var(--real);   border-color: var(--real);   background: rgba(124,111,205,0.06); }
+    .panel[data-lens="dev"]    .copy-btn:hover { color: var(--dev);    border-color: var(--dev);    background: rgba(42,157,111,0.06); }
+    .panel[data-lens="normie"] .copy-btn:hover { color: var(--normie); border-color: var(--normie); background: rgba(192,122,42,0.06); }
+    .copy-btn.copied { color: var(--dev); border-color: var(--dev); }
+
+    .panel-editor { position: relative; flex: 1; overflow: hidden; background: var(--bg); }
+
+    .hl-layer {
+      position: absolute; top: 0; left: 0; right: 0;
+      z-index: 2; pointer-events: none;
+      font-family: 'JetBrains Mono', monospace; font-size: 16.8px; line-height: 1.75;
+      color: #2a2622; padding: 20px 24px;
+      white-space: pre-wrap; overflow-wrap: break-word; overflow: hidden;
+    }
+
+    .tok { pointer-events: auto; cursor: text; }
+    body.split .tok { border-radius: 2px; display: inline-block; transition: transform 0.1s, background 0.1s; }
+    body.split .tok:hover, body.split .tok.lit { background: rgba(232,99,42,0.15); transform: scale(1.2); }
+
+    textarea {
+      position: absolute; inset: 0; z-index: 1;
+      background: transparent; border: none; resize: none;
+      font-family: 'JetBrains Mono', monospace; font-size: 16.8px; line-height: 1.75;
+      color: transparent; caret-color: var(--muted);
+      padding: 20px 24px; outline: none; tab-size: 2; overflow-y: scroll;
+    }
+    textarea[readonly] { caret-color: transparent; }
+    body.split textarea { scrollbar-width: none; }
+    body.split textarea::-webkit-scrollbar { display: none; }
+
+    .shared-scrollbar {
+      display: none; flex-shrink: 0;
+      width: 8px; background: var(--bg2); position: relative; cursor: pointer;
+    }
+    body.split .shared-scrollbar { display: block; }
+    .shared-scroll-thumb {
+      position: absolute; left: 1px; right: 1px;
+      background: var(--border2); border-radius: 4px;
+      min-height: 20px; cursor: grab; transition: background 0.15s;
+    }
+    .shared-scroll-thumb:hover, .shared-scroll-thumb.dragging { background: var(--muted); }
+
+    footer {
+      padding: 10px 32px; border-top: 1px solid var(--border); background: #fff;
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 12px; color: var(--muted2); flex-shrink: 0; letter-spacing: 0.04em;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="/" class="brand">Ek</a>
+    <nav>
+      <a href="playground.html" class="active">playground</a>
+      <a href="syntax.html">syntax</a>
+      <a href="spec.html">spec</a>
+    </nav>
+  </header>
+
+  <section id="playground">
+    <div class="tab-bar">
+      <div class="tabs">
+        <button class="tab-btn active" data-lens="real">Real Lens<span class="tab-sub">(for AI)</span></button>
+        <button class="tab-btn" data-lens="dev">Dev Lens<span class="tab-sub">(for engineers)</span></button>
+        <button class="tab-btn" data-lens="normie">Normie Lens<span class="tab-sub">(for humans)</span></button>
+      </div>
+      <button class="view-toggle" id="viewToggle">⊟ split view</button>
+    </div>
+
+    <div class="panel-wrap">
+      <div class="panel active" data-lens="real">
+        <div class="panel-label"><span><span class="label-name">Real Lens</span><span class="label-sub">(for AI)</span></span><button class="copy-btn" data-lens="real">⧉</button></div>
+        <div class="panel-toolbar"></div>
+        <div class="panel-editor">
+          <div class="hl-layer" data-lens="real"></div>
+          <textarea data-lens="real" placeholder="add hint code" spellcheck="false" readonly></textarea>
+        </div>
+      </div>
+      <div class="resize-handle" data-between="real-dev"></div>
+      <div class="panel" data-lens="dev">
+        <div class="panel-label"><span><span class="label-name">Dev Lens</span><span class="label-sub">(for engineers)</span></span><button class="copy-btn" data-lens="dev">⧉</button></div>
+        <div class="panel-toolbar"></div>
+        <div class="panel-editor">
+          <div class="hl-layer" data-lens="dev"></div>
+          <textarea data-lens="dev" placeholder="add hint code" spellcheck="false"></textarea>
+        </div>
+      </div>
+      <div class="resize-handle" data-between="dev-normie"></div>
+      <div class="panel" data-lens="normie">
+        <div class="panel-label"><span><span class="label-name">Normie Lens</span><span class="label-sub">(for humans)</span></span><button class="copy-btn" data-lens="normie">⧉</button></div>
+        <div class="panel-toolbar"></div>
+        <div class="panel-editor">
+          <div class="hl-layer" data-lens="normie"></div>
+          <textarea data-lens="normie" placeholder="add hint code" spellcheck="false"></textarea>
+        </div>
+      </div>
+      <div class="shared-scrollbar" id="sharedScrollbar">
+        <div class="shared-scroll-thumb" id="sharedThumb"></div>
+      </div>
+    </div>
+
+    <div class="output-window">
+      <div class="output-console">
+        <div class="output-header">
+          <span class="output-title">Output</span>
+          <span class="output-note">Ek has no compiler yet — preview only</span>
+        </div>
+        <div class="output-body" id="outputBody"><span class="placeholder">Run the code to see output here…</span></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>ek v0.1</span>
+    <span>experimental — symbols subject to change</span>
+  </footer>
+
+  <script src="translator.js"></script>
+  <script>
+    const textareas  = document.querySelectorAll('textarea[data-lens]')
+    const tabBtns    = document.querySelectorAll('.tab-btn')
+    const panels     = document.querySelectorAll('.panel')
+    const viewToggle = document.getElementById('viewToggle')
+
+    let scrollPct = 0
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabBtns.forEach(b => b.classList.remove('active'))
+        panels.forEach(p => p.classList.remove('active'))
+        btn.classList.add('active')
+        document.querySelector(`.panel[data-lens="${btn.dataset.lens}"]`).classList.add('active')
+        const ta = document.querySelector(`textarea[data-lens="${btn.dataset.lens}"]`)
+        ta.scrollTop = scrollPct * (ta.scrollHeight - ta.clientHeight)
+        ta.previousElementSibling.style.transform = `translateY(-${ta.scrollTop}px)`
+      })
+    })
+
+    let isSplit = true
+    document.body.classList.add('split')
+    viewToggle.textContent = '⊞ tab view'
+
+    viewToggle.addEventListener('click', () => {
+      isSplit = !isSplit
+      document.body.classList.toggle('split', isSplit)
+      viewToggle.textContent = isSplit ? '⊞ tab view' : '⊟ split view'
+      // clear any leftover inline flex from resize-handle dragging so each mode's CSS applies cleanly
+      document.querySelectorAll('.panel').forEach(p => { p.style.flex = '' })
+    })
+
+    document.querySelectorAll('.resize-handle').forEach(handle => {
+      handle.addEventListener('mousedown', e => {
+        if (!isSplit) return
+        e.preventDefault()
+        const panelA  = handle.previousElementSibling
+        const panelB  = handle.nextElementSibling
+        const startX  = e.clientX
+        const startAW = panelA.getBoundingClientRect().width
+        const startBW = panelB.getBoundingClientRect().width
+        handle.classList.add('dragging')
+        document.body.style.cursor = 'col-resize'
+        document.body.style.userSelect = 'none'
+        function onMove(e) {
+          const dx = e.clientX - startX
+          panelA.style.flex = `0 0 ${Math.max(80, startAW + dx)}px`
+          panelB.style.flex = `0 0 ${Math.max(80, startBW - dx)}px`
+        }
+        function onUp() {
+          handle.classList.remove('dragging')
+          document.body.style.cursor = ''
+          document.body.style.userSelect = ''
+          document.removeEventListener('mousemove', onMove)
+          document.removeEventListener('mouseup', onUp)
+        }
+        document.addEventListener('mousemove', onMove)
+        document.addEventListener('mouseup', onUp)
+      })
+    })
+
+    const sharedBar   = document.getElementById('sharedScrollbar')
+    const sharedThumb = document.getElementById('sharedThumb')
+
+    function updateThumb() {
+      const ref    = textareas[0]
+      const ratio  = ref.clientHeight / (ref.scrollHeight || 1)
+      const thumbH = Math.max(20, sharedBar.clientHeight * ratio)
+      const maxTop = sharedBar.clientHeight - thumbH
+      sharedThumb.style.height = thumbH + 'px'
+      sharedThumb.style.top    = (scrollPct * maxTop) + 'px'
+    }
+
+    function applyScroll(pct) {
+      scrollPct = Math.max(0, Math.min(1, pct))
+      textareas.forEach(ta => {
+        ta.scrollTop = scrollPct * (ta.scrollHeight - ta.clientHeight)
+        ta.previousElementSibling.style.transform = `translateY(-${ta.scrollTop}px)`
+      })
+      updateThumb()
+    }
+
+    sharedThumb.addEventListener('mousedown', e => {
+      e.preventDefault()
+      sharedThumb.classList.add('dragging')
+      const startY   = e.clientY
+      const startPct = scrollPct
+      const ref      = textareas[0]
+      const ratio    = ref.clientHeight / (ref.scrollHeight || 1)
+      const thumbH   = Math.max(20, sharedBar.clientHeight * ratio)
+      const maxTop   = sharedBar.clientHeight - thumbH
+      function onMove(e) { applyScroll(startPct + (e.clientY - startY) / maxTop) }
+      function onUp() {
+        sharedThumb.classList.remove('dragging')
+        document.removeEventListener('mousemove', onMove)
+        document.removeEventListener('mouseup', onUp)
+      }
+      document.addEventListener('mousemove', onMove)
+      document.addEventListener('mouseup', onUp)
+    })
+
+    sharedBar.addEventListener('mousedown', e => {
+      if (e.target === sharedThumb) return
+      const rect   = sharedBar.getBoundingClientRect()
+      const ref    = textareas[0]
+      const ratio  = ref.clientHeight / (ref.scrollHeight || 1)
+      const thumbH = Math.max(20, sharedBar.clientHeight * ratio)
+      const maxTop = sharedBar.clientHeight - thumbH
+      applyScroll((e.clientY - rect.top - thumbH / 2) / maxTop)
+    })
+
+    let scrolling = false
+    textareas.forEach(ta => {
+      const overlay = ta.previousElementSibling
+      ta.addEventListener('scroll', () => {
+        overlay.style.transform = `translateY(-${ta.scrollTop}px)`
+        scrollPct = ta.scrollTop / (ta.scrollHeight - ta.clientHeight || 1)
+        if (scrolling) return
+        scrolling = true
+        textareas.forEach(other => {
+          if (other === ta) return
+          other.scrollTop = scrollPct * (other.scrollHeight - other.clientHeight)
+          other.previousElementSibling.style.transform = `translateY(-${other.scrollTop}px)`
+        })
+        updateThumb()
+        requestAnimationFrame(() => { scrolling = false })
+      })
+    })
+
+    new ResizeObserver(updateThumb).observe(sharedBar)
+
+    function escHtml(s) {
+      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    }
+
+    function renderOverlay(lens) {
+      const ta      = document.querySelector(`textarea[data-lens="${lens}"]`)
+      const overlay = document.querySelector(`.hl-layer[data-lens="${lens}"]`)
+      const tokens  = getTokens(ta.value, lens)
+      overlay.innerHTML = tokens.map(tok => {
+        const txt = escHtml(tok.value)
+        if (tok.symbolName)
+          return `<span class="tok" data-sym="${tok.symbolName}">${txt}</span>`
+        if (tok.type === 'unknown' && /[A-Za-z0-9_]/.test(tok.value))
+          return `<span class="tok" data-word="${escHtml(tok.value)}">${txt}</span>`
+        return txt
+      }).join('')
+    }
+
+    function renderAll() { ['real','dev','normie'].forEach(renderOverlay) }
+
+    document.addEventListener('mouseover', e => {
+      if (!isSplit) return
+      const tok = e.target.closest('.tok')
+      document.querySelectorAll('.tok.lit').forEach(el => el.classList.remove('lit'))
+      if (!tok) return
+      if (tok.dataset.sym)
+        document.querySelectorAll(`.tok[data-sym="${tok.dataset.sym}"]`).forEach(el => el.classList.add('lit'))
+      else if (tok.dataset.word)
+        tok.classList.add('lit')
+    })
+
+    document.addEventListener('mousedown', e => {
+      const tok = e.target.closest('.tok')
+      if (!tok) return
+      tok.closest('.panel-editor').querySelector('textarea').focus({ preventScroll: true })
+    })
+
+    fetch('symbols.json')
+      .then(r => { if (!r.ok) throw new Error('symbols.json ' + r.status); return r.json() })
+      .then(symbols => {
+        initTranslator(symbols)
+        renderAll()
+        textareas.forEach(ta => {
+          ta.addEventListener('input', () => {
+            const from = ta.dataset.lens
+            const code = ta.value
+            textareas.forEach(other => {
+              if (other.dataset.lens === from) return
+              other.value = translate(code, from, other.dataset.lens)
+            })
+            renderAll()
+          })
+        })
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const ta = document.querySelector(`textarea[data-lens="${btn.dataset.lens}"]`)
+            navigator.clipboard.writeText(ta.value).then(() => {
+              btn.textContent = 'Copied!'
+              btn.classList.add('copied')
+              setTimeout(() => { btn.textContent = '⧉'; btn.classList.remove('copied') }, 1500)
+            })
+          })
+        })
+      })
+      .catch(err => console.error('symbols.json:', err.message))
+  </script>
+</body>
+</html>

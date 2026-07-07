@@ -6,7 +6,7 @@
   <title>Ek — Live Comparison Demo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -27,9 +27,8 @@
     }
 
     body {
-      font-family: 'JetBrains Mono', monospace;
-      font-feature-settings: "liga" 0, "calt" 0;
-      font-variant-ligatures: none;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0;
       background: var(--bg); color: var(--text);
       min-height: 100vh; display: flex; flex-direction: column;
     }
@@ -66,7 +65,7 @@
     .prompt-input:focus { border-color: var(--accent); }
 
     .run-btn {
-      font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700;
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
       background: var(--accent); color: #fff; border: none; border-radius: 8px;
       padding: 12px 24px; cursor: pointer; letter-spacing: 0.04em;
       transition: background 0.15s, opacity 0.15s; white-space: nowrap;
@@ -228,7 +227,75 @@
   <script>
     // ── Paste your Ek syntax reference here ──────────────────────────────────
     const EK_SYNTAX_REFERENCE = `
-[SYNTAX_TABLE_PLACEHOLDER — paste the Ek master symbol table here]
+== EK MASTER SYMBOL TABLE (Real Code lens) ==
+
+DECLARATIONS
+  :: name(params) -> ReturnType {}   function declaration
+  § Type name <- value;              variable declaration
+  ⊞ Name { Type field, ... }         record declaration
+  ⊎ Name { Variant, Variant(Type) }  union declaration
+  ↳ Name { field: value, ... }       record construction
+  ⊙ CapabilityType cap               capability token parameter
+  ※ moduleName;                      import
+
+CONTROL FLOW
+  ? (cond) : { ... } ⋮ { ... }      conditional (if/then/else)
+  ⋈ x { val → ..., _ → ... }        pattern match
+  ↻ i 0..N { ... }                   bounded loop
+  ⥁ (cond) { ... }                   unbounded while loop
+  ↵ value;                           return value
+  ▢                                  void (no return value)
+  ⏹;                                 break
+  ▶;                                 continue
+  ⚑ ↯ fn(args) {                     outcome handling
+    success(x) → ↵ x;
+    failure(e) → ↵ fallback;
+  }
+
+CALLS & ACCESS
+  ↯ name(args)                       function call
+  value.field                        field access
+  arr @ i                            array element access
+  ->                                 return type in signature
+  <-                                 assignment
+
+TYPES
+  ℤ   integer (signed 32-bit default; ℤ8 ℤ16 ℤ32 ℤ64)
+  ℕ   unsigned integer (ℕ8 ℕ16 ℕ32 ℕ64)
+  ℝ   float (32-bit default; ℝ32 ℝ64)
+  𝔹   boolean
+  𝕊   string
+  ℂ   character
+  ∅   null
+  ⟦τ Type, σ N⟧   fixed-size bounded array (e.g. ⟦τ ℤ, σ 100⟧)
+  ⦃τ Type⦄         growable vector (audited reallocation only)
+
+OPERATORS
+  +  -  *  /  %              arithmetic
+  =  !=  >  <  >=  <=        comparison (no implicit precedence — use parentheses when mixing categories)
+  &  |  !                    logical and / or / not
+  ∩  ∪  ⊕  ∼  ≪  ≫          bitwise (experimental)
+  ⊤  ⊥                       true / false
+
+LITERALS & STRUCTURE
+  "text"   string literal (backslash escapes: \n \t \" \\; may span lines)
+  'a'      character literal
+  0x1F  0b1010  0o17  1e10   numeric literal forms
+  [a, b, c]                  array literal
+  {}                         block body
+  ()                         argument list
+  //  /* */                  single-line / block comment
+  ;                          statement terminator
+  ,                          separator
+
+RULES
+- No unbounded copy primitives — every array has an explicit bounded size
+- No implicit operator precedence — parentheses required when mixing arithmetic, comparison, and logical operators
+- No generics, no overloading, no preprocessor/macros
+- Declaration before use required
+- Every statement ends with ;
+- main() is the required program entry point
+- Capability tokens (⊙) flag functions that touch the outside world
 `
     // ─────────────────────────────────────────────────────────────────────────
 

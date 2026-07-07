@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ek — Syntax Reference</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #f7f5f2;
+      --bg2:      #f0ede8;
+      --border:   #ddd9d3;
+      --border2:  #ccc8c2;
+      --text:     #1c1a18;
+      --muted:    #8a857e;
+      --muted2:   #b8b3ac;
+      --real:     #7c6fcd;
+      --dev:      #2a9d6f;
+      --normie:   #c07a2a;
+      --accent:   #e8632a;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0;
+      background: var(--bg); color: var(--text);
+      min-height: 100vh; display: flex; flex-direction: column;
+    }
+
+    header {
+      display: flex; align-items: center; gap: 28px;
+      padding: 18px 32px; border-bottom: 1px solid var(--border);
+      background: #fff; flex-shrink: 0; position: sticky; top: 0; z-index: 100;
+    }
+    .brand {
+      font-size: 24px; font-weight: 700; color: var(--text); letter-spacing: -1px;
+      text-decoration: none;
+    }
+    .brand:hover { color: var(--accent); }
+    nav { display: flex; gap: 4px; flex: 1; }
+    nav a {
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
+      color: var(--muted); text-decoration: none; padding: 6px 14px; border-radius: 6px;
+      transition: color 0.15s, background 0.15s;
+    }
+    nav a:hover { color: var(--text); background: var(--bg2); }
+    nav a.active { color: var(--text); background: var(--bg2); }
+
+    /* ── Layout ── */
+    .page { display: flex; flex: 1; min-height: 0; }
+
+    /* ── TOC sidebar ── */
+    .toc {
+      width: 220px; flex-shrink: 0; padding: 32px 16px 40px;
+      border-right: 1px solid var(--border); background: #fff;
+      position: sticky; top: 57px; height: calc(100vh - 57px);
+      overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--border2) transparent;
+    }
+    .toc::-webkit-scrollbar { width: 4px; }
+    .toc::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+    .toc-label {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted2); margin-bottom: 14px;
+    }
+    .toc a {
+      display: block; font-size: 13px; color: var(--muted); text-decoration: none;
+      padding: 5px 0 5px 10px; line-height: 1.5; transition: color 0.15s;
+      border-left: 2px solid transparent; margin-left: -10px;
+    }
+    .toc a:hover { color: var(--text); }
+    .toc a.active { color: var(--accent); border-left-color: var(--accent); }
+
+    /* ── Content ── */
+    .content-wrap { flex: 1; display: flex; justify-content: center; overflow-y: auto; }
+    .content { width: 100%; max-width: 1000px; padding: 52px 40px 80px; min-width: 0; }
+
+    .page-title { font-size: 32px; font-weight: 700; letter-spacing: -1px; margin-bottom: 6px; }
+    .page-sub { font-size: 15px; color: var(--muted); margin-bottom: 40px; }
+
+    hr { border: none; border-top: 1px solid var(--border); margin: 48px 0; }
+
+    h2 {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted2); margin: 52px 0 20px;
+    }
+    h2 .num { color: var(--accent); margin-right: 8px; }
+
+    h3 { font-size: 16px; font-weight: 700; color: var(--text); margin: 36px 0 12px; }
+
+    p { font-size: 15px; color: var(--muted); margin-bottom: 14px; line-height: 1.8; }
+    p strong { color: var(--text); font-weight: 600; }
+
+    ul, ol { margin: 10px 0 16px 22px; }
+    li { font-size: 15px; color: var(--muted); line-height: 1.8; margin-bottom: 4px; }
+    li strong { color: var(--text); font-weight: 600; }
+
+    /* Inline code */
+    code {
+      font-family: 'JetBrains Mono', monospace; font-size: 12px;
+      background: #eef0f3; border: 1px solid #dde0e5;
+      border-radius: 4px; padding: 1px 6px; color: #2d3148;
+    }
+
+    /* Code blocks */
+    pre {
+      background: #f3f4f6; border: 1px solid #e2e4e8;
+      border-radius: 8px; padding: 18px 20px; overflow-x: auto;
+      margin: 16px 0;
+      scrollbar-width: thin; scrollbar-color: #d0d3d8 transparent;
+    }
+    pre::-webkit-scrollbar { height: 4px; }
+    pre::-webkit-scrollbar-thumb { background: #d0d3d8; border-radius: 2px; }
+    pre code {
+      font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
+      line-height: 1.75; color: #2d3148; background: none; padding: 0;
+      border: none; border-radius: 0;
+    }
+    .cm { color: #8a8fa8; }
+    .kw { color: #6055b5; }
+    .ty { color: #1a7a54; }
+    .st { color: #a05c18; }
+    .op { color: #c94e1a; }
+
+    /* Lens example tabs */
+    .lens-tabs { display: flex; gap: 0; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin: 16px 0 0; }
+    .lens-tab { flex: 1; }
+    .lens-tab input[type="radio"] { display: none; }
+    .lens-tab label {
+      display: block; padding: 8px 14px; font-size: 11px; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;
+      background: var(--bg2); color: var(--muted2); border-right: 1px solid var(--border);
+      transition: background 0.15s, color 0.15s; text-align: center;
+    }
+    .lens-tab:last-child label { border-right: none; }
+    .lens-tab input:checked + label { background: #fff; color: var(--text); }
+    .lens-tab input[value="real"]:checked + label { color: var(--real); }
+    .lens-tab input[value="dev"]:checked + label { color: var(--dev); }
+    .lens-tab input[value="normie"]:checked + label { color: var(--normie); }
+
+    .lens-panels { border: 1px solid var(--border); border-top: none; border-radius: 0 0 8px 8px; overflow: hidden; }
+    .lens-panel { display: none; }
+
+    /* JS-driven active panel */
+    .lens-panel.active { display: block; }
+
+    .lens-panel pre { border-radius: 0; border: none; border-top: 1px solid var(--border); margin: 0; }
+    .lens-panel:first-child pre { border-top: none; }
+
+    /* Tables */
+    .table-wrap { overflow-x: auto; margin: 20px 0; border-radius: 8px; border: 1px solid var(--border); }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead tr { background: var(--bg2); }
+    th {
+      text-align: left; font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted); padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    td { padding: 9px 14px; border-bottom: 1px solid var(--border); color: var(--muted); vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(0,0,0,0.02); }
+    td:first-child { font-weight: 500; color: var(--text); white-space: nowrap; }
+    td code { font-size: 11.5px; }
+
+    /* Lens column colors */
+    .col-real { color: var(--real) !important; }
+    .col-dev  { color: var(--dev)  !important; }
+    .col-norm { color: var(--normie) !important; }
+    th.col-real, th.col-dev, th.col-norm { color: inherit; }
+
+    /* Column header badges */
+    .badge-real { background: rgba(124,111,205,0.1); color: var(--real); border-radius: 4px; padding: 1px 7px; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; }
+    .badge-dev  { background: rgba(42,157,111,0.1);  color: var(--dev);  border-radius: 4px; padding: 1px 7px; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; }
+    .badge-norm { background: rgba(192,122,42,0.1);  color: var(--normie); border-radius: 4px; padding: 1px 7px; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; }
+
+    .exp { font-size: 10px; color: var(--muted2); font-style: italic; }
+
+    /* Outcome handling box */
+    .outcome-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px 0; }
+    .outcome-block { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .outcome-block-header {
+      padding: 8px 14px; font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; border-bottom: 1px solid var(--border);
+    }
+    .outcome-block-header.real { background: rgba(124,111,205,0.07); color: var(--real); }
+    .outcome-block-header.dev  { background: rgba(42,157,111,0.07);  color: var(--dev); }
+    .outcome-block-header.norm { background: rgba(192,122,42,0.07);  color: var(--normie); }
+    .outcome-block pre { margin: 0; border: none; border-radius: 0; background: #f8f9fa; }
+
+    /* Callout */
+    .callout {
+      border: 1px solid var(--border); border-left: 3px solid var(--accent);
+      background: rgba(232,99,42,0.04); border-radius: 0 6px 6px 0;
+      padding: 14px 18px; margin: 20px 0;
+    }
+    .callout p { font-size: 14px; margin: 0; }
+
+    /* Rules list */
+    .rules-list { list-style: none; margin: 0; padding: 0; }
+    .rules-list li {
+      display: flex; gap: 14px; padding: 12px 0;
+      border-bottom: 1px solid var(--border); font-size: 14px; color: var(--muted);
+      line-height: 1.7; margin: 0;
+    }
+    .rules-list li:last-child { border-bottom: none; }
+    .rules-list .rule-num {
+      flex-shrink: 0; width: 28px; font-size: 11px; font-weight: 700;
+      color: var(--muted2); padding-top: 2px;
+    }
+    .rules-list li strong { color: var(--text); font-weight: 600; }
+
+    .section-label {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted2); margin: 32px 0 14px; padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="brand">Ek</a>
+  <nav>
+    <a href="playground.html">playground</a>
+    <!-- <a href="comparison.html">comparison</a> -->
+    <a href="syntax.html" class="active">syntax</a>
+    <a href="spec.html">spec</a>
+  </nav>
+</header>
+
+<div class="page">
+
+  <!-- TOC -->
+  <aside class="toc">
+    <div class="toc-label">Contents</div>
+    <a href="#primitives">Primitives</a>
+    <a href="#operators">Operators</a>
+    <a href="#types">Primitive Types</a>
+    <a href="#symbols">Symbol Table</a>
+    <a href="#outcome">Outcome Handling</a>
+    <a href="#precedence">Operator Precedence</a>
+    <a href="#example">Worked Example</a>
+    <a href="#rules">Code Rules</a>
+    <a href="#rules-normie" style="padding-left:22px;font-size:11px;color:var(--muted2)">Normie-specific</a>
+    <a href="#rules-all" style="padding-left:22px;font-size:11px;color:var(--muted2)">All lenses</a>
+    <a href="#rules-open" style="padding-left:22px;font-size:11px;color:var(--muted2)">Open questions</a>
+  </aside>
+
+  <div class="content-wrap">
+  <div class="content">
+
+    <h1 class="page-title">Syntax Reference</h1>
+    <p class="page-sub">Primitives, operators, types, and rules across all three lenses.</p>
+
+    <hr />
+
+    <!-- PRIMITIVES -->
+    <section id="primitives">
+      <h2><span class="num">1</span>Primitives</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Primitive</th>
+              <th><span class="badge-real">Real</span></th>
+              <th><span class="badge-dev">Dev</span></th>
+              <th><span class="badge-norm">Normie</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>Function declaration</td><td class="col-real"><code>:: add(ℤ a, ℤ b) -> ℤ {}</code></td><td class="col-dev"><code>fn add(int a, int b) -> int {}</code></td><td class="col-norm"><code>function add(integer a, integer b) returnType integer {}</code></td></tr>
+            <tr><td>2</td><td>Variable declaration <span class="exp">experimental</span></td><td class="col-real"><code>§ ℤ x</code></td><td class="col-dev"><code>var: int x</code></td><td class="col-norm"><code>container: integer x</code></td></tr>
+            <tr><td>3</td><td>Assignment <span class="exp">experimental</span></td><td class="col-real"><code>§ ℤ x &lt;- 5;</code></td><td class="col-dev"><code>var: int x &lt;- 5;</code></td><td class="col-norm"><code>container: integer x &lt;- 5;</code></td></tr>
+            <tr><td>4</td><td>Function call</td><td class="col-real"><code>↯ add(1, 2);</code></td><td class="col-dev"><code>call add(1, 2);</code></td><td class="col-norm"><code>runFunction add(1, 2);</code></td></tr>
+            <tr><td>5</td><td>Return type</td><td class="col-real"><code>-> ℤ</code></td><td class="col-dev"><code>-> int</code></td><td class="col-norm"><code>returnType integer</code></td></tr>
+            <tr><td>6</td><td>Return value</td><td class="col-real"><code>↵ x;</code></td><td class="col-dev"><code>ret x;</code></td><td class="col-norm"><code>return x;</code></td></tr>
+            <tr><td>7</td><td>Conditional</td><td class="col-real"><code>? (x > 0) : {} ⋮ {}</code></td><td class="col-dev"><code>if (x > 0) then {} else {}</code></td><td class="col-norm"><code>if (x > 0) then {} else {}</code></td></tr>
+            <tr><td>8</td><td>Pattern match</td><td class="col-real"><code>⋈ x { 1 → ..., _ → ... }</code></td><td class="col-dev"><code>match x { 1 -> ..., _ -> ... }</code></td><td class="col-norm"><code>check x { 1 means ..., anything means ... }</code></td></tr>
+            <tr><td>9</td><td>Loop</td><td class="col-real"><code>↻ i 0..10 {}</code></td><td class="col-dev"><code>for i 0..10 {}</code></td><td class="col-norm"><code>loop i 0..10 {}</code></td></tr>
+            <tr><td>10</td><td>Record declaration</td><td class="col-real"><code>⊞ User { 𝕊 name, ℤ age }</code></td><td class="col-dev"><code>rec User { str name, int age }</code></td><td class="col-norm"><code>record User { string name, integer age }</code></td></tr>
+            <tr><td>11</td><td>Union declaration</td><td class="col-real"><code>⊎ Status { Active, Banned(𝕊) }</code></td><td class="col-dev"><code>union Status { Active, Banned(str) }</code></td><td class="col-norm"><code>either Status { Active, Banned(string) }</code></td></tr>
+            <tr><td>12</td><td>Array <span class="exp">experimental</span></td><td class="col-real"><code>⟦τ ℤ, σ 100⟧ arr;</code></td><td class="col-dev"><code>arr[type: int, size: 100] arr;</code></td><td class="col-norm"><code>list[type: integer, size: 100];</code></td></tr>
+            <tr><td>13</td><td>Comment (single-line)</td><td><code>// comment</code></td><td><code>// comment</code></td><td><code>// comment</code></td></tr>
+            <tr><td>14</td><td>Block body</td><td><code>{}</code></td><td><code>{}</code></td><td><code>{}</code></td></tr>
+            <tr><td>15</td><td>Arguments</td><td><code>()</code></td><td><code>()</code></td><td><code>()</code></td></tr>
+            <tr><td>16</td><td>Field access</td><td><code>user.age</code></td><td><code>user.age</code></td><td><code>user.age</code></td></tr>
+            <tr><td>17</td><td>Array element access</td><td class="col-real"><code>users @ i</code></td><td class="col-dev"><code>users at i</code></td><td class="col-norm"><code>users at i</code></td></tr>
+            <tr><td>18</td><td>Import</td><td class="col-real"><code>※ utils;</code></td><td class="col-dev"><code>import utils;</code></td><td class="col-norm"><code>import utils;</code></td></tr>
+            <tr><td>19</td><td>Unary negation / not</td><td><code>-x / !flag</code></td><td><code>-x / !flag</code></td><td><code>-x / !flag</code></td></tr>
+            <tr><td>20</td><td>Record equality</td><td class="col-real"><code>equals User(a, b) -> 𝔹 { ↵ a.name = b.name; }</code></td><td class="col-dev"><code>equals User(a, b) -> bool { ret a.name = b.name; }</code></td><td class="col-norm"><code>equals User(a, b) returnType boolean { return a.name = b.name; }</code></td></tr>
+            <tr><td>21</td><td>String concatenation</td><td><code>join(a, b)</code></td><td><code>join(a, b)</code></td><td><code>join(a, b)</code></td></tr>
+            <tr><td>22</td><td>Record construction</td><td class="col-real"><code>↳ User { name: "Sam", age: 25 };</code></td><td class="col-dev"><code>new User { name: "Sam", age: 25 };</code></td><td class="col-norm"><code>new User { name: "Sam", age: 25 };</code></td></tr>
+            <tr><td>23</td><td>Capability token</td><td class="col-real"><code>⊙ FileReadCapability cap</code></td><td class="col-dev"><code>cap: FileReadCapability cap</code></td><td class="col-norm"><code>capability: FileReadCapability cap</code></td></tr>
+            <tr><td>24</td><td>Array literal</td><td><code>[90, 85, 76]</code></td><td><code>[90, 85, 76]</code></td><td><code>[90, 85, 76]</code></td></tr>
+            <tr><td>25</td><td>Separator</td><td><code>,</code></td><td><code>,</code></td><td><code>,</code></td></tr>
+            <tr><td>26</td><td>Block comment</td><td><code>/* comment */</code></td><td><code>/* comment */</code></td><td><code>/* comment */</code></td></tr>
+            <tr><td>27</td><td>Break</td><td class="col-real"><code>⏹;</code></td><td class="col-dev"><code>break;</code></td><td class="col-norm"><code>break;</code></td></tr>
+            <tr><td>28</td><td>Continue</td><td class="col-real"><code>▶;</code></td><td class="col-dev"><code>continue;</code></td><td class="col-norm"><code>continue;</code></td></tr>
+            <tr><td>29</td><td>While loop (unbounded)</td><td class="col-real"><code>⥁ (x > 0) {}</code></td><td class="col-dev"><code>while (x > 0) {}</code></td><td class="col-norm"><code>whileLoop (x > 0) {}</code></td></tr>
+            <tr><td>30</td><td>Void / no return value</td><td class="col-real"><code>▢ greet() {}</code></td><td class="col-dev"><code>void greet() {}</code></td><td class="col-norm"><code>void greet() {}</code></td></tr>
+            <tr><td>31</td><td>Char type usage</td><td class="col-real"><code>§ ℂ c &lt;- 'a';</code></td><td class="col-dev"><code>var: char c &lt;- 'a';</code></td><td class="col-norm"><code>container: character c &lt;- 'a';</code></td></tr>
+            <tr><td>32</td><td>Statement terminator</td><td><code>;</code></td><td><code>;</code></td><td><code>;</code></td></tr>
+            <tr><td>33</td><td>String escapes</td><td><code>"line\n\"quoted\""</code></td><td><code>"line\n\"quoted\""</code></td><td><code>"line\n\"quoted\""</code></td></tr>
+            <tr><td>34</td><td>Scientific notation</td><td><code>1e10</code></td><td><code>1e10</code></td><td><code>1e10</code></td></tr>
+            <tr><td>35</td><td>Hex / binary / octal</td><td><code>0x1F / 0b1010 / 0o17</code></td><td><code>0x1F / 0b1010 / 0o17</code></td><td><code>0x1F / 0b1010 / 0o17</code></td></tr>
+            <tr><td>36</td><td>Inline conditional expression</td><td class="col-real"><code>§ ℤ max &lt;- ? (a > b) : { ↵ a } ⋮ { ↵ b };</code></td><td class="col-dev"><code>var: int max &lt;- if (a > b) then { ret a } else { ret b };</code></td><td class="col-norm"><code>container: integer max &lt;- if (a > b) then { return a } else { return b };</code></td></tr>
+            <tr><td>37</td><td>Multi-dimensional array</td><td class="col-real"><code>⟦τ ⟦τ ℤ, σ 10⟧, σ 10⟧ grid;</code></td><td class="col-dev"><code>arr[type: arr[type: int, size: 10], size: 10] grid;</code></td><td class="col-norm"><code>list[type: list[type: integer, size: 10], size: 10] grid;</code></td></tr>
+            <tr><td>38</td><td>Vector (growable) <span class="exp">experimental</span></td><td class="col-real"><code>⦃τ ℤ⦄ nums;</code></td><td class="col-dev"><code>vec[type: int] nums;</code></td><td class="col-norm"><code>vector[type: integer] nums;</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <hr />
+
+    <!-- OPERATORS -->
+    <section id="operators">
+      <h2><span class="num">2</span>Operators</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Operator</th>
+              <th><span class="badge-real">Real</span></th>
+              <th><span class="badge-dev">Dev</span></th>
+              <th><span class="badge-norm">Normie</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Add</td><td><code>+</code></td><td><code>+</code></td><td><code>+</code></td></tr>
+            <tr><td>Subtract</td><td><code>-</code></td><td><code>-</code></td><td><code>-</code></td></tr>
+            <tr><td>Multiply</td><td><code>*</code></td><td><code>*</code></td><td><code>*</code></td></tr>
+            <tr><td>Divide</td><td><code>/</code></td><td><code>/</code></td><td><code>/</code></td></tr>
+            <tr><td>Modulo</td><td><code>%</code></td><td><code>%</code></td><td><code>%</code></td></tr>
+            <tr><td>Equal to</td><td><code>=</code></td><td><code>=</code></td><td><code>=</code></td></tr>
+            <tr><td>Not equal</td><td><code>!=</code> <span class="exp">alt: ≠</span></td><td><code>!=</code></td><td><code>!=</code></td></tr>
+            <tr><td>Greater than</td><td><code>&gt;</code></td><td><code>&gt;</code></td><td><code>&gt;</code></td></tr>
+            <tr><td>Less than</td><td><code>&lt;</code></td><td><code>&lt;</code></td><td><code>&lt;</code></td></tr>
+            <tr><td>Greater or equal</td><td><code>&gt;=</code></td><td><code>&gt;=</code></td><td><code>&gt;=</code></td></tr>
+            <tr><td>Less or equal</td><td><code>&lt;=</code></td><td><code>&lt;=</code></td><td><code>&lt;=</code></td></tr>
+            <tr><td>And</td><td><code>&amp;</code> <span class="exp">alt: ∧</span></td><td><code>&amp;&amp;</code> <span class="exp">experimental</span></td><td><code>&amp;</code></td></tr>
+            <tr><td>Or</td><td><code>|</code> <span class="exp">alt: ∨</span></td><td><code>||</code> <span class="exp">experimental</span></td><td><code>|</code></td></tr>
+            <tr><td>Not</td><td><code>!</code></td><td><code>!</code></td><td><code>!</code></td></tr>
+            <tr><td>Assignment</td><td><code>&lt;-</code></td><td><code>&lt;-</code></td><td><code>&lt;-</code></td></tr>
+            <tr><td colspan="4" style="padding:10px 14px;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted2);background:var(--bg2)">Bitwise — experimental</td></tr>
+            <tr><td>Bitwise AND</td><td class="col-real"><code>∩</code></td><td class="col-dev"><code>&amp;</code></td><td class="col-norm"><code>bitwiseAnd</code></td></tr>
+            <tr><td>Bitwise OR</td><td class="col-real"><code>∪</code></td><td class="col-dev"><code>|</code></td><td class="col-norm"><code>bitwiseOr</code></td></tr>
+            <tr><td>Bitwise XOR</td><td class="col-real"><code>⊕</code></td><td class="col-dev"><code>^</code></td><td class="col-norm"><code>bitwiseXor</code></td></tr>
+            <tr><td>Bitwise NOT</td><td class="col-real"><code>∼</code></td><td class="col-dev"><code>~</code></td><td class="col-norm"><code>bitwiseNot</code></td></tr>
+            <tr><td>Left shift</td><td class="col-real"><code>≪</code></td><td class="col-dev"><code>&lt;&lt;</code></td><td class="col-norm"><code>shiftLeft</code></td></tr>
+            <tr><td>Right shift</td><td class="col-real"><code>≫</code></td><td class="col-dev"><code>&gt;&gt;</code></td><td class="col-norm"><code>shiftRight</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <hr />
+
+    <!-- PRIMITIVE TYPES -->
+    <section id="types">
+      <h2><span class="num">3</span>Primitive Types</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th><span class="badge-real">Real</span></th>
+              <th><span class="badge-dev">Dev</span></th>
+              <th><span class="badge-norm">Normie</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Integer (signed, default 32-bit)</td><td class="col-real"><code>ℤ</code> (= ℤ32)</td><td class="col-dev"><code>int</code> (= i32)</td><td class="col-norm"><code>integer</code> (= integer32)</td></tr>
+            <tr><td>Integer (signed, explicit width)</td><td class="col-real"><code>ℤ8 ℤ16 ℤ32 ℤ64</code></td><td class="col-dev"><code>i8 i16 i32 i64</code></td><td class="col-norm"><code>integer8 integer16 integer32 integer64</code></td></tr>
+            <tr><td>Integer (unsigned, default 32-bit)</td><td class="col-real"><code>ℕ</code> (= ℕ32)</td><td class="col-dev"><code>u32</code></td><td class="col-norm"><code>wholeNumber</code> (= wholeNumber32)</td></tr>
+            <tr><td>Integer (unsigned, explicit width)</td><td class="col-real"><code>ℕ8 ℕ16 ℕ32 ℕ64</code></td><td class="col-dev"><code>u8 u16 u32 u64</code></td><td class="col-norm"><code>wholeNumber8 … wholeNumber64</code></td></tr>
+            <tr><td>Float (default 32-bit)</td><td class="col-real"><code>ℝ</code> (= ℝ32)</td><td class="col-dev"><code>float</code> (= f32)</td><td class="col-norm"><code>float</code> (= float32)</td></tr>
+            <tr><td>Float (explicit width)</td><td class="col-real"><code>ℝ32 ℝ64</code></td><td class="col-dev"><code>f32 f64</code></td><td class="col-norm"><code>float32 float64</code></td></tr>
+            <tr><td>Boolean</td><td class="col-real"><code>𝔹</code></td><td class="col-dev"><code>bool</code></td><td class="col-norm"><code>boolean</code></td></tr>
+            <tr><td>String</td><td class="col-real"><code>𝕊</code></td><td class="col-dev"><code>str</code></td><td class="col-norm"><code>string</code></td></tr>
+            <tr><td>Char</td><td class="col-real"><code>ℂ</code></td><td class="col-dev"><code>char</code></td><td class="col-norm"><code>character</code></td></tr>
+            <tr><td>Null</td><td class="col-real"><code>∅</code></td><td class="col-dev"><code>null</code></td><td class="col-norm"><code>null</code></td></tr>
+            <tr><td>Array (fixed, bounded) <span class="exp">experimental</span></td><td class="col-real"><code>⟦ τ type, σ size ⟧</code></td><td class="col-dev"><code>arr[type: t, size: n]</code></td><td class="col-norm"><code>list[type: T, size: N]</code></td></tr>
+            <tr><td>Vector (growable, audited) <span class="exp">experimental</span></td><td class="col-real"><code>⦃ τ type ⦄</code></td><td class="col-dev"><code>vec[type: t]</code></td><td class="col-norm"><code>vector[type: T]</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <hr />
+
+    <!-- MASTER SYMBOL TABLE -->
+    <section id="symbols">
+      <h2><span class="num">4</span>Master Symbol Table</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Meaning</th>
+              <th><span class="badge-real">Real</span></th>
+              <th><span class="badge-dev">Dev</span></th>
+              <th><span class="badge-norm">Normie</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Function declaration</td><td class="col-real"><code>::</code></td><td class="col-dev"><code>fn</code></td><td class="col-norm"><code>function</code></td></tr>
+            <tr><td>Variable declaration <span class="exp">experimental</span></td><td class="col-real"><code>§</code></td><td class="col-dev"><code>var:</code></td><td class="col-norm"><code>container:</code></td></tr>
+            <tr><td>Type label (in array) <span class="exp">experimental</span></td><td class="col-real"><code>τ</code></td><td class="col-dev"><code>type:</code></td><td class="col-norm"><code>type:</code></td></tr>
+            <tr><td>Size label (in array) <span class="exp">experimental</span></td><td class="col-real"><code>σ</code></td><td class="col-dev"><code>size:</code></td><td class="col-norm"><code>size:</code></td></tr>
+            <tr><td>Assignment</td><td><code>&lt;-</code></td><td><code>&lt;-</code></td><td><code>&lt;-</code></td></tr>
+            <tr><td>Return type in signature</td><td><code>-&gt;</code></td><td><code>-&gt;</code></td><td class="col-norm"><code>returnType</code></td></tr>
+            <tr><td>Return value from body</td><td class="col-real"><code>↵</code></td><td class="col-dev"><code>ret</code></td><td class="col-norm"><code>return</code></td></tr>
+            <tr><td>Function call</td><td class="col-real"><code>↯</code></td><td class="col-dev"><code>call</code></td><td class="col-norm"><code>runFunction</code></td></tr>
+            <tr><td>Conditional</td><td class="col-real"><code>?</code></td><td class="col-dev"><code>if</code></td><td class="col-norm"><code>if</code></td></tr>
+            <tr><td>Then (conditional branch)</td><td class="col-real"><code>:</code></td><td class="col-dev"><code>then</code></td><td class="col-norm"><code>then</code></td></tr>
+            <tr><td>Else (conditional branch)</td><td class="col-real"><code>⋮</code></td><td class="col-dev"><code>else</code></td><td class="col-norm"><code>else</code></td></tr>
+            <tr><td>Statement terminator</td><td><code>;</code></td><td><code>;</code></td><td><code>;</code></td></tr>
+            <tr><td>Pattern match</td><td class="col-real"><code>⋈</code></td><td class="col-dev"><code>match</code></td><td class="col-norm"><code>check</code></td></tr>
+            <tr><td>Loop (bounded)</td><td class="col-real"><code>↻</code></td><td class="col-dev"><code>for</code></td><td class="col-norm"><code>loop</code></td></tr>
+            <tr><td>While loop (unbounded)</td><td class="col-real"><code>⥁</code></td><td class="col-dev"><code>while</code></td><td class="col-norm"><code>whileLoop</code></td></tr>
+            <tr><td>Break</td><td class="col-real"><code>⏹</code></td><td class="col-dev"><code>break</code></td><td class="col-norm"><code>break</code></td></tr>
+            <tr><td>Continue</td><td class="col-real"><code>▶</code></td><td class="col-dev"><code>continue</code></td><td class="col-norm"><code>continue</code></td></tr>
+            <tr><td>Record declaration</td><td class="col-real"><code>⊞</code></td><td class="col-dev"><code>rec</code></td><td class="col-norm"><code>record</code></td></tr>
+            <tr><td>Union declaration</td><td class="col-real"><code>⊎</code></td><td class="col-dev"><code>union</code></td><td class="col-norm"><code>either</code></td></tr>
+            <tr><td>Record construction</td><td class="col-real"><code>↳</code></td><td class="col-dev"><code>new</code></td><td class="col-norm"><code>new</code></td></tr>
+            <tr><td>Outcome handling</td><td class="col-real"><code>⚑</code></td><td class="col-dev"><code>verify</code></td><td class="col-norm"><code>verify</code></td></tr>
+            <tr><td>Capability token</td><td class="col-real"><code>⊙</code></td><td class="col-dev"><code>cap:</code></td><td class="col-norm"><code>capability:</code></td></tr>
+            <tr><td>Import</td><td class="col-real"><code>※</code></td><td class="col-dev"><code>import</code></td><td class="col-norm"><code>import</code></td></tr>
+            <tr><td>Void / no return value</td><td class="col-real"><code>▢</code></td><td class="col-dev"><code>void</code></td><td class="col-norm"><code>void</code></td></tr>
+            <tr><td>Array</td><td class="col-real"><code>⟦ ⟧</code></td><td class="col-dev"><code>arr[]</code></td><td class="col-norm"><code>list[]</code></td></tr>
+            <tr><td>Vector</td><td class="col-real"><code>⦃ ⦄</code></td><td class="col-dev"><code>vec[]</code></td><td class="col-norm"><code>vector[]</code></td></tr>
+            <tr><td>Field access</td><td><code>.</code></td><td><code>.</code></td><td><code>.</code></td></tr>
+            <tr><td>Array element access</td><td class="col-real"><code>@</code></td><td class="col-dev"><code>at</code></td><td class="col-norm"><code>at</code></td></tr>
+            <tr><td>Separator</td><td><code>,</code></td><td><code>,</code></td><td><code>,</code></td></tr>
+            <tr><td>Block body</td><td><code>{}</code></td><td><code>{}</code></td><td><code>{}</code></td></tr>
+            <tr><td>Arguments</td><td><code>()</code></td><td><code>()</code></td><td><code>()</code></td></tr>
+            <tr><td>Comment</td><td><code>//</code></td><td><code>//</code></td><td><code>//</code></td></tr>
+            <tr><td>Block comment</td><td><code>/* */</code></td><td><code>/* */</code></td><td><code>/* */</code></td></tr>
+            <tr><td>True <span class="exp">experimental</span></td><td class="col-real"><code>⊤</code></td><td class="col-dev"><code>true</code></td><td class="col-norm"><code>true</code></td></tr>
+            <tr><td>False <span class="exp">experimental</span></td><td class="col-real"><code>⊥</code></td><td class="col-dev"><code>false</code></td><td class="col-norm"><code>false</code></td></tr>
+            <tr><td>Integer type</td><td class="col-real"><code>ℤ</code></td><td class="col-dev"><code>int</code></td><td class="col-norm"><code>integer</code></td></tr>
+            <tr><td>Unsigned integer type</td><td class="col-real"><code>ℕ</code></td><td class="col-dev"><code>u32</code></td><td class="col-norm"><code>wholeNumber</code></td></tr>
+            <tr><td>Float type</td><td class="col-real"><code>ℝ</code></td><td class="col-dev"><code>float</code></td><td class="col-norm"><code>float</code></td></tr>
+            <tr><td>Boolean type</td><td class="col-real"><code>𝔹</code></td><td class="col-dev"><code>bool</code></td><td class="col-norm"><code>boolean</code></td></tr>
+            <tr><td>String type</td><td class="col-real"><code>𝕊</code></td><td class="col-dev"><code>str</code></td><td class="col-norm"><code>string</code></td></tr>
+            <tr><td>Char type</td><td class="col-real"><code>ℂ</code></td><td class="col-dev"><code>char</code></td><td class="col-norm"><code>character</code></td></tr>
+            <tr><td>Null</td><td class="col-real"><code>∅</code></td><td class="col-dev"><code>null</code></td><td class="col-norm"><code>null</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <hr />
+
+    <!-- OUTCOME HANDLING -->
+    <section id="outcome">
+      <h2><span class="num">5</span>Outcome Handling</h2>
+      <p>A fallible operation returns a plain two-variant union (<strong>Success / Failure</strong>), using the existing union declaration — no generics, no angle brackets. The caller handles both branches with the dedicated <code>verify</code> construct.</p>
+
+      <p>Declaring the union:</p>
+      <pre><code><span class="kw">⊎</span> Outcome { <span class="ty">Success</span>(<span class="ty">𝕊</span>), <span class="ty">Failure</span>(FileNotFound) }</code></pre>
+
+      <div class="outcome-grid">
+        <div class="outcome-block">
+          <div class="outcome-block-header real">Real</div>
+          <pre><code><span class="kw">⚑</span> <span class="kw">↯</span> readFile(path) {
+    success(contents) → <span class="kw">↵</span> contents;
+    failure(err) → <span class="kw">↵</span> <span class="st">"error occurred"</span>;
+}</code></pre>
+        </div>
+        <div class="outcome-block">
+          <div class="outcome-block-header dev">Dev</div>
+          <pre><code><span class="kw">verify</span> <span class="kw">call</span> readFile(path) {
+    success(contents) -> <span class="kw">ret</span> contents;
+    failure(err) -> <span class="kw">ret</span> <span class="st">"error occurred"</span>;
+}</code></pre>
+        </div>
+        <div class="outcome-block">
+          <div class="outcome-block-header norm">Normie</div>
+          <pre><code><span class="kw">verify</span> <span class="kw">runFunction</span> readFile(path) {
+    success(contents) means <span class="kw">return</span> contents;
+    failure(err) means <span class="kw">return</span> <span class="st">"error occurred"</span>;
+}</code></pre>
+        </div>
+      </div>
+      <p><code>success(...)</code> and <code>failure(...)</code> are fixed labels, identical across all three lenses.</p>
+    </section>
+
+    <hr />
+
+    <!-- OPERATOR PRECEDENCE -->
+    <section id="precedence">
+      <h2><span class="num">6</span>Operator Precedence</h2>
+      <div class="callout">
+        <p>Ek has <strong>no implicit operator precedence table.</strong> Any expression mixing more than one category of operator (arithmetic, comparison, logical) must use explicit parentheses. This rule is identical across all three lenses.</p>
+      </div>
+      <pre><code>(a + b) > c        <span class="cm">// valid</span>
+a + b > c          <span class="cm">// rejected — ambiguous, no implicit precedence</span>
+
+(a &amp; b) | c        <span class="cm">// valid</span>
+a &amp; b | c          <span class="cm">// rejected — ambiguous</span></code></pre>
+    </section>
+
+    <hr />
+
+    <!-- WORKED EXAMPLE -->
+    <section id="example">
+      <h2><span class="num">7</span>Worked Example</h2>
+      <p>Full-coverage example showing every major construct across all three lenses.</p>
+
+      <div style="margin:20px 0;">
+        <div style="display:flex;gap:8px;margin-bottom:12px;">
+          <button class="ex-tab active" data-ex="real" style="font-family:'Inter',sans-serif;font-size:12px;font-weight:600;padding:6px 16px;border-radius:6px;border:1px solid var(--border);background:#fff;color:var(--real);cursor:pointer;letter-spacing:0.05em;">REAL</button>
+          <button class="ex-tab" data-ex="dev" style="font-family:'Inter',sans-serif;font-size:12px;font-weight:600;padding:6px 16px;border-radius:6px;border:1px solid var(--border);background:var(--bg2);color:var(--muted);cursor:pointer;letter-spacing:0.05em;">DEV</button>
+          <button class="ex-tab" data-ex="normie" style="font-family:'Inter',sans-serif;font-size:12px;font-weight:600;padding:6px 16px;border-radius:6px;border:1px solid var(--border);background:var(--bg2);color:var(--muted);cursor:pointer;letter-spacing:0.05em;">NORMIE</button>
+        </div>
+
+        <div class="ex-panel" id="ex-real">
+<pre><code><span class="kw">※</span> utils;
+
+<span class="cm">/* User record: stores a name and an age,
+   used across the file read and greeting logic below */</span>
+<span class="kw">⊞</span> User { <span class="ty">𝕊</span> name, <span class="ty">ℤ</span> age };
+
+<span class="kw">⊎</span> Outcome { <span class="ty">Success</span>(<span class="ty">𝕊</span>), <span class="ty">Failure</span>(FileNotFound) };
+
+equals User(a, b) -> <span class="ty">𝔹</span> {
+    <span class="kw">↵</span> a.name <span class="op">=</span> b.name;
+}
+
+<span class="kw">::</span> greet(<span class="kw">§</span> User u) -> <span class="ty">𝕊</span> {
+    <span class="kw">§</span> <span class="ty">𝕊</span> greeting <span class="op">&lt;-</span> join(<span class="st">"Hello, "</span>, u.name);
+    <span class="kw">↵</span> greeting;
+}
+
+<span class="kw">::</span> readUserFile(<span class="kw">§</span> User u, <span class="kw">⊙</span> FileReadCapability cap) -> <span class="ty">𝕊</span> {
+    <span class="kw">⚑</span> <span class="kw">↯</span> readFile(u.name, cap) {
+        success(contents) → <span class="kw">↵</span> contents;
+        failure(err) → <span class="kw">↵</span> <span class="st">"could not read file"</span>;
+    }
+}
+
+<span class="kw">::</span> isAdult(<span class="kw">§</span> User u) -> <span class="ty">𝔹</span> {
+    <span class="kw">?</span> (u.age <span class="op">&gt;=</span> 18) <span class="kw">:</span> {
+        <span class="kw">↵</span> <span class="ty">⊤</span>;
+    } <span class="kw">⋮</span> {
+        <span class="kw">↵</span> <span class="ty">⊥</span>;
+    }
+}
+
+<span class="kw">::</span> printVoid() -> <span class="ty">▢</span> {
+    <span class="kw">↯</span> logMessage(<span class="st">"done"</span>);
+}
+
+<span class="kw">::</span> firstAdultName(<span class="kw">§</span> <span class="ty">⟦τ User, σ 5⟧</span> users) -> <span class="ty">𝕊</span> {
+    <span class="kw">§</span> <span class="ty">ℤ</span> i <span class="op">&lt;-</span> 0;
+
+    <span class="kw">⥁</span> (i <span class="op">&lt;</span> 5) {
+        <span class="kw">?</span> (<span class="kw">↯</span> isAdult(users <span class="op">@</span> i)) <span class="kw">:</span> {
+            <span class="kw">↵</span> (users <span class="op">@</span> i).name;
+        } <span class="kw">⋮</span> {
+            i <span class="op">&lt;-</span> i <span class="op">+</span> 1;
+        }
+    }
+
+    <span class="kw">↵</span> <span class="st">"no adult found"</span>;
+}
+
+<span class="kw">::</span> countVowels(<span class="kw">§</span> <span class="ty">𝕊</span> word) -> <span class="ty">ℤ</span> {
+    <span class="kw">§</span> <span class="ty">ℤ</span> count <span class="op">&lt;-</span> 0;
+    <span class="kw">§</span> <span class="ty">ℤ</span> i <span class="op">&lt;-</span> 0;
+
+    <span class="kw">↻</span> i 0..10 {
+        <span class="kw">?</span> ((word <span class="op">@</span> i) <span class="op">=</span> <span class="st">'a'</span>) <span class="kw">:</span> {
+            count <span class="op">&lt;-</span> count <span class="op">+</span> 1;
+        } <span class="kw">⋮</span> {
+            count <span class="op">&lt;-</span> count;
+        }
+
+        <span class="kw">?</span> (i <span class="op">=</span> 9) <span class="kw">:</span> {
+            <span class="kw">⏹</span>;
+        } <span class="kw">⋮</span> {
+            <span class="kw">▶</span>;
+        }
+    }
+
+    <span class="kw">↵</span> count;
+}
+
+<span class="kw">::</span> oldestUser(<span class="kw">§</span> <span class="ty">⟦τ User, σ 3⟧</span> users) -> User {
+    <span class="kw">§</span> <span class="ty">ℤ</span> oldestIndex <span class="op">&lt;-</span> 0;
+    <span class="kw">§</span> <span class="ty">ℤ</span> i <span class="op">&lt;-</span> 0;
+
+    <span class="kw">↻</span> i 0..3 {
+        <span class="kw">?</span> ((users <span class="op">@</span> i).age <span class="op">&gt;</span> (users <span class="op">@</span> oldestIndex).age) <span class="kw">:</span> {
+            oldestIndex <span class="op">&lt;-</span> i;
+        } <span class="kw">⋮</span> {
+            oldestIndex <span class="op">&lt;-</span> oldestIndex;
+        }
+    }
+
+    <span class="kw">↵</span> users <span class="op">@</span> oldestIndex;
+}
+
+<span class="kw">::</span> main(<span class="kw">⊙</span> FileReadCapability cap) -> <span class="ty">ℤ</span> {
+    <span class="kw">§</span> User sam <span class="op">&lt;-</span> <span class="kw">↳</span> User { name: <span class="st">"Sam"</span>, age: 25 };
+    <span class="kw">§</span> User alex <span class="op">&lt;-</span> <span class="kw">↳</span> User { name: <span class="st">"Alex"</span>, age: 31 };
+    <span class="kw">§</span> User priya <span class="op">&lt;-</span> <span class="kw">↳</span> User { name: <span class="st">"Priya"</span>, age: 42 };
+
+    <span class="kw">§</span> <span class="ty">⟦τ User, σ 3⟧</span> users <span class="op">&lt;-</span> [sam, alex, priya];
+    <span class="kw">§</span> <span class="ty">⟦τ ⟦τ ℤ, σ 3⟧, σ 3⟧</span> grid <span class="op">&lt;-</span> [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+
+    <span class="kw">§</span> <span class="ty">ℂ</span> initial <span class="op">&lt;-</span> <span class="st">'S'</span>;
+    <span class="kw">§</span> <span class="ty">ℤ</span> hexValue <span class="op">&lt;-</span> 0x1F;
+    <span class="kw">§</span> <span class="ty">ℝ</span> bigNumber <span class="op">&lt;-</span> 1e10;
+
+    <span class="kw">§</span> <span class="ty">𝕊</span> greeting <span class="op">&lt;-</span> <span class="kw">↯</span> greet(sam);
+    <span class="kw">§</span> <span class="ty">𝔹</span> samIsAdult <span class="op">&lt;-</span> <span class="kw">↯</span> isAdult(sam);
+    <span class="kw">§</span> User oldest <span class="op">&lt;-</span> <span class="kw">↯</span> oldestUser(users);
+    <span class="kw">§</span> <span class="ty">ℤ</span> max <span class="op">&lt;-</span> <span class="kw">?</span> (sam.age <span class="op">&gt;</span> alex.age) <span class="kw">:</span> { <span class="kw">↵</span> sam.age; } <span class="kw">⋮</span> { <span class="kw">↵</span> alex.age; };
+
+    <span class="kw">⋈</span> oldest.name {
+        <span class="st">"Priya"</span> → <span class="kw">↵</span> 1;
+        _ → <span class="kw">↵</span> 0;
+    }
+}</code></pre>
+        </div>
+
+        <div class="ex-panel" id="ex-dev" style="display:none;">
+<pre><code><span class="kw">import</span> utils;
+
+<span class="cm">/* User record: stores a name and an age,
+   used across the file read and greeting logic below */</span>
+<span class="kw">rec</span> User { <span class="ty">str</span> name, <span class="ty">int</span> age };
+
+<span class="kw">union</span> Outcome { <span class="ty">Success</span>(<span class="ty">str</span>), <span class="ty">Failure</span>(FileNotFound) };
+
+equals User(a, b) -> <span class="ty">bool</span> {
+    <span class="kw">ret</span> a.name <span class="op">=</span> b.name;
+}
+
+<span class="kw">fn</span> greet(<span class="kw">var:</span> User u) -> <span class="ty">str</span> {
+    <span class="kw">var:</span> <span class="ty">str</span> greeting <span class="op">&lt;-</span> join(<span class="st">"Hello, "</span>, u.name);
+    <span class="kw">ret</span> greeting;
+}
+
+<span class="kw">fn</span> readUserFile(<span class="kw">var:</span> User u, <span class="kw">cap:</span> FileReadCapability cap) -> <span class="ty">str</span> {
+    <span class="kw">verify</span> <span class="kw">call</span> readFile(u.name, cap) {
+        success(contents) -> <span class="kw">ret</span> contents;
+        failure(err) -> <span class="kw">ret</span> <span class="st">"could not read file"</span>;
+    }
+}
+
+<span class="kw">fn</span> isAdult(<span class="kw">var:</span> User u) -> <span class="ty">bool</span> {
+    <span class="kw">if</span> (u.age <span class="op">&gt;=</span> 18) <span class="kw">then</span> {
+        <span class="kw">ret</span> <span class="ty">true</span>;
+    } <span class="kw">else</span> {
+        <span class="kw">ret</span> <span class="ty">false</span>;
+    }
+}
+
+<span class="kw">fn</span> printVoid() -> <span class="ty">void</span> {
+    <span class="kw">call</span> logMessage(<span class="st">"done"</span>);
+}
+
+<span class="kw">fn</span> firstAdultName(<span class="kw">var:</span> arr[type: User, size: 5] users) -> <span class="ty">str</span> {
+    <span class="kw">var:</span> <span class="ty">int</span> i <span class="op">&lt;-</span> 0;
+
+    <span class="kw">while</span> (i <span class="op">&lt;</span> 5) {
+        <span class="kw">if</span> (<span class="kw">call</span> isAdult(users <span class="kw">at</span> i)) <span class="kw">then</span> {
+            <span class="kw">ret</span> (users <span class="kw">at</span> i).name;
+        } <span class="kw">else</span> {
+            i <span class="op">&lt;-</span> i <span class="op">+</span> 1;
+        }
+    }
+
+    <span class="kw">ret</span> <span class="st">"no adult found"</span>;
+}
+
+<span class="kw">fn</span> countVowels(<span class="kw">var:</span> <span class="ty">str</span> word) -> <span class="ty">int</span> {
+    <span class="kw">var:</span> <span class="ty">int</span> count <span class="op">&lt;-</span> 0;
+    <span class="kw">var:</span> <span class="ty">int</span> i <span class="op">&lt;-</span> 0;
+
+    <span class="kw">for</span> i 0..10 {
+        <span class="kw">if</span> ((word <span class="kw">at</span> i) <span class="op">=</span> <span class="st">'a'</span>) <span class="kw">then</span> {
+            count <span class="op">&lt;-</span> count <span class="op">+</span> 1;
+        } <span class="kw">else</span> {
+            count <span class="op">&lt;-</span> count;
+        }
+
+        <span class="kw">if</span> (i <span class="op">=</span> 9) <span class="kw">then</span> {
+            <span class="kw">break</span>;
+        } <span class="kw">else</span> {
+            <span class="kw">continue</span>;
+        }
+    }
+
+    <span class="kw">ret</span> count;
+}
+
+<span class="kw">fn</span> oldestUser(<span class="kw">var:</span> arr[type: User, size: 3] users) -> User {
+    <span class="kw">var:</span> <span class="ty">int</span> oldestIndex <span class="op">&lt;-</span> 0;
+    <span class="kw">var:</span> <span class="ty">int</span> i <span class="op">&lt;-</span> 0;
+
+    <span class="kw">for</span> i 0..3 {
+        <span class="kw">if</span> ((users <span class="kw">at</span> i).age <span class="op">&gt;</span> (users <span class="kw">at</span> oldestIndex).age) <span class="kw">then</span> {
+            oldestIndex <span class="op">&lt;-</span> i;
+        } <span class="kw">else</span> {
+            oldestIndex <span class="op">&lt;-</span> oldestIndex;
+        }
+    }
+
+    <span class="kw">ret</span> users <span class="kw">at</span> oldestIndex;
+}
+
+<span class="kw">fn</span> main(<span class="kw">cap:</span> FileReadCapability cap) -> <span class="ty">int</span> {
+    <span class="kw">var:</span> User sam <span class="op">&lt;-</span> <span class="kw">new</span> User { name: <span class="st">"Sam"</span>, age: 25 };
+    <span class="kw">var:</span> User alex <span class="op">&lt;-</span> <span class="kw">new</span> User { name: <span class="st">"Alex"</span>, age: 31 };
+    <span class="kw">var:</span> User priya <span class="op">&lt;-</span> <span class="kw">new</span> User { name: <span class="st">"Priya"</span>, age: 42 };
+
+    <span class="kw">var:</span> arr[type: User, size: 3] users <span class="op">&lt;-</span> [sam, alex, priya];
+    <span class="kw">var:</span> arr[type: arr[type: <span class="ty">int</span>, size: 3], size: 3] grid <span class="op">&lt;-</span> [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+
+    <span class="kw">var:</span> <span class="ty">char</span> initial <span class="op">&lt;-</span> <span class="st">'S'</span>;
+    <span class="kw">var:</span> <span class="ty">int</span> hexValue <span class="op">&lt;-</span> 0x1F;
+    <span class="kw">var:</span> <span class="ty">float</span> bigNumber <span class="op">&lt;-</span> 1e10;
+
+    <span class="kw">var:</span> <span class="ty">str</span> greeting <span class="op">&lt;-</span> <span class="kw">call</span> greet(sam);
+    <span class="kw">var:</span> <span class="ty">bool</span> samIsAdult <span class="op">&lt;-</span> <span class="kw">call</span> isAdult(sam);
+    <span class="kw">var:</span> User oldest <span class="op">&lt;-</span> <span class="kw">call</span> oldestUser(users);
+    <span class="kw">var:</span> <span class="ty">int</span> max <span class="op">&lt;-</span> <span class="kw">if</span> (sam.age <span class="op">&gt;</span> alex.age) <span class="kw">then</span> { <span class="kw">ret</span> sam.age; } <span class="kw">else</span> { <span class="kw">ret</span> alex.age; };
+
+    <span class="kw">match</span> oldest.name {
+        <span class="st">"Priya"</span> -> <span class="kw">ret</span> 1;
+        _ -> <span class="kw">ret</span> 0;
+    }
+}</code></pre>
+        </div>
+
+                <div class="ex-panel" id="ex-normie" style="display:none;">
+<pre><code><span class="kw">import</span> utils;
+
+<span class="cm">/* User record: stores a name and an age,
+   used across the file read and greeting logic below */</span>
+<span class="kw">record</span> User { <span class="ty">string</span> name, <span class="ty">integer</span> age };
+
+<span class="kw">either</span> Outcome { <span class="ty">Success</span>(<span class="ty">string</span>), <span class="ty">Failure</span>(FileNotFound) };
+
+equals User(a, b) <span class="kw">returnType</span> <span class="ty">boolean</span> {
+    <span class="kw">return</span> a.name <span class="op">=</span> b.name;
+}
+
+<span class="kw">function</span> greet(<span class="kw">container:</span> User u) <span class="kw">returnType</span> <span class="ty">string</span> {
+    <span class="kw">container:</span> <span class="ty">string</span> greeting <span class="op">&lt;-</span> join(<span class="st">&quot;Hello, &quot;</span>, u.name);
+    <span class="kw">return</span> greeting;
+}
+
+<span class="kw">function</span> readUserFile(<span class="kw">container:</span> User u, <span class="kw">capability:</span> FileReadCapability cap) <span class="kw">returnType</span> <span class="ty">string</span> {
+    <span class="kw">verify</span> <span class="kw">runFunction</span> readFile(u.name, cap) {
+        success(contents) means <span class="kw">return</span> contents;
+        failure(err) means <span class="kw">return</span> <span class="st">&quot;could not read file&quot;</span>;
+    }
+}
+
+<span class="kw">function</span> isAdult(<span class="kw">container:</span> User u) <span class="kw">returnType</span> <span class="ty">boolean</span> {
+    <span class="kw">if</span> (u.age <span class="op">&gt;=</span> 18) <span class="kw">then</span> {
+        <span class="kw">return</span> <span class="ty">true</span>;
+    } <span class="kw">else</span> {
+        <span class="kw">return</span> <span class="ty">false</span>;
+    }
+}
+
+<span class="kw">function</span> printVoid() <span class="kw">returnType</span> <span class="ty">void</span> {
+    <span class="kw">runFunction</span> logMessage(<span class="st">&quot;done&quot;</span>);
+}
+
+<span class="kw">function</span> firstAdultName(<span class="kw">container:</span> list[type: User, size: 5] users) <span class="kw">returnType</span> <span class="ty">string</span> {
+    <span class="kw">container:</span> <span class="ty">integer</span> i <span class="op">&lt;-</span> 0;
+
+    <span class="kw">whileLoop</span> (i <span class="op">&lt;</span> 5) {
+        <span class="kw">if</span> (<span class="kw">runFunction</span> isAdult(users <span class="kw">at</span> i)) <span class="kw">then</span> {
+            <span class="kw">return</span> (users <span class="kw">at</span> i).name;
+        } <span class="kw">else</span> {
+            i <span class="op">&lt;-</span> i <span class="op">+</span> 1;
+        }
+    }
+
+    <span class="kw">return</span> <span class="st">&quot;no adult found&quot;</span>;
+}
+
+<span class="kw">function</span> countVowels(<span class="kw">container:</span> <span class="ty">string</span> word) <span class="kw">returnType</span> <span class="ty">integer</span> {
+    <span class="kw">container:</span> <span class="ty">integer</span> count <span class="op">&lt;-</span> 0;
+    <span class="kw">container:</span> <span class="ty">integer</span> i <span class="op">&lt;-</span> 0;
+
+    <span class="kw">loop</span> i 0..10 {
+        <span class="kw">if</span> ((word <span class="kw">at</span> i) <span class="op">=</span> <span class="st">&apos;a&apos;</span>) <span class="kw">then</span> {
+            count <span class="op">&lt;-</span> count <span class="op">+</span> 1;
+        } <span class="kw">else</span> {
+            count <span class="op">&lt;-</span> count;
+        }
+
+        <span class="kw">if</span> (i <span class="op">=</span> 9) <span class="kw">then</span> {
+            <span class="kw">break</span>;
+        } <span class="kw">else</span> {
+            <span class="kw">continue</span>;
+        }
+    }
+
+    <span class="kw">return</span> count;
+}
+
+<span class="kw">function</span> oldestUser(<span class="kw">container:</span> list[type: User, size: 3] users) <span class="kw">returnType</span> User {
+    <span class="kw">container:</span> <span class="ty">integer</span> oldestIndex <span class="op">&lt;-</span> 0;
+    <span class="kw">container:</span> <span class="ty">integer</span> i <span class="op">&lt;-</span> 0;
+
+    <span class="kw">loop</span> i 0..3 {
+        <span class="kw">if</span> ((users <span class="kw">at</span> i).age <span class="op">&gt;</span> (users <span class="kw">at</span> oldestIndex).age) <span class="kw">then</span> {
+            oldestIndex <span class="op">&lt;-</span> i;
+        } <span class="kw">else</span> {
+            oldestIndex <span class="op">&lt;-</span> oldestIndex;
+        }
+    }
+
+    <span class="kw">return</span> users <span class="kw">at</span> oldestIndex;
+}
+
+<span class="kw">function</span> main(<span class="kw">capability:</span> FileReadCapability cap) <span class="kw">returnType</span> <span class="ty">integer</span> {
+    <span class="kw">container:</span> User sam <span class="op">&lt;-</span> <span class="kw">new</span> User { name: <span class="st">&quot;Sam&quot;</span>, age: 25 };
+    <span class="kw">container:</span> User alex <span class="op">&lt;-</span> <span class="kw">new</span> User { name: <span class="st">&quot;Alex&quot;</span>, age: 31 };
+    <span class="kw">container:</span> User priya <span class="op">&lt;-</span> <span class="kw">new</span> User { name: <span class="st">&quot;Priya&quot;</span>, age: 42 };
+
+    <span class="kw">container:</span> list[type: User, size: 3] users <span class="op">&lt;-</span> [sam, alex, priya];
+    <span class="kw">container:</span> list[type: list[type: <span class="ty">integer</span>, size: 3], size: 3] grid <span class="op">&lt;-</span> [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+
+    <span class="kw">container:</span> <span class="ty">character</span> initial <span class="op">&lt;-</span> <span class="st">&apos;S&apos;</span>;
+    <span class="kw">container:</span> <span class="ty">integer</span> hexValue <span class="op">&lt;-</span> 0x1F;
+    <span class="kw">container:</span> <span class="ty">float</span> bigNumber <span class="op">&lt;-</span> 1e10;
+
+    <span class="kw">container:</span> <span class="ty">string</span> greeting <span class="op">&lt;-</span> <span class="kw">runFunction</span> greet(sam);
+    <span class="kw">container:</span> <span class="ty">boolean</span> samIsAdult <span class="op">&lt;-</span> <span class="kw">runFunction</span> isAdult(sam);
+    <span class="kw">container:</span> User oldest <span class="op">&lt;-</span> <span class="kw">runFunction</span> oldestUser(users);
+    <span class="kw">container:</span> <span class="ty">integer</span> max <span class="op">&lt;-</span> <span class="kw">if</span> (sam.age <span class="op">&gt;</span> alex.age) <span class="kw">then</span> { <span class="kw">return</span> sam.age; } <span class="kw">else</span> { <span class="kw">return</span> alex.age; };
+
+    <span class="kw">check</span> oldest.name {
+        <span class="st">&quot;Priya&quot;</span> means <span class="kw">return</span> 1;
+        anything means <span class="kw">return</span> 0;
+    }
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <hr />
+
+    <!-- CODE RULES -->
+    <section id="rules">
+      <h2><span class="num">8</span>Code Rules</h2>
+      <p>These rules cover both lens-specific conventions and behaviors that apply identically across all three lenses.</p>
+
+      <div id="rules-normie" class="section-label">Normie-specific conventions</div>
+      <ul class="rules-list">
+        <li><span class="rule-num">1</span><span>Variables are called <strong>containers</strong> — declared as <code>container: Type name</code></span></li>
+        <li><span class="rule-num">2</span><span><span class="exp">experimental</span> <code>container:</code>, <code>type:</code>, and <code>size:</code> map to Real Code symbols (<code>§</code>, <code>τ</code>, <code>σ</code>) and Dev keywords (<code>var:</code>, <code>type:</code>, <code>size:</code>) — fully translatable across all three lenses</span></li>
+        <li><span class="rule-num">3</span><span>Assignment uses <code>&lt;-</code>; functions use <code>returnType</code> and <code>return</code>; calls use <code>runFunction</code></span></li>
+        <li><span class="rule-num">4</span><span>Conditionals use <code>then</code> before the block — <code>if (x > 0) then {} else {}</code> — Dev Lens shares this same <code>then</code>/<code>else</code> structure</span></li>
+        <li><span class="rule-num">5</span><span>Types are full English words — <code>integer</code>, <code>string</code>, <code>float</code>, <code>boolean</code>, <code>null</code>, <code>character</code></span></li>
+        <li><span class="rule-num">6</span><span>Capability tokens use the label <code>capability:</code> (Dev uses the shorter <code>cap:</code>)</span></li>
+        <li><span class="rule-num">7</span><span><code>whileLoop</code> is the Normie keyword for the unbounded loop; <code>loop</code> remains the keyword for bounded range iteration</span></li>
+      </ul>
+
+      <div id="rules-all" class="section-label">Rules that apply across all three lenses</div>
+      <ul class="rules-list">
+        <li><span class="rule-num">8</span><span><code>{}</code>, <code>()</code>, and <code>//</code> are kept as-is across all lenses</span></li>
+        <li><span class="rule-num">9</span><span>No <code>any</code> or wildcard types — unknown types are a compile error, not a wildcard</span></li>
+        <li><span class="rule-num">10</span><span>Bitwise operators are experimental, pending final design and model testing</span></li>
+        <li><span class="rule-num">11</span><span>No implicit operator precedence — mixed-category expressions (<code>a + b > c</code>) require explicit parentheses (<code>(a + b) > c</code>) in every lens</span></li>
+        <li><span class="rule-num">12</span><span><code>-</code> and <code>!</code> double as unary prefix operators (<code>-x</code>, <code>!flag</code>) in addition to their binary forms — unambiguous from grammatical position</span></li>
+        <li><span class="rule-num">13</span><span>Imports are resolved at compile time, never as text substitution</span></li>
+        <li><span class="rule-num">14</span><span>Record construction uses <code>new TypeName { field: value, ... }</code> (<code>↳</code> in Real Code) — named fields, mandatory declaration order, no positional shorthand</span></li>
+        <li><span class="rule-num">15</span><span>Capability tokens are declared like any typed parameter, but with their own dedicated label/symbol (<code>⊙</code> in Real Code) to flag that the function touches the outside world</span></li>
+        <li><span class="rule-num">16</span><span>Array literals use plain <code>[ ]</code> with comma-separated values — identical across all three lenses</span></li>
+        <li><span class="rule-num">17</span><span>Block comments use <code>/* ... */</code>, identical across all three lenses; <code>//</code> remains for single-line comments</span></li>
+        <li><span class="rule-num">18</span><span><strong>Every statement ends with <code>;</code></strong> — the universal statement terminator, identical across all three lenses. Two constructs are exempt because they are <em>definitions</em>, not statements: a <strong>function declaration</strong> (<code>::</code>/<code>fn</code>/<code>function</code>) and a <strong>standalone control-flow block</strong> (<code>if</code>/<code>while</code>/<code>for</code>/<code>verify</code>/<code>match</code>) used in statement position — both self-terminate at <code>}</code> with no additional <code>;</code>. Everything else that is a statement ends in <code>;</code>, including <code>record</code>/<code>union</code> declarations and any statement whose right-hand side happens to end in <code>}</code> such as an inline conditional used as a value.</span></li>
+        <li><span class="rule-num">19</span><span><code>&amp;</code> and <code>|</code> short-circuit, matching C/Rust convention — the right side is skipped once the left side already determines the result</span></li>
+        <li><span class="rule-num">20</span><span><code>break</code> and <code>continue</code> only affect the single nearest enclosing loop — no labeled/multi-level jump</span></li>
+        <li><span class="rule-num">21</span><span><code>void</code> marks a function that returns nothing (<code>▢</code> in Real Code) — a deliberate, familiar exception to the "no special cases" rule</span></li>
+        <li><span class="rule-num">22</span><span><code>character</code> (<code>ℂ</code>) is a distinct type from <code>string</code> — needed for kernel/firmware/device-driver layer coverage where single-byte precision matters</span></li>
+        <li><span class="rule-num">23</span><span>No function overloading — one name, one function, always</span></li>
+        <li><span class="rule-num">24</span><span><code>main</code> is the required, fixed-name program entry point, identical across all three lenses</span></li>
+        <li><span class="rule-num">25</span><span>Declaration before use is required — a function or type must be declared before any point in the file where it is referenced, unlike Rust's order-independence</span></li>
+        <li><span class="rule-num">26</span><span>Whitespace and indentation are purely cosmetic and never affect meaning — block delimiters (<code>{}</code>) already make indentation-based structure unnecessary</span></li>
+        <li><span class="rule-num">27</span><span>A declared array size of <code>0</code> is a compile error</span></li>
+        <li><span class="rule-num">28</span><span>String literals support backslash escapes (<code>\n</code>, <code>\t</code>, <code>\"</code>, <code>\\</code>), scientific notation (<code>1e10</code>), and hex/binary/octal integer literals (<code>0x1F</code>, <code>0b1010</code>, <code>0o17</code>)</span></li>
+        <li><span class="rule-num">29</span><span>String literals may span multiple lines directly in the source</span></li>
+        <li><span class="rule-num">30</span><span>Inline conditional expressions reuse the existing <code>if</code>/<code>then</code>/<code>else</code> construct as a value — no separate ternary operator</span></li>
+        <li><span class="rule-num">31</span><span>There is no separate mutable/immutable distinction — linear types mean every value is used exactly once and never reassigned</span></li>
+        <li><span class="rule-num">32</span><span>Multi-dimensional arrays and nested records require no new syntax</span></li>
+        <li><span class="rule-num">33</span><span>Recursion requires no new syntax — a function calling itself is an ordinary function call</span></li>
+        <li><span class="rule-num">34</span><span>Integers default to signed, 32-bit (<code>ℤ</code> = <code>ℤ32</code>); unsigned integers use a distinct base symbol (<code>ℕ</code>); floats default to 32-bit (<code>ℝ</code> = <code>ℝ32</code>)</span></li>
+        <li><span class="rule-num">35</span><span><strong>Vector</strong> (<code>⦃ ⦄</code>) is the one place unbounded allocation is permitted. A record's "next" or "children" field is a plain integer index into a Vector, not a pointer. Growth happens through one audited reallocation mechanism in the standard library.</span></li>
+      </ul>
+
+      <div id="rules-open" class="section-label">Open research questions</div>
+      <ul class="rules-list">
+        <li><span class="rule-num">36</span><span><strong>Capturing closures.</strong> Whether a closure can capture a variable from its enclosing scope is undecided. The core difficulty is the interaction with linear types and capability tokens — it's unclear whether a captured linear value or capability token should be considered consumed when the closure is created, or each time the closure is called. Deferred pending further design work.</span></li>
+      </ul>
+
+    </section>
+
+  </div>
+  </div>
+</div>
+
+<script>
+  // Worked example tab switcher
+  document.querySelectorAll('.ex-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.ex-tab').forEach(b => {
+        b.classList.remove('active')
+        b.style.background = 'var(--bg2)'
+        b.style.color = 'var(--muted)'
+        b.style.borderColor = 'var(--border)'
+      })
+      document.querySelectorAll('.ex-panel').forEach(p => p.style.display = 'none')
+      btn.classList.add('active')
+      btn.style.background = '#fff'
+      btn.style.borderColor = 'var(--border)'
+      const lens = btn.dataset.ex
+      if (lens === 'real') btn.style.color = 'var(--real)'
+      else if (lens === 'dev') btn.style.color = 'var(--dev)'
+      else btn.style.color = 'var(--normie)'
+      document.getElementById('ex-' + lens).style.display = 'block'
+    })
+  })
+
+  // TOC scroll spy
+  const sections = document.querySelectorAll('section[id], [id]')
+  const tocLinks = document.querySelectorAll('.toc a[href^="#"]')
+
+  function onScroll() {
+    let current = ''
+    sections.forEach(s => {
+      if (s.getBoundingClientRect().top < 120) current = s.id
+    })
+    tocLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current)
+    })
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true })
+  onScroll()
+
+  // TOC smooth scroll
+  tocLinks.forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault()
+      const target = document.querySelector(a.getAttribute('href'))
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+  })
+</script>
+
+</body>
+</html>

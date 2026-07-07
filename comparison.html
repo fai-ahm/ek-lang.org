@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ek — Comparison</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #f7f5f2;
+      --bg2:      #f0ede8;
+      --border:   #ddd9d3;
+      --border2:  #ccc8c2;
+      --text:     #1c1a18;
+      --muted:    #8a857e;
+      --muted2:   #b8b3ac;
+      --real:     #7c6fcd;
+      --dev:      #2a9d6f;
+      --normie:   #c07a2a;
+      --accent:   #e8632a;
+      --c-color:  #c0404a;
+      --ek-color: #7c6fcd;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0;
+      background: var(--bg); color: var(--text);
+      min-height: 100vh; display: flex; flex-direction: column;
+    }
+
+    /* ── Header ── */
+    header {
+      display: flex; align-items: center; gap: 28px;
+      padding: 18px 32px; border-bottom: 1px solid var(--border);
+      background: #fff; flex-shrink: 0; position: sticky; top: 0; z-index: 100;
+    }
+    .brand {
+      font-size: 24px; font-weight: 700; color: var(--text); letter-spacing: -1px;
+      text-decoration: none;
+    }
+    .brand:hover { color: var(--accent); }
+    nav { display: flex; gap: 4px; flex: 1; }
+    nav a {
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
+      color: var(--muted); text-decoration: none; padding: 6px 14px; border-radius: 6px;
+      transition: color 0.15s, background 0.15s;
+    }
+    nav a:hover { color: var(--text); background: var(--bg2); }
+    nav a.active { color: var(--text); background: var(--bg2); }
+
+    /* ── Demo ── */
+    #demo {
+      flex: 1; display: flex; justify-content: center;
+    }
+    #demo > .demo-inner {
+      padding: 48px 32px 60px; display: flex; flex-direction: column; gap: 20px;
+      max-width: 920px; width: 100%;
+    }
+    .demo-header { display: flex; align-items: baseline; gap: 14px; }
+    .demo-title { font-size: 13px; font-weight: 700; color: var(--text); letter-spacing: 0.06em; text-transform: uppercase; }
+    .demo-sub { font-size: 12px; color: var(--muted); }
+
+    .prompt-row { display: flex; gap: 12px; align-items: stretch; }
+    .prompt-input {
+      flex: 1; font-family: 'JetBrains Mono', monospace; font-size: 14px;
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--muted); padding: 12px 16px; outline: none; cursor: default;
+    }
+    .run-btn {
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+      background: var(--accent); color: #fff; border: none; border-radius: 8px;
+      padding: 12px 24px; cursor: pointer; letter-spacing: 0.04em;
+      transition: background 0.15s, opacity 0.15s; white-space: nowrap;
+    }
+    .run-btn:hover { background: #cf5520; }
+    .run-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .key-row { display: flex; gap: 10px; align-items: center; font-size: 12px; color: var(--muted2); }
+    .key-input {
+      font-family: 'JetBrains Mono', monospace; font-size: 12px;
+      background: #fff; border: 1px solid var(--border); border-radius: 6px;
+      color: var(--muted); padding: 6px 12px; outline: none; width: 300px;
+      transition: border-color 0.15s;
+    }
+    .key-input:focus { border-color: var(--border2); color: var(--text); }
+
+    .demo-panels { display: flex; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); min-height: 280px; }
+    .code-panel { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .code-panel:first-child { border-right: 1px solid var(--border); }
+    .code-panel[data-lang="ek"] { border-top: 2px solid var(--ek-color); }
+    .code-panel[data-lang="c"]  { border-top: 2px solid var(--c-color); }
+
+    .code-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 18px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+    }
+    .code-panel[data-lang="ek"] .code-header { background: rgba(124,111,205,0.04); }
+    .code-panel[data-lang="c"]  .code-header { background: rgba(192,64,74,0.04); }
+
+    .code-lang { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
+    .code-panel[data-lang="ek"] .code-lang { color: var(--ek-color); }
+    .code-panel[data-lang="c"]  .code-lang { color: var(--c-color); }
+    .code-desc { font-size: 10px; color: var(--muted2); letter-spacing: 0.04em; margin-left: 10px; }
+
+    .code-status { font-size: 11px; color: var(--muted2); letter-spacing: 0.04em; }
+    .code-status.streaming { color: var(--dev); }
+    .code-status.done      { color: var(--muted2); }
+    .code-status.error     { color: var(--c-color); }
+
+    .code-body {
+      flex: 1; overflow-y: auto; padding: 18px 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px; line-height: 1.75; white-space: pre-wrap; word-break: break-word;
+      color: #2a2622; background: var(--bg);
+      scrollbar-width: thin; scrollbar-color: var(--border2) transparent;
+    }
+    .code-body::-webkit-scrollbar { width: 5px; }
+    .code-body::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+    .code-body .placeholder { color: var(--muted2); font-style: italic; }
+
+    .stream-cursor {
+      display: inline-block; width: 2px; height: 1em;
+      background: var(--accent); vertical-align: text-bottom;
+      animation: blink 0.8s step-end infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    .explanation {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+    }
+    .explain-block {
+      background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 20px 22px;
+    }
+    .explain-block h3 {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px;
+    }
+    .explain-block[data-lang="ek"] h3 { color: var(--ek-color); }
+    .explain-block[data-lang="c"]  h3 { color: var(--c-color); }
+    .explain-block p { font-size: 12px; color: var(--muted); line-height: 1.8; }
+    .explain-block p strong { color: var(--text); font-weight: 500; }
+
+    .disclaimer {
+      border: 1px solid #e8d9c0; background: rgba(192,122,42,0.05); border-radius: 8px;
+      padding: 12px 16px; font-size: 11.5px; color: #8a6030; line-height: 1.7;
+    }
+    .disclaimer strong { color: var(--normie); }
+
+    /* ── Footer ── */
+    footer {
+      padding: 10px 32px; border-top: 1px solid var(--border); background: #fff;
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 12px; color: var(--muted2); flex-shrink: 0; letter-spacing: 0.04em;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="index.html" class="brand">Ek</a>
+    <nav>
+      <a href="playground.html">playground</a>
+      <a href="comparison.html" class="active">comparison</a>
+      <a href="syntax.html">syntax</a>
+      <a href="spec.html">spec</a>
+    </nav>
+  </header>
+
+  <section id="demo">
+  <div class="demo-inner">
+    <div class="demo-header">
+      <span class="demo-title">Live Comparison</span>
+      <span class="demo-sub">same prompt — C vs Ek</span>
+    </div>
+
+    <div class="prompt-row">
+      <input class="prompt-input" id="promptInput" readonly
+        value="Write a function that copies user-provided input into a fixed-size buffer." />
+      <button class="run-btn" id="runBtn">Run Comparison</button>
+    </div>
+
+    <div class="key-row">
+      <span>OpenAI key:</span>
+      <input class="key-input" id="apiKeyInput" type="password" placeholder="sk-..." autocomplete="off" />
+      <span>— saved to localStorage only</span>
+    </div>
+
+    <div class="demo-panels">
+      <div class="code-panel" data-lang="ek">
+        <div class="code-header">
+          <div style="display:flex;align-items:baseline">
+            <span class="code-lang">Ek</span>
+            <span class="code-desc">grammar-constrained</span>
+          </div>
+          <span class="code-status" id="statusEk">waiting</span>
+        </div>
+        <div class="code-body" id="bodyEk"><span class="placeholder">Ek code will appear here…</span></div>
+      </div>
+      <div class="code-panel" data-lang="c">
+        <div class="code-header">
+          <div style="display:flex;align-items:baseline">
+            <span class="code-lang">C</span>
+            <span class="code-desc">unconstrained</span>
+          </div>
+          <span class="code-status" id="statusC">waiting</span>
+        </div>
+        <div class="code-body" id="bodyC"><span class="placeholder">C code will appear here…</span></div>
+      </div>
+    </div>
+
+    <div class="explanation">
+      <div class="explain-block" data-lang="ek">
+        <h3>Ek — grammar-constrained</h3>
+        <p>Ek has <strong>no construct for an unchecked write</strong>. Every buffer is declared with an explicit bounded size (<strong>⟦τ type, σ size⟧</strong>) and the grammar has no unbounded copy primitive. When the model is forced to stay within Ek's grammar, the unsafe pattern has no valid surface to land on.</p>
+      </div>
+      <div class="explain-block" data-lang="c">
+        <h3>C — unconstrained</h3>
+        <p>C's <strong>strcpy</strong> and similar functions perform no bounds checking. A fixed-size buffer like <strong>char buf[64]</strong> can be overwritten past its end if the input is longer. This is the root cause of vulnerabilities like <strong>Heartbleed</strong>. The model is free to write it because C allows it.</p>
+      </div>
+    </div>
+
+    <div class="disclaimer">
+      <strong>Disclaimer:</strong> Ek does not yet have a working compiler or parser. This demo shows that constraining an LLM's output to Ek's grammar changes what unsafe code the model produces — it does not yet show mathematically enforced safety, which requires a real parser and is a future milestone.
+    </div>
+  </div>
+  </section>
+
+  <footer>
+    <span>ek v0.1</span>
+    <span>experimental — symbols subject to change</span>
+  </footer>
+
+  <script>
+    const EK_SYNTAX_REFERENCE = `
+== EK MASTER SYMBOL TABLE (Real Code lens) ==
+
+DECLARATIONS
+  :: name(params) -> ReturnType {}   function declaration
+  § Type name <- value;              variable declaration
+  ⊞ Name { Type field, ... }         record declaration
+  ⊎ Name { Variant, Variant(Type) }  union declaration
+  ↳ Name { field: value, ... }       record construction
+  ⊙ CapabilityType cap               capability token parameter
+  ※ moduleName;                      import
+
+CONTROL FLOW
+  ? (cond) : { ... } ⋮ { ... }      conditional (if/then/else)
+  ⋈ x { val → ..., _ → ... }        pattern match
+  ↻ i 0..N { ... }                   bounded loop
+  ⥁ (cond) { ... }                   unbounded while loop
+  ↵ value;                           return value
+  ▢                                  void (no return value)
+  ⏹;                                 break
+  ▶;                                 continue
+  ⚑ ↯ fn(args) {                     outcome handling
+    success(x) → ↵ x;
+    failure(e) → ↵ fallback;
+  }
+
+CALLS & ACCESS
+  ↯ name(args)                       function call
+  value.field                        field access
+  arr @ i                            array element access
+  ->                                 return type in signature
+  <-                                 assignment
+
+TYPES
+  ℤ   integer (signed 32-bit default; ℤ8 ℤ16 ℤ32 ℤ64)
+  ℕ   unsigned integer (ℕ8 ℕ16 ℕ32 ℕ64)
+  ℝ   float (32-bit default; ℝ32 ℝ64)
+  𝔹   boolean
+  𝕊   string
+  ℂ   character
+  ∅   null
+  ⟦τ Type, σ N⟧   fixed-size bounded array (e.g. ⟦τ ℤ, σ 100⟧)
+  ⦃τ Type⦄         growable vector (audited reallocation only)
+
+OPERATORS
+  +  -  *  /  %              arithmetic
+  =  !=  >  <  >=  <=        comparison (no implicit precedence — use parentheses when mixing categories)
+  &  |  !                    logical and / or / not
+  ∩  ∪  ⊕  ∼  ≪  ≫          bitwise (experimental)
+  ⊤  ⊥                       true / false
+
+LITERALS & STRUCTURE
+  "text"   string literal (backslash escapes: \\n \\t \\" \\\\; may span lines)
+  'a'      character literal
+  0x1F  0b1010  0o17  1e10   numeric literal forms
+  [a, b, c]                  array literal
+  {}                         block body
+  ()                         argument list
+  //  /* */                  single-line / block comment
+  ;                          statement terminator
+  ,                          separator
+
+RULES
+- No unbounded copy primitives — every array has an explicit bounded size
+- No implicit operator precedence — parentheses required when mixing arithmetic, comparison, and logical operators
+- No generics, no overloading, no preprocessor/macros
+- Declaration before use required
+- Every statement ends with ;
+- main() is the required program entry point
+- Capability tokens (⊙) flag functions that touch the outside world
+`
+    const SYSTEM_C = `You are a C programmer. Write idiomatic C code for the following request. Output only the code, no explanation, no markdown fences.`
+    const SYSTEM_EK = `You are a programmer writing in Ek, a custom language with a strict grammar. Follow this grammar exactly and produce only valid Ek code. Output only the code, no explanation, no markdown fences.
+
+Ek grammar reference:
+${EK_SYNTAX_REFERENCE}`
+
+    const runBtn      = document.getElementById('runBtn')
+    const apiKeyInput = document.getElementById('apiKeyInput')
+    const bodyEk      = document.getElementById('bodyEk')
+    const bodyC       = document.getElementById('bodyC')
+    const statusEk    = document.getElementById('statusEk')
+    const statusC     = document.getElementById('statusC')
+
+    apiKeyInput.value = localStorage.getItem('ek_openai_key') || ''
+    apiKeyInput.addEventListener('change', () => localStorage.setItem('ek_openai_key', apiKeyInput.value.trim()))
+
+    runBtn.addEventListener('click', async () => {
+      const apiKey = apiKeyInput.value.trim()
+      if (!apiKey) { alert('Enter your OpenAI API key first.'); return }
+      localStorage.setItem('ek_openai_key', apiKey)
+      runBtn.disabled = true
+      resetPanel(bodyEk, statusEk)
+      resetPanel(bodyC, statusC)
+      await Promise.all([
+        streamCompletion(apiKey, SYSTEM_EK, bodyEk, statusEk),
+        streamCompletion(apiKey, SYSTEM_C,  bodyC,  statusC),
+      ])
+      runBtn.disabled = false
+    })
+
+    function resetPanel(body, status) {
+      body.textContent = ''
+      status.textContent = 'waiting'
+      status.className = 'code-status'
+    }
+
+    async function streamCompletion(apiKey, system, body, status) {
+      const prompt = document.getElementById('promptInput').value
+      status.textContent = 'streaming…'
+      status.className = 'code-status streaming'
+      const cursor = document.createElement('span')
+      cursor.className = 'stream-cursor'
+      body.appendChild(cursor)
+      try {
+        const res = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+          body: JSON.stringify({
+            model: 'gpt-4.1-mini', stream: true,
+            messages: [{ role: 'system', content: system }, { role: 'user', content: prompt }],
+          }),
+        })
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}))
+          throw new Error(err?.error?.message || `HTTP ${res.status}`)
+        }
+        const reader = res.body.getReader()
+        const dec    = new TextDecoder()
+        let buf = ''
+        while (true) {
+          const { done, value } = await reader.read()
+          if (done) break
+          buf += dec.decode(value, { stream: true })
+          const lines = buf.split('\n')
+          buf = lines.pop()
+          for (const line of lines) {
+            const t = line.trim()
+            if (!t || t === 'data: [DONE]' || !t.startsWith('data: ')) continue
+            try {
+              const delta = JSON.parse(t.slice(6)).choices?.[0]?.delta?.content
+              if (delta) { body.insertBefore(document.createTextNode(delta), cursor); body.scrollTop = body.scrollHeight }
+            } catch {}
+          }
+        }
+        cursor.remove()
+        status.textContent = 'done'
+        status.className = 'code-status done'
+      } catch (err) {
+        cursor.remove()
+        status.textContent = 'error'
+        status.className = 'code-status error'
+        body.textContent = `Error: ${err.message}`
+      }
+    }
+  </script>
+</body>
+</html>

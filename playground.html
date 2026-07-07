@@ -6,7 +6,7 @@
   <title>Ek — Playground</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -25,9 +25,8 @@
     }
 
     body {
-      font-family: 'JetBrains Mono', monospace;
-      font-feature-settings: "liga" 0, "calt" 0;
-      font-variant-ligatures: none;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0;
       background: var(--bg); color: var(--text);
       min-height: 100vh; display: flex; flex-direction: column;
     }
@@ -44,15 +43,15 @@
     .brand:hover { color: var(--accent); }
     nav { display: flex; gap: 4px; flex: 1; }
     nav a {
-      font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500;
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
       color: var(--muted); text-decoration: none; padding: 6px 14px; border-radius: 6px;
-      letter-spacing: 0.04em; transition: color 0.15s, background 0.15s;
+      transition: color 0.15s, background 0.15s;
     }
     nav a:hover { color: var(--text); background: var(--bg2); }
     nav a.active { color: var(--text); background: var(--bg2); }
 
     .view-toggle {
-      font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500;
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
       color: var(--muted); background: none; border: 1px solid var(--border2); border-radius: 6px;
       padding: 6px 14px; cursor: pointer; transition: color 0.15s, border-color 0.15s, background 0.15s;
       letter-spacing: 0.03em;
@@ -73,7 +72,7 @@
     .tab-bar .view-toggle { grid-column: 3; justify-self: end; }
 
     .tab-btn {
-      font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 500;
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
       background: none; border: none; border-bottom: 2px solid transparent;
       padding: 14px 18px 12px; cursor: pointer; color: var(--muted2);
       letter-spacing: 0.05em; transition: color 0.15s; margin-bottom: -1px;
@@ -180,7 +179,7 @@
 
     .tok { pointer-events: auto; cursor: text; }
     body.split .tok { border-radius: 2px; display: inline-block; transition: transform 0.1s, background 0.1s; }
-    body.split .tok:hover, body.split .tok.lit { background: rgba(232,99,42,0.15); transform: scale(1.2); }
+    body.split .tok:hover, body.split .tok.lit { background: rgba(232,99,42,0.15); transform: scale(1.2); backdrop-filter: blur(4px); }
 
     textarea {
       position: absolute; inset: 0; z-index: 1;
@@ -218,6 +217,7 @@
     <a href="/" class="brand">Ek</a>
     <nav>
       <a href="playground.html" class="active">playground</a>
+      <!-- <a href="comparison.html">comparison</a> -->
       <a href="syntax.html">syntax</a>
       <a href="spec.html">spec</a>
     </nav>
@@ -441,7 +441,7 @@
       if (tok.dataset.sym)
         document.querySelectorAll(`.tok[data-sym="${tok.dataset.sym}"]`).forEach(el => el.classList.add('lit'))
       else if (tok.dataset.word)
-        tok.classList.add('lit')
+        document.querySelectorAll(`.tok[data-word="${tok.dataset.word}"]`).forEach(el => el.classList.add('lit'))
     })
 
     document.addEventListener('mousedown', e => {
@@ -450,10 +450,340 @@
       tok.closest('.panel-editor').querySelector('textarea').focus({ preventScroll: true })
     })
 
+    const SAMPLE = {
+      real: `※ utils;
+
+/* User record: stores a name and an age,
+   used across the file read and greeting logic below */
+⊞ User { 𝕊 name, ℤ age };
+
+⊎ Outcome { Success(𝕊), Failure(FileNotFound) };
+
+equals User(a, b) -> 𝔹 {
+    ↵ a.name = b.name;
+}
+
+:: greet(§ User u) -> 𝕊 {
+    § 𝕊 greeting <- ↯ join("Hello, ", u.name);
+    ↵ greeting;
+}
+
+:: readUserFile(§ User u, ⊙ FileReadCapability cap) -> 𝕊 {
+    ⚑ ↯ readFile(u.name, cap) {
+        success(contents) → ↵ contents;
+        failure(err) → ↵ "could not read file";
+    }
+}
+
+:: isAdult(§ User u) -> 𝔹 {
+    ? (u.age >= 18) : {
+        ↵ ⊤;
+    } ⋮ {
+        ↵ ⊥;
+    }
+}
+
+:: printVoid() -> ▢ {
+    ↯ logMessage("done");
+}
+
+:: firstAdultName(§ ⟦τ User, σ 5⟧ users) -> 𝕊 {
+    § ℤ i <- 0;
+
+    ⥁ (i < 5) {
+        ? (↯ isAdult(users @ i)) : {
+            ↵ (users @ i).name;
+        } ⋮ {
+            i <- i + 1;
+        }
+    }
+
+    ↵ "no adult found";
+}
+
+:: countVowels(§ 𝕊 word) -> ℤ {
+    § ℤ count <- 0;
+    § ℤ i <- 0;
+
+    ↻ i 0..10 {
+        ? ((word @ i) = 'a') : {
+            count <- count + 1;
+        } ⋮ {
+            count <- count;
+        }
+
+        ? (i = 9) : {
+            ⏹;
+        } ⋮ {
+            ▶;
+        }
+    }
+
+    ↵ count;
+}
+
+:: oldestUser(§ ⟦τ User, σ 3⟧ users) -> User {
+    § ℤ oldestIndex <- 0;
+    § ℤ i <- 0;
+
+    ↻ i 0..3 {
+        ? ((users @ i).age > (users @ oldestIndex).age) : {
+            oldestIndex <- i;
+        } ⋮ {
+            oldestIndex <- oldestIndex;
+        }
+    }
+
+    ↵ users @ oldestIndex;
+}
+
+:: main(⊙ FileReadCapability cap) -> ℤ {
+    § User sam <- ↳ User { name: "Sam", age: 25 };
+    § User alex <- ↳ User { name: "Alex", age: 31 };
+    § User priya <- ↳ User { name: "Priya", age: 42 };
+
+    § ⟦τ User, σ 3⟧ users <- [sam, alex, priya];
+    § ⟦τ ⟦τ ℤ, σ 3⟧, σ 3⟧ grid <- [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+
+    § ℂ initial <- 'S';
+    § ℤ hexValue <- 0x1F;
+    § ℝ bigNumber <- 1e10;
+
+    § 𝕊 greeting <- ↯ greet(sam);
+    § 𝔹 samIsAdult <- ↯ isAdult(sam);
+    § User oldest <- ↯ oldestUser(users);
+    § ℤ max <- ? (sam.age > alex.age) : { ↵ sam.age; } ⋮ { ↵ alex.age; };
+
+    ⋈ oldest.name {
+        "Priya" → ↵ 1;
+        _ → ↵ 0;
+    }
+}`,
+      dev: `import utils;
+
+/* User record: stores a name and an age,
+   used across the file read and greeting logic below */
+rec User { str name, int age };
+
+union Outcome { Success(str), Failure(FileNotFound) };
+
+equals User(a, b) -> bool {
+    ret a.name = b.name;
+}
+
+fn greet(var: User u) -> str {
+    var: str greeting <- call join("Hello, ", u.name);
+    ret greeting;
+}
+
+fn readUserFile(var: User u, cap: FileReadCapability cap) -> str {
+    verify call readFile(u.name, cap) {
+        success(contents) -> ret contents;
+        failure(err) -> ret "could not read file";
+    }
+}
+
+fn isAdult(var: User u) -> bool {
+    if (u.age >= 18) then {
+        ret true;
+    } else {
+        ret false;
+    }
+}
+
+fn printVoid() -> void {
+    call logMessage("done");
+}
+
+fn firstAdultName(var: arr[type: User, size: 5] users) -> str {
+    var: int i <- 0;
+
+    while (i < 5) {
+        if (call isAdult(users at i)) then {
+            ret (users at i).name;
+        } else {
+            i <- i + 1;
+        }
+    }
+
+    ret "no adult found";
+}
+
+fn countVowels(var: str word) -> int {
+    var: int count <- 0;
+    var: int i <- 0;
+
+    for i 0..10 {
+        if ((word at i) = 'a') then {
+            count <- count + 1;
+        } else {
+            count <- count;
+        }
+
+        if (i = 9) then {
+            break;
+        } else {
+            continue;
+        }
+    }
+
+    ret count;
+}
+
+fn oldestUser(var: arr[type: User, size: 3] users) -> User {
+    var: int oldestIndex <- 0;
+    var: int i <- 0;
+
+    for i 0..3 {
+        if ((users at i).age > (users at oldestIndex).age) then {
+            oldestIndex <- i;
+        } else {
+            oldestIndex <- oldestIndex;
+        }
+    }
+
+    ret users at oldestIndex;
+}
+
+fn main(cap: FileReadCapability cap) -> int {
+    var: User sam <- new User { name: "Sam", age: 25 };
+    var: User alex <- new User { name: "Alex", age: 31 };
+    var: User priya <- new User { name: "Priya", age: 42 };
+
+    var: arr[type: User, size: 3] users <- [sam, alex, priya];
+    var: arr[type: arr[type: int, size: 3], size: 3] grid <- [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+
+    var: char initial <- 'S';
+    var: int hexValue <- 0x1F;
+    var: float bigNumber <- 1e10;
+
+    var: str greeting <- call greet(sam);
+    var: bool samIsAdult <- call isAdult(sam);
+    var: User oldest <- call oldestUser(users);
+    var: int max <- if (sam.age > alex.age) then { ret sam.age; } else { ret alex.age; };
+
+    match oldest.name {
+        "Priya" -> ret 1;
+        _ -> ret 0;
+    }
+}`,
+      normie: `import utils;
+
+/* User record: stores a name and an age,
+   used across the file read and greeting logic below */
+record User { string name, integer age };
+
+either Outcome { Success(string), Failure(FileNotFound) };
+
+equals User(a, b) returnType boolean {
+    return a.name = b.name;
+}
+
+function greet(container: User u) returnType string {
+    container: string greeting <- runFunction join("Hello, ", u.name);
+    return greeting;
+}
+
+function readUserFile(container: User u, capability: FileReadCapability cap) returnType string {
+    verify runFunction readFile(u.name, cap) {
+        success(contents) means return contents;
+        failure(err) means return "could not read file";
+    }
+}
+
+function isAdult(container: User u) returnType boolean {
+    if (u.age >= 18) then {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function printVoid() returnType void {
+    runFunction logMessage("done");
+}
+
+function firstAdultName(container: list[type: User, size: 5] users) returnType string {
+    container: integer i <- 0;
+
+    whileLoop (i < 5) {
+        if (runFunction isAdult(users at i)) then {
+            return (users at i).name;
+        } else {
+            i <- i + 1;
+        }
+    }
+
+    return "no adult found";
+}
+
+function countVowels(container: string word) returnType integer {
+    container: integer count <- 0;
+    container: integer i <- 0;
+
+    loop i 0..10 {
+        if ((word at i) = 'a') then {
+            count <- count + 1;
+        } else {
+            count <- count;
+        }
+
+        if (i = 9) then {
+            break;
+        } else {
+            continue;
+        }
+    }
+
+    return count;
+}
+
+function oldestUser(container: list[type: User, size: 3] users) returnType User {
+    container: integer oldestIndex <- 0;
+    container: integer i <- 0;
+
+    loop i 0..3 {
+        if ((users at i).age > (users at oldestIndex).age) then {
+            oldestIndex <- i;
+        } else {
+            oldestIndex <- oldestIndex;
+        }
+    }
+
+    return users at oldestIndex;
+}
+
+function main(capability: FileReadCapability cap) returnType integer {
+    container: User sam <- new User { name: "Sam", age: 25 };
+    container: User alex <- new User { name: "Alex", age: 31 };
+    container: User priya <- new User { name: "Priya", age: 42 };
+
+    container: list[type: User, size: 3] users <- [sam, alex, priya];
+    container: list[type: list[type: integer, size: 3], size: 3] grid <- [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+
+    container: character initial <- 'S';
+    container: integer hexValue <- 0x1F;
+    container: float bigNumber <- 1e10;
+
+    container: string greeting <- runFunction greet(sam);
+    container: boolean samIsAdult <- runFunction isAdult(sam);
+    container: User oldest <- runFunction oldestUser(users);
+    container: integer max <- if (sam.age > alex.age) then { return sam.age; } else { return alex.age; };
+
+    check oldest.name {
+        "Priya" means return 1;
+        anything means return 0;
+    }
+}`
+    }
+
     fetch('symbols.json')
       .then(r => { if (!r.ok) throw new Error('symbols.json ' + r.status); return r.json() })
       .then(symbols => {
         initTranslator(symbols)
+        document.querySelector('textarea[data-lens="real"]').value   = SAMPLE.real
+        document.querySelector('textarea[data-lens="dev"]').value    = SAMPLE.dev
+        document.querySelector('textarea[data-lens="normie"]').value = SAMPLE.normie
         renderAll()
         textareas.forEach(ta => {
           ta.addEventListener('input', () => {

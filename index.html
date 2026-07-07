@@ -6,7 +6,7 @@
   <title>Ek — One language, three views</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -27,9 +27,8 @@
     }
 
     body {
-      font-family: 'JetBrains Mono', monospace;
-      font-feature-settings: "liga" 0, "calt" 0;
-      font-variant-ligatures: none;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0;
       background: var(--bg); color: var(--text);
       min-height: 100vh; display: flex; flex-direction: column;
     }
@@ -47,121 +46,72 @@
     .brand:hover { color: var(--accent); }
     nav { display: flex; gap: 4px; flex: 1; }
     nav a {
-      font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500;
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
       color: var(--muted); text-decoration: none; padding: 6px 14px; border-radius: 6px;
-      letter-spacing: 0.04em; transition: color 0.15s, background 0.15s;
+      transition: color 0.15s, background 0.15s;
     }
     nav a:hover { color: var(--text); background: var(--bg2); }
     nav a.active { color: var(--text); background: var(--bg2); }
 
     .view-toggle {
-      font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500;
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
       color: var(--muted); background: none; border: 1px solid var(--border2); border-radius: 6px;
       padding: 6px 14px; cursor: pointer; transition: color 0.15s, border-color 0.15s, background 0.15s;
       letter-spacing: 0.03em;
     }
     .view-toggle:hover { color: var(--text); border-color: var(--muted); background: var(--bg2); }
 
-    /* ── Demo section ── */
-    #demo {
+    /* ── Hero ── */
+    #hero {
+      display: flex; justify-content: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .hero-inner {
+      padding: 64px 32px 52px; max-width: 920px; width: 100%;
+    }
+    .hero-tagline {
+      font-size: 28px; font-weight: 700; color: var(--text);
+      letter-spacing: -0.6px; line-height: 1.3; max-width: 600px;
+    }
+
+    /* ── Features section ── */
+    #features {
       border-bottom: 1px solid var(--border);
       display: flex; justify-content: center;
     }
-    #demo > .demo-inner {
-      padding: 40px 32px 36px; display: flex; flex-direction: column; gap: 20px;
-      max-width: 920px; width: 100%;
+    .features-inner {
+      padding: 52px 32px 48px; max-width: 920px; width: 100%;
     }
-    .demo-header { display: flex; align-items: baseline; gap: 14px; }
-    .demo-title { font-size: 13px; font-weight: 700; color: var(--text); letter-spacing: 0.06em; text-transform: uppercase; }
-    .demo-sub { font-size: 12px; color: var(--muted); }
-
-    .prompt-row { display: flex; gap: 12px; align-items: stretch; }
-    .prompt-input {
-      flex: 1; font-family: 'JetBrains Mono', monospace; font-size: 14px;
-      background: var(--bg2); border: 1px solid var(--border); border-radius: 8px;
-      color: var(--muted); padding: 12px 16px; outline: none; cursor: default;
+    .features-title {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted2); margin-bottom: 8px;
     }
-    .run-btn {
-      font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700;
-      background: var(--accent); color: #fff; border: none; border-radius: 8px;
-      padding: 12px 24px; cursor: pointer; letter-spacing: 0.04em;
-      transition: background 0.15s, opacity 0.15s; white-space: nowrap;
+    .feature-row {
+      display: flex; align-items: baseline; gap: 0;
+      padding: 18px 0; border-bottom: 1px solid var(--border);
     }
-    .run-btn:hover { background: #cf5520; }
-    .run-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-    .key-row { display: flex; gap: 10px; align-items: center; font-size: 12px; color: var(--muted2); }
-    .key-input {
-      font-family: 'JetBrains Mono', monospace; font-size: 12px;
-      background: #fff; border: 1px solid var(--border); border-radius: 6px;
-      color: var(--muted); padding: 6px 12px; outline: none; width: 300px;
-      transition: border-color 0.15s;
+    .feature-row:first-of-type { border-top: 1px solid var(--border); }
+    .feature-num {
+      font-size: 11px; font-weight: 600; color: var(--muted2); letter-spacing: 0.04em;
+      width: 32px; flex-shrink: 0;
     }
-    .key-input:focus { border-color: var(--border2); color: var(--text); }
-
-    .demo-panels { display: flex; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); min-height: 280px; }
-    .code-panel { flex: 1; display: flex; flex-direction: column; min-width: 0; }
-    .code-panel:first-child { border-right: 1px solid var(--border); }
-    .code-panel[data-lang="ek"] { border-top: 2px solid var(--ek-color); }
-    .code-panel[data-lang="c"]  { border-top: 2px solid var(--c-color); }
-
-    .code-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 10px 18px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+    .feature-name {
+      font-size: 16px; font-weight: 700; color: var(--text); width: 200px; flex-shrink: 0;
     }
-    .code-panel[data-lang="ek"] .code-header { background: rgba(124,111,205,0.04); }
-    .code-panel[data-lang="c"]  .code-header { background: rgba(192,64,74,0.04); }
-
-    .code-lang { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
-    .code-panel[data-lang="ek"] .code-lang { color: var(--ek-color); }
-    .code-panel[data-lang="c"]  .code-lang { color: var(--c-color); }
-    .code-desc { font-size: 10px; color: var(--muted2); letter-spacing: 0.04em; margin-left: 10px; }
-
-    .code-status { font-size: 11px; color: var(--muted2); letter-spacing: 0.04em; }
-    .code-status.streaming { color: var(--dev); }
-    .code-status.done      { color: var(--muted2); }
-    .code-status.error     { color: var(--c-color); }
-
-    .code-body {
-      flex: 1; overflow-y: auto; padding: 18px 20px;
-      font-size: 13.5px; line-height: 1.75; white-space: pre-wrap; word-break: break-word;
-      color: #2a2622; background: var(--bg);
-      scrollbar-width: thin; scrollbar-color: var(--border2) transparent;
+    .feature-tag {
+      font-size: 9px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 2px 7px; border-radius: 4px; width: 100px; flex-shrink: 0; text-align: center;
     }
-    .code-body::-webkit-scrollbar { width: 5px; }
-    .code-body::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
-    .code-body .placeholder { color: var(--muted2); font-style: italic; }
-
-    .stream-cursor {
-      display: inline-block; width: 2px; height: 1em;
-      background: var(--accent); vertical-align: text-bottom;
-      animation: blink 0.8s step-end infinite;
+    .feature-tag.precedented { background: rgba(42,157,111,0.1); color: var(--dev); }
+    .feature-tag.proposed    { background: rgba(192,122,42,0.1); color: var(--normie); }
+    .feature-tag.built       { background: rgba(124,111,205,0.1); color: var(--real); }
+    .feature-desc {
+      font-size: 13px; color: var(--muted); line-height: 1.7; flex: 1; padding-left: 32px;
     }
-    @keyframes blink { 50% { opacity: 0; } }
-
-    .explanation {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
-    }
-    .explain-block {
-      background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 20px 22px;
-    }
-    .explain-block h3 {
-      font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px;
-    }
-    .explain-block[data-lang="ek"] h3 { color: var(--ek-color); }
-    .explain-block[data-lang="c"]  h3 { color: var(--c-color); }
-    .explain-block p { font-size: 12px; color: var(--muted); line-height: 1.8; }
-    .explain-block p strong { color: var(--text); font-weight: 500; }
-
-    .disclaimer {
-      border: 1px solid #e8d9c0; background: rgba(192,122,42,0.05); border-radius: 8px;
-      padding: 12px 16px; font-size: 11.5px; color: #8a6030; line-height: 1.7;
-    }
-    .disclaimer strong { color: var(--normie); }
 
     /* ── Split view section ── */
     #splitview {
-      flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 400px;
+      flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 700px;
     }
 
     .lenses-header {
@@ -170,8 +120,16 @@
     }
     .lenses-title { font-size: 26px; font-weight: 700; color: var(--text); letter-spacing: -0.6px; }
     .lenses-sub { font-size: 13px; color: var(--muted); letter-spacing: 0.01em; line-height: 1.6; max-width: 680px; }
+    .lenses-hint {
+      font-size: 22px; font-weight: 700; color: var(--muted2);
+      letter-spacing: -0.4px; margin-top: 6px;
+    }
+    .real-lens-note {
+      font-size: 10px; font-weight: 400; color: var(--muted2);
+      letter-spacing: 0.01em; margin-left: 10px; font-style: italic;
+    }
 
-    .panel-wrap { flex: 1; display: flex; flex-direction: row; overflow: hidden; min-height: 280px; }
+    .panel-wrap { flex: 1; display: flex; flex-direction: row; overflow: hidden; min-height: 720px; }
 
     .panel { display: flex; flex: 1; flex-direction: column; min-width: 0; overflow: hidden; }
     .panel[data-lens="real"]   { border-top: 2px solid var(--real); }
@@ -222,7 +180,7 @@
     }
 
     .tok { pointer-events: auto; border-radius: 2px; cursor: text; display: inline-block; transition: transform 0.1s, background 0.1s; }
-    .tok:hover, .tok.lit { background: rgba(232,99,42,0.15); transform: scale(1.2); }
+    .tok:hover, .tok.lit { background: rgba(232,99,42,0.15); transform: scale(1.2); backdrop-filter: blur(4px); }
 
     textarea {
       position: absolute; inset: 0; z-index: 1;
@@ -259,67 +217,56 @@
     <a href="#" class="brand">Ek</a>
     <nav>
       <a href="playground.html">playground</a>
+      <!-- <a href="comparison.html">comparison</a> -->
       <a href="syntax.html">syntax</a>
       <a href="spec.html">spec</a>
     </nav>
   </header>
 
-  <!-- ── Demo ── -->
-  <section id="demo">
-  <div class="demo-inner">
-    <div class="demo-header">
-      <span class="demo-title">Live Comparison</span>
-      <span class="demo-sub">same prompt — C vs Ek</span>
+  <!-- ── Hero ── -->
+  <section id="hero">
+  <div class="hero-inner">
+    <div class="hero-tagline">A Programming Language for the Age of AI Authorship</div>
+  </div>
+  </section>
+
+  <!-- ── Features ── -->
+  <section id="features">
+  <div class="features-inner">
+    <div class="features-title">Core Safety Features</div>
+    <div class="feature-row">
+      <span class="feature-num">01</span>
+      <span class="feature-name">Linear Types</span>
+      <span class="feature-tag precedented">precedented</span>
+      <p class="feature-desc">Every value is used exactly once. Open a file — you must close it. Allocate memory — you must free it. No garbage collector needed; the compiler tracks usage statically.</p>
     </div>
 
-    <div class="prompt-row">
-      <input class="prompt-input" id="promptInput" readonly
-        value="Write a function that copies user-provided input into a fixed-size buffer." />
-      <button class="run-btn" id="runBtn">Run Comparison</button>
+    <div class="feature-row">
+      <span class="feature-num">02</span>
+      <span class="feature-name">Capability Tokens</span>
+      <span class="feature-tag precedented">precedented</span>
+      <p class="feature-desc">No function can touch the filesystem, network, or hardware without an explicit, unforgeable token in its signature. A function with no capability arguments is provably pure.</p>
     </div>
 
-    <div class="key-row">
-      <span>OpenAI key:</span>
-      <input class="key-input" id="apiKeyInput" type="password" placeholder="sk-..." autocomplete="off" />
-      <span>— saved to localStorage only</span>
+    <div class="feature-row">
+      <span class="feature-num">03</span>
+      <span class="feature-name">Bounded Memory</span>
+      <span class="feature-tag precedented">precedented</span>
+      <p class="feature-desc">Array and buffer sizes are part of the type, not a runtime check. If the compiler can't prove an operation stays in bounds, it rejects the program before anything runs.</p>
     </div>
 
-    <div class="demo-panels">
-      <div class="code-panel" data-lang="ek">
-        <div class="code-header">
-          <div style="display:flex;align-items:baseline">
-            <span class="code-lang">Ek</span>
-            <span class="code-desc">grammar-constrained</span>
-          </div>
-          <span class="code-status" id="statusEk">waiting</span>
-        </div>
-        <div class="code-body" id="bodyEk"><span class="placeholder">Ek code will appear here…</span></div>
-      </div>
-      <div class="code-panel" data-lang="c">
-        <div class="code-header">
-          <div style="display:flex;align-items:baseline">
-            <span class="code-lang">C</span>
-            <span class="code-desc">unconstrained</span>
-          </div>
-          <span class="code-status" id="statusC">waiting</span>
-        </div>
-        <div class="code-body" id="bodyC"><span class="placeholder">C code will appear here…</span></div>
-      </div>
+    <div class="feature-row">
+      <span class="feature-num">04</span>
+      <span class="feature-name">Effect System</span>
+      <span class="feature-tag proposed">proposed</span>
+      <p class="feature-desc">Every function declares the exhaustive set of ways it can fail, and the compiler forces every caller to handle every declared case. No silent errors, ever.</p>
     </div>
 
-    <div class="explanation">
-      <div class="explain-block" data-lang="ek">
-        <h3>Ek — grammar-constrained</h3>
-        <p>Ek has <strong>no construct for an unchecked write</strong>. Every buffer is declared with an explicit bounded size (<strong>⟦τ type, σ size⟧</strong>) and the grammar has no unbounded copy primitive. When the model is forced to stay within Ek's grammar, the unsafe pattern has no valid surface to land on.</p>
-      </div>
-      <div class="explain-block" data-lang="c">
-        <h3>C — unconstrained</h3>
-        <p>C's <strong>strcpy</strong> and similar functions perform no bounds checking. A fixed-size buffer like <strong>char buf[64]</strong> can be overwritten past its end if the input is longer. This is the root cause of vulnerabilities like <strong>Heartbleed</strong>. The model is free to write it because C allows it.</p>
-      </div>
-    </div>
-
-    <div class="disclaimer">
-      <strong>Disclaimer:</strong> Ek does not yet have a working compiler or parser. This demo shows that constraining an LLM's output to Ek's grammar changes what unsafe code the model produces — it does not yet show mathematically enforced safety, which requires a real parser and is a future milestone.
+    <div class="feature-row">
+      <span class="feature-num">05</span>
+      <span class="feature-name">Lens System</span>
+      <span class="feature-tag built">built</span>
+      <p class="feature-desc">One canonical AST with readable views generated from it. Dedicated symbols mean exactly one thing, always — reducing model ambiguity. See the lenses example below.</p>
     </div>
   </div>
   </section>
@@ -328,11 +275,12 @@
   <section id="splitview">
     <div class="lenses-header">
       <span class="lenses-title">Lenses</span>
-      <span class="lenses-sub">optimized for readability — because in the future you won't write code, you'll mostly read it. Ek has lenses, so you can read the same code in whichever lens you want</span>
+      <span class="lenses-sub">One program, three readable forms. Real is what agents write and the compiler sees. Dev and Normie are views generated from it — never written directly.</span>
+      <span class="lenses-hint">hover over a keyword to highlight it across all lenses</span>
     </div>
     <div class="panel-wrap">
       <div class="panel active" data-lens="real">
-        <div class="panel-label"><span><span class="label-name">Real Lens</span><span class="label-sub">(for AI)</span></span><button class="copy-btn" data-lens="real">⧉</button></div>
+        <div class="panel-label"><span><span class="label-name">Real Lens</span><span class="label-sub">(for AI)</span><span class="real-lens-note">models will be trained on this code, not written by humans</span></span><button class="copy-btn" data-lens="real">⧉</button></div>
         <div class="panel-toolbar"></div>
         <div class="panel-editor">
           <div class="hl-layer" data-lens="real"></div>
@@ -372,6 +320,333 @@
   <script>
     // ── Split view ───────────────────────────────────────────────────────────
     const textareas = document.querySelectorAll('textarea[data-lens]')
+
+    const SAMPLE = {
+      real: `※ utils;
+
+/* User record: stores a name and an age,
+   used across the file read and greeting logic below */
+⊞ User { 𝕊 name, ℤ age };
+
+⊎ Outcome { Success(𝕊), Failure(FileNotFound) };
+
+equals User(a, b) -> 𝔹 {
+    ↵ a.name = b.name;
+}
+
+:: greet(§ User u) -> 𝕊 {
+    § 𝕊 greeting <- ↯ join("Hello, ", u.name);
+    ↵ greeting;
+}
+
+:: readUserFile(§ User u, ⊙ FileReadCapability cap) -> 𝕊 {
+    ⚑ ↯ readFile(u.name, cap) {
+        success(contents) → ↵ contents;
+        failure(err) → ↵ "could not read file";
+    }
+}
+
+:: isAdult(§ User u) -> 𝔹 {
+    ? (u.age >= 18) : {
+        ↵ ⊤;
+    } ⋮ {
+        ↵ ⊥;
+    }
+}
+
+:: printVoid() -> ▢ {
+    ↯ logMessage("done");
+}
+
+:: firstAdultName(§ ⟦τ User, σ 5⟧ users) -> 𝕊 {
+    § ℤ i <- 0;
+
+    ⥁ (i < 5) {
+        ? (↯ isAdult(users @ i)) : {
+            ↵ (users @ i).name;
+        } ⋮ {
+            i <- i + 1;
+        }
+    }
+
+    ↵ "no adult found";
+}
+
+:: countVowels(§ 𝕊 word) -> ℤ {
+    § ℤ count <- 0;
+    § ℤ i <- 0;
+
+    ↻ i 0..10 {
+        ? ((word @ i) = 'a') : {
+            count <- count + 1;
+        } ⋮ {
+            count <- count;
+        }
+
+        ? (i = 9) : {
+            ⏹;
+        } ⋮ {
+            ▶;
+        }
+    }
+
+    ↵ count;
+}
+
+:: oldestUser(§ ⟦τ User, σ 3⟧ users) -> User {
+    § ℤ oldestIndex <- 0;
+    § ℤ i <- 0;
+
+    ↻ i 0..3 {
+        ? ((users @ i).age > (users @ oldestIndex).age) : {
+            oldestIndex <- i;
+        } ⋮ {
+            oldestIndex <- oldestIndex;
+        }
+    }
+
+    ↵ users @ oldestIndex;
+}
+
+:: main(⊙ FileReadCapability cap) -> ℤ {
+    § User sam <- ↳ User { name: "Sam", age: 25 };
+    § User alex <- ↳ User { name: "Alex", age: 31 };
+    § User priya <- ↳ User { name: "Priya", age: 42 };
+
+    § ⟦τ User, σ 3⟧ users <- [sam, alex, priya];
+    § ⟦τ ⟦τ ℤ, σ 3⟧, σ 3⟧ grid <- [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+
+    § ℂ initial <- 'S';
+    § ℤ hexValue <- 0x1F;
+    § ℝ bigNumber <- 1e10;
+
+    § 𝕊 greeting <- ↯ greet(sam);
+    § 𝔹 samIsAdult <- ↯ isAdult(sam);
+    § User oldest <- ↯ oldestUser(users);
+    § ℤ max <- ? (sam.age > alex.age) : { ↵ sam.age; } ⋮ { ↵ alex.age; };
+
+    ⋈ oldest.name {
+        "Priya" → ↵ 1;
+        _ → ↵ 0;
+    }
+}`,
+      dev: `import utils;
+
+/* User record: stores a name and an age,
+   used across the file read and greeting logic below */
+rec User { str name, int age };
+
+union Outcome { Success(str), Failure(FileNotFound) };
+
+equals User(a, b) -> bool {
+    ret a.name = b.name;
+}
+
+fn greet(var: User u) -> str {
+    var: str greeting <- call join("Hello, ", u.name);
+    ret greeting;
+}
+
+fn readUserFile(var: User u, cap: FileReadCapability cap) -> str {
+    verify call readFile(u.name, cap) {
+        success(contents) -> ret contents;
+        failure(err) -> ret "could not read file";
+    }
+}
+
+fn isAdult(var: User u) -> bool {
+    if (u.age >= 18) then {
+        ret true;
+    } else {
+        ret false;
+    }
+}
+
+fn printVoid() -> void {
+    call logMessage("done");
+}
+
+fn firstAdultName(var: arr[type: User, size: 5] users) -> str {
+    var: int i <- 0;
+
+    while (i < 5) {
+        if (call isAdult(users at i)) then {
+            ret (users at i).name;
+        } else {
+            i <- i + 1;
+        }
+    }
+
+    ret "no adult found";
+}
+
+fn countVowels(var: str word) -> int {
+    var: int count <- 0;
+    var: int i <- 0;
+
+    for i 0..10 {
+        if ((word at i) = 'a') then {
+            count <- count + 1;
+        } else {
+            count <- count;
+        }
+
+        if (i = 9) then {
+            break;
+        } else {
+            continue;
+        }
+    }
+
+    ret count;
+}
+
+fn oldestUser(var: arr[type: User, size: 3] users) -> User {
+    var: int oldestIndex <- 0;
+    var: int i <- 0;
+
+    for i 0..3 {
+        if ((users at i).age > (users at oldestIndex).age) then {
+            oldestIndex <- i;
+        } else {
+            oldestIndex <- oldestIndex;
+        }
+    }
+
+    ret users at oldestIndex;
+}
+
+fn main(cap: FileReadCapability cap) -> int {
+    var: User sam <- new User { name: "Sam", age: 25 };
+    var: User alex <- new User { name: "Alex", age: 31 };
+    var: User priya <- new User { name: "Priya", age: 42 };
+
+    var: arr[type: User, size: 3] users <- [sam, alex, priya];
+    var: arr[type: arr[type: int, size: 3], size: 3] grid <- [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+
+    var: char initial <- 'S';
+    var: int hexValue <- 0x1F;
+    var: float bigNumber <- 1e10;
+
+    var: str greeting <- call greet(sam);
+    var: bool samIsAdult <- call isAdult(sam);
+    var: User oldest <- call oldestUser(users);
+    var: int max <- if (sam.age > alex.age) then { ret sam.age; } else { ret alex.age; };
+
+    match oldest.name {
+        "Priya" -> ret 1;
+        _ -> ret 0;
+    }
+}`,
+      normie: `import utils;
+
+/* User record: stores a name and an age,
+   used across the file read and greeting logic below */
+record User { string name, integer age };
+
+either Outcome { Success(string), Failure(FileNotFound) };
+
+equals User(a, b) returnType boolean {
+    return a.name = b.name;
+}
+
+function greet(container: User u) returnType string {
+    container: string greeting <- runFunction join("Hello, ", u.name);
+    return greeting;
+}
+
+function readUserFile(container: User u, capability: FileReadCapability cap) returnType string {
+    verify runFunction readFile(u.name, cap) {
+        success(contents) means return contents;
+        failure(err) means return "could not read file";
+    }
+}
+
+function isAdult(container: User u) returnType boolean {
+    if (u.age >= 18) then {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function printVoid() returnType void {
+    runFunction logMessage("done");
+}
+
+function firstAdultName(container: list[type: User, size: 5] users) returnType string {
+    container: integer i <- 0;
+
+    whileLoop (i < 5) {
+        if (runFunction isAdult(users at i)) then {
+            return (users at i).name;
+        } else {
+            i <- i + 1;
+        }
+    }
+
+    return "no adult found";
+}
+
+function countVowels(container: string word) returnType integer {
+    container: integer count <- 0;
+    container: integer i <- 0;
+
+    loop i 0..10 {
+        if ((word at i) = 'a') then {
+            count <- count + 1;
+        } else {
+            count <- count;
+        }
+
+        if (i = 9) then {
+            break;
+        } else {
+            continue;
+        }
+    }
+
+    return count;
+}
+
+function oldestUser(container: list[type: User, size: 3] users) returnType User {
+    container: integer oldestIndex <- 0;
+    container: integer i <- 0;
+
+    loop i 0..3 {
+        if ((users at i).age > (users at oldestIndex).age) then {
+            oldestIndex <- i;
+        } else {
+            oldestIndex <- oldestIndex;
+        }
+    }
+
+    return users at oldestIndex;
+}
+
+function main(capability: FileReadCapability cap) returnType integer {
+    container: User sam <- new User { name: "Sam", age: 25 };
+    container: User alex <- new User { name: "Alex", age: 31 };
+    container: User priya <- new User { name: "Priya", age: 42 };
+
+    container: list[type: User, size: 3] users <- [sam, alex, priya];
+    container: list[type: list[type: integer, size: 3], size: 3] grid <- [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+
+    container: character initial <- 'S';
+    container: integer hexValue <- 0x1F;
+    container: float bigNumber <- 1e10;
+
+    container: string greeting <- runFunction greet(sam);
+    container: boolean samIsAdult <- runFunction isAdult(sam);
+    container: User oldest <- runFunction oldestUser(users);
+    container: integer max <- if (sam.age > alex.age) then { return sam.age; } else { return alex.age; };
+
+    check oldest.name {
+        "Priya" means return 1;
+        anything means return 0;
+    }
+}`
+    }
 
     let scrollPct = 0
 
@@ -500,7 +775,7 @@
       if (tok.dataset.sym)
         document.querySelectorAll(`.tok[data-sym="${tok.dataset.sym}"]`).forEach(el => el.classList.add('lit'))
       else if (tok.dataset.word)
-        tok.classList.add('lit')
+        document.querySelectorAll(`.tok[data-word="${tok.dataset.word}"]`).forEach(el => el.classList.add('lit'))
     })
 
     document.addEventListener('mousedown', e => {
@@ -513,6 +788,9 @@
       .then(r => { if (!r.ok) throw new Error('symbols.json ' + r.status); return r.json() })
       .then(symbols => {
         initTranslator(symbols)
+        document.querySelector('textarea[data-lens="real"]').value   = SAMPLE.real
+        document.querySelector('textarea[data-lens="dev"]').value    = SAMPLE.dev
+        document.querySelector('textarea[data-lens="normie"]').value = SAMPLE.normie
         renderAll()
         textareas.forEach(ta => {
           ta.addEventListener('input', () => {
@@ -538,94 +816,6 @@
       })
       .catch(err => console.error('symbols.json:', err.message))
 
-    // ── Demo ─────────────────────────────────────────────────────────────────
-    const EK_SYNTAX_REFERENCE = `
-[SYNTAX_TABLE_PLACEHOLDER — paste the Ek master symbol table here]
-`
-    const SYSTEM_C = `You are a C programmer. Write idiomatic C code for the following request. Output only the code, no explanation, no markdown fences.`
-    const SYSTEM_EK = `You are a programmer writing in Ek, a custom language with a strict grammar. Follow this grammar exactly and produce only valid Ek code. Output only the code, no explanation, no markdown fences.
-
-Ek grammar reference:
-${EK_SYNTAX_REFERENCE}`
-
-    const runBtn      = document.getElementById('runBtn')
-    const apiKeyInput = document.getElementById('apiKeyInput')
-    const bodyEk      = document.getElementById('bodyEk')
-    const bodyC       = document.getElementById('bodyC')
-    const statusEk    = document.getElementById('statusEk')
-    const statusC     = document.getElementById('statusC')
-
-    apiKeyInput.value = localStorage.getItem('ek_openai_key') || ''
-    apiKeyInput.addEventListener('change', () => localStorage.setItem('ek_openai_key', apiKeyInput.value.trim()))
-
-    runBtn.addEventListener('click', async () => {
-      const apiKey = apiKeyInput.value.trim()
-      if (!apiKey) { alert('Enter your OpenAI API key first.'); return }
-      localStorage.setItem('ek_openai_key', apiKey)
-      runBtn.disabled = true
-      resetPanel(bodyEk, statusEk)
-      resetPanel(bodyC, statusC)
-      await Promise.all([
-        streamCompletion(apiKey, SYSTEM_EK, bodyEk, statusEk),
-        streamCompletion(apiKey, SYSTEM_C,  bodyC,  statusC),
-      ])
-      runBtn.disabled = false
-    })
-
-    function resetPanel(body, status) {
-      body.textContent = ''
-      status.textContent = 'waiting'
-      status.className = 'code-status'
-    }
-
-    async function streamCompletion(apiKey, system, body, status) {
-      const prompt = document.getElementById('promptInput').value
-      status.textContent = 'streaming…'
-      status.className = 'code-status streaming'
-      const cursor = document.createElement('span')
-      cursor.className = 'stream-cursor'
-      body.appendChild(cursor)
-      try {
-        const res = await fetch('https://api.openai.com/v1/chat/completions', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-          body: JSON.stringify({
-            model: 'gpt-4.1-mini', stream: true,
-            messages: [{ role: 'system', content: system }, { role: 'user', content: prompt }],
-          }),
-        })
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({}))
-          throw new Error(err?.error?.message || `HTTP ${res.status}`)
-        }
-        const reader = res.body.getReader()
-        const dec    = new TextDecoder()
-        let buf = ''
-        while (true) {
-          const { done, value } = await reader.read()
-          if (done) break
-          buf += dec.decode(value, { stream: true })
-          const lines = buf.split('\n')
-          buf = lines.pop()
-          for (const line of lines) {
-            const t = line.trim()
-            if (!t || t === 'data: [DONE]' || !t.startsWith('data: ')) continue
-            try {
-              const delta = JSON.parse(t.slice(6)).choices?.[0]?.delta?.content
-              if (delta) { body.insertBefore(document.createTextNode(delta), cursor); body.scrollTop = body.scrollHeight }
-            } catch {}
-          }
-        }
-        cursor.remove()
-        status.textContent = 'done'
-        status.className = 'code-status done'
-      } catch (err) {
-        cursor.remove()
-        status.textContent = 'error'
-        status.className = 'code-status error'
-        body.textContent = `Error: ${err.message}`
-      }
-    }
   </script>
 </body>
 </html>

@@ -259,21 +259,19 @@
       <a href="#bounded" class="h3">3.6 Bounded Memory</a>
       <a href="#escape" class="h3">3.7 No Escape Hatches</a>
       <a href="#effects" class="h3">3.8 Effect System</a>
-      <a href="#formal" class="h3">3.9 Formal Verifiability</a>
-      <a href="#speed" class="h3">3.10 Speed</a>
-      <a href="#i18n" class="h3">3.11 Internationalization</a>
-      <a href="#lenses" class="h3">3.12 Lens System</a>
-      <a href="#comparison" class="h3">3.13 Comparison</a>
-      <a href="#omissions" class="h3">3.14 Omissions</a>
-      <a href="#resolved" class="h3">3.15 Resolved Decisions</a>
-      <a href="#open" class="h3">3.16 Open Questions</a>
+      <a href="#speed" class="h3">3.9 Speed</a>
+      <a href="#i18n" class="h3">3.10 Internationalization</a>
+      <a href="#lenses" class="h3">3.11 Lens System</a>
+      <a href="#comparison" class="h3">3.12 Comparison</a>
+      <a href="#omissions" class="h3">3.13 Omissions</a>
+      <a href="#resolved" class="h3">3.14 Resolved Decisions</a>
+      <a href="#open" class="h3">3.15 Open Questions</a>
       <a href="#tcb">4. Trusted Computing Base</a>
       <a href="#fullstack">5. Full Stack Coverage</a>
       <a href="#compilation">6. Compilation</a>
       <a href="#whatisnot">7. What Ek Is Not</a>
       <a href="#evergreen">8. Evergreen Compilation</a>
-      <a href="#living">9. Living Codebase</a>
-      <a href="#origin">10. Origin</a>
+      <a href="#origin">9. Origin</a>
     </aside>
 
     <!-- ── Content ── -->
@@ -307,7 +305,7 @@
       <div class="callout">
         <p><strong>The Thesis:</strong> If you need to dig a tunnel and you have infinite spoons and infinite time, you can build a better tunnel than anyone with a shovel or a machine. Agents are the infinite spoons. Tokens are infinite. The old constraints are dead.</p>
       </div>
-      <p>This is not a language for humans to write. It is a language for agents to use as their primary instrument for real work — from kernel modules to browser UIs — with safety guarantees that are mathematically impossible to violate.</p>
+      <p>This is not a language for humans to write. It is a language for agents to use as their primary instrument for real work — from kernel modules to browser UIs — with safety guarantees that are structurally impossible to violate.</p>
 
       <hr />
 
@@ -319,7 +317,7 @@
       <ul>
         <li><strong>Rust</strong> introduced a borrow checker — but kept an <code>unsafe</code> keyword that developers use to opt out of safety</li>
         <li><strong>Austral</strong> introduced linear types and capability security — but remains academic and human-authored</li>
-        <li><strong>Vercel Zero</strong> launched in May 2026 as an agent-first language — but targets only the systems layer, has no internationalization, and no formal verifiability</li>
+        <li><strong>Vercel Zero</strong> launched in May 2026 as an agent-first language — but targets only the systems layer and has no internationalization</li>
       </ul>
       <p>None of them started from the right assumption: that the programmer is not a human.</p>
 
@@ -350,7 +348,6 @@
             <tr><td>Bounded Memory</td><td>Every allocation has a declared maximum size, proven at compile time</td><td>Buffer overflows, unbounded allocation attacks</td></tr>
             <tr><td>No Unsafe Keyword</td><td>Zero escape hatches, ever</td><td>The entire category of unsafe opt-outs</td></tr>
             <tr><td>Effect System</td><td>Every failure mode enumerated and proven at compile time</td><td>Silent failures, unhandled errors, runtime surprises</td></tr>
-            <tr><td>Formal Verifiability</td><td>Compiler produces a mathematical proof alongside every binary</td><td>Entire classes of logic errors</td></tr>
             <tr><td>Strict Typing</td><td>No implicit casts, ever</td><td>Type confusion vulnerabilities</td></tr>
             <tr><td>Explicit Error Handling</td><td>Every error must be handled, compiler enforces this</td><td>Silent failures and unexpected crashes</td></tr>
           </tbody>
@@ -456,13 +453,7 @@ strcpy(buffer, user_input); <span class="cm">// what if user_input is 10,000 byt
         <p>What Ek proves: <strong>no matter what happens at runtime, every possible outcome has been handled in the code.</strong> The file might not be there. But you already handled that case because the compiler made you. Runtime surprises are impossible — not because the world is predictable, but because every possible outcome is accounted for.</p>
       </div>
 
-      <h3 id="formal"><span class="sec-num">3.9</span> Formal Verifiability <span class="experimental">experimental</span></h3>
-      <p>Normal testing says: "I ran the code 1000 times and it worked."</p>
-      <p>Formal verification says: "I can mathematically prove this code is correct for all possible inputs, forever."</p>
-      <p>The Ek compiler produces a formal proof alongside every binary. Before a single line of agent-generated code runs, the agent can verify the proof. Not test it. Prove it.</p>
-      <p>The proof covers not just "does this logic compute the right answer" but "can this program access anything it should not, overflow any buffer, or encounter any unhandled failure mode." The answer to all three is mathematically proven to be no.</p>
-
-      <h3 id="speed"><span class="sec-num">3.10</span> Speed</h3>
+      <h3 id="speed"><span class="sec-num">3.9</span> Speed</h3>
       <p>All of these safety features — do they make Ek slow? No. And the reason is specific and important.</p>
       <p><strong>Every safety feature in Ek is enforced at compile time, not at runtime.</strong></p>
       <p>The compiler does the work. The binary does not. By the time a <code>.ek</code> file becomes a running program, every safety check has already happened and been proven. The binary contains none of that checking machinery — it just runs.</p>
@@ -473,11 +464,11 @@ strcpy(buffer, user_input); <span class="cm">// what if user_input is 10,000 byt
       </ul>
       <p>Ek has none of this at runtime. Linear types manage memory at compile time through math — no garbage collector, no pauses, no hidden overhead. Ek binaries are comparable in speed to C and Rust. All of the safety. None of the runtime cost.</p>
 
-      <h3 id="i18n"><span class="sec-num">3.11</span> Internationalized Syntax</h3>
+      <h3 id="i18n"><span class="sec-num">3.10</span> Internationalized Syntax</h3>
       <p>Ek keywords are not locked to English. The syntax is designed to be language-neutral in structure — readable and writable regardless of what human language the author thinks in. Keywords can be expressed in any language. The grammar does not assume left-to-right or subject-verb-object thinking.</p>
       <p>Ek is the first systems language to treat internationalization as a first-class design requirement, not an afterthought. A developer in Lahore, Lagos, or Tokyo should be able to read Ek code without thinking in English first.</p>
 
-      <h3 id="lenses"><span class="sec-num">3.12</span> The Lens System <span class="experimental">experimental</span></h3>
+      <h3 id="lenses"><span class="sec-num">3.11</span> The Lens System <span class="experimental">experimental</span></h3>
       <p>Ek has one truth and multiple readable forms.</p>
 
       <h4>Real Code</h4>
@@ -504,7 +495,7 @@ strcpy(buffer, user_input); <span class="cm">// what if user_input is 10,000 byt
       <pre><div class="pre-bar"><span class="pre-dot"></span><span class="pre-dot"></span><span class="pre-dot"></span></div><div class="pre-inner"><code>@lens: dev</code></div></pre>
       <p>This resolves ambiguity at the file level. Some snippets are genuinely indistinguishable between Dev and Normie — a bare conditional like <code>if (x > 0) then {} else {}</code> is identical token-for-token in both lenses. This is an accepted tradeoff: closeness between the lenses is what makes them easy to learn side by side.</p>
 
-      <h3 id="comparison"><span class="sec-num">3.13</span> Comparison to Existing Languages</h3>
+      <h3 id="comparison"><span class="sec-num">3.12</span> Comparison to Existing Languages</h3>
       <div class="table-wrap">
         <table>
           <thead>
@@ -519,7 +510,6 @@ strcpy(buffer, user_input); <span class="cm">// what if user_input is 10,000 byt
             <tr><td>Capability tokens</td><td class="no">❌</td><td class="no">❌</td><td class="no">❌</td><td class="yes">✅</td><td class="partial">Partial</td><td class="yes">✅ full</td></tr>
             <tr><td>Bounded memory (compile-time proven)</td><td class="no">❌</td><td class="partial">Runtime only</td><td class="yes">✅ SPARK only</td><td class="partial">Partial</td><td class="no">❌</td><td class="yes">✅ full</td></tr>
             <tr><td>Effect system (compile-time)</td><td class="no">❌</td><td class="no">❌</td><td class="no">❌</td><td class="no">❌</td><td class="no">❌</td><td class="yes">✅</td></tr>
-            <tr><td>Formal verifiability</td><td class="no">❌</td><td class="no">❌</td><td class="yes">✅ SPARK only</td><td class="partial">Partial</td><td class="no">❌</td><td class="yes">✅</td></tr>
             <tr><td>Full stack coverage</td><td class="partial">Partial</td><td class="partial">Partial</td><td class="no">❌</td><td class="no">❌</td><td class="no">❌</td><td class="yes">✅</td></tr>
             <tr><td>Internationalized syntax</td><td class="no">❌</td><td class="no">❌</td><td class="no">❌</td><td class="no">❌</td><td class="no">❌</td><td class="yes">✅</td></tr>
             <tr><td>Agent-first design</td><td class="no">❌</td><td class="no">❌</td><td class="no">❌</td><td class="no">❌</td><td class="partial">Partial</td><td class="yes">✅</td></tr>
@@ -529,11 +519,11 @@ strcpy(buffer, user_input); <span class="cm">// what if user_input is 10,000 byt
           </tbody>
         </table>
       </div>
-      <blockquote><p><strong>Against Vercel Zero:</strong> Zero is safe at the bottom of the stack. Ek is safe everywhere. Zero is English-only. Ek is internationalized. Zero has no formal verifiability. Ek proves correctness mathematically. Zero validated the market timing. Ek is the complete answer.</p></blockquote>
+      <blockquote><p><strong>Against Vercel Zero:</strong> Zero is safe at the bottom of the stack. Ek is safe everywhere. Zero is English-only. Ek is internationalized. Zero validated the market timing. Ek is building the complete answer.</p></blockquote>
       <blockquote><p><strong>Against Austral:</strong> Austral requires error handling. Ek proves at compile time every failure mode that can reach a function — and eliminates failure modes that cannot occur. Austral knows at runtime. Ek knows at compile time.</p></blockquote>
-      <blockquote><p><strong>Against Ada/SPARK:</strong> SPARK proved that bounded memory and formal verification work in production — jet engines and medical devices run on it. Ek takes that proven foundation and adds capability tokens, an effect system, agent-first design, full-stack coverage, and internationalized syntax. SPARK is the proof the ideas work. Ek is the complete version of those ideas.</p></blockquote>
+      <blockquote><p><strong>Against Ada/SPARK:</strong> SPARK proved that bounded memory works in production — jet engines and medical devices run on it. Ek takes that proven foundation and aspires to add capability tokens, an effect system, agent-first design, full-stack coverage, and internationalized syntax. SPARK is the proof the ideas work. Ek aims to be the complete version of those ideas.</p></blockquote>
 
-      <h3 id="omissions"><span class="sec-num">3.14</span> Deliberate Omissions</h3>
+      <h3 id="omissions"><span class="sec-num">3.13</span> Deliberate Omissions</h3>
       <p>Every feature below exists in at least one mainstream language. Ek omits all of them — not because they are hard to implement, but because they exist for a reason that no longer applies: human programmers got tired of typing things, so languages built shortcuts. Agents do not get tired.</p>
 
       <h4>No Pointers</h4>
@@ -548,7 +538,7 @@ strcpy(buffer, user_input); <span class="cm">// what if user_input is 10,000 byt
       <p>If the conversion can fail or lose information — converting a float to an integer can lose precision or overflow — the function returns a plain two-variant union that the caller handles with <code>verify</code>. If the conversion is always safe — converting an integer to a float — the function returns the value directly. Agents need no new grammar to convert between types. Type conversion is not a language feature. It is a library feature, expressed entirely through the function and effect system that already exists.</p>
 
       <h4>No Preprocessor, No Macros</h4>
-      <p>Ek has no preprocessor and no macro system of any kind. No <code>#define</code>. No <code>macro_rules!</code>. No text substitution step before compilation. No code that generates other code before the type checker, capability verifier, or effect system ever sees it. Macros break Ek's core promise — a macro means the code you read is not the code that runs, the opposite of formal verifiability. This is not the same as the Lens notation system: Lens does not generate new code or new logic, it renders the exact same program in a different visual representation, the way the same number can be written in decimal or binary. A macro produces a different program. Ek allows the former and forbids the latter.</p>
+      <p>Ek has no preprocessor and no macro system of any kind. No <code>#define</code>. No <code>macro_rules!</code>. No text substitution step before compilation. No code that generates other code before the type checker, capability verifier, or effect system ever sees it. Macros break Ek's core promise — a macro means the code you read is not the code that runs. This is not the same as the Lens notation system: Lens does not generate new code or new logic, it renders the exact same program in a different visual representation, the way the same number can be written in decimal or binary. A macro produces a different program. Ek allows the former and forbids the latter.</p>
 
       <h4>No Multiple Return Values</h4>
       <p>Ek has no syntax for returning multiple values from a function — no tuple type, no comma-separated return. A function that needs to return more than one piece of information returns a record, which carries it explicitly and by name:</p>
@@ -560,12 +550,12 @@ strcpy(buffer, user_input); <span class="cm">// what if user_input is 10,000 byt
       <p>This needs no new grammar, no new primitive, and no special case. One function, one return value, always — and when that value needs to carry multiple pieces of data, a record carries it clearly by name rather than an unnamed tuple position like <code>result.0</code> or <code>result.1</code>.</p>
 
       <h4>No Generics</h4>
-      <p>Ek has no generic types and no type parameters. There is no <code>&lt;T&gt;</code>, no <code>[T]</code>, no placeholder-type syntax of any kind. Every function signature names concrete, specific types. Agents have infinite tokens — writing <code>maxInt</code>, <code>maxFloat</code>, and <code>maxString</code> as three separate, fully explicit, separately provable functions costs an agent nothing. The standard library ships fully-typed, formally verified functions for every common type and common operation — written and proven once by whoever maintains the standard library. Generics also add real complexity to the type system, the effect system, and the formal verifier — every generic feature is more surface area where soundness can break. Ek trades a small amount of stdlib-level duplication for a simpler, more reliably verifiable type system everywhere else.</p>
+      <p>Ek has no generic types and no type parameters. There is no <code>&lt;T&gt;</code>, no <code>[T]</code>, no placeholder-type syntax of any kind. Every function signature names concrete, specific types. Agents have infinite tokens — writing <code>maxInt</code>, <code>maxFloat</code>, and <code>maxString</code> as three separate, fully explicit functions costs an agent nothing. The standard library ships fully-typed functions for every common type and common operation — written once by whoever maintains the standard library. Generics also add real complexity to the type system and the effect system — every generic feature is more surface area where soundness can break. Ek trades a small amount of stdlib-level duplication for a simpler, more reliably checkable type system everywhere else.</p>
 
       <h4>Excluded Features</h4>
       <p>Ek has no operator overloading, no default or optional parameters, no variadic functions, no global mutable state, no inheritance or polymorphism, and no exceptions or try/catch — the plain two-variant <code>Success</code>/<code>Failure</code> union, handled via the <code>verify</code> construct, and the effect system replace all error handling, and every value, behavior, and signature is explicit and unambiguous by construction.</p>
 
-      <h3 id="resolved"><span class="sec-num">3.15</span> Further Resolved Decisions</h3>
+      <h3 id="resolved"><span class="sec-num">3.14</span> Further Resolved Decisions</h3>
       <ul>
         <li><strong>No separate mutability concept.</strong> Ek has no <code>mut</code>, no <code>const</code>, no distinction between a mutable and an immutable variable. Linear types already mean every value is used exactly once and never reassigned — there is no "change this value later" operation in the grammar to begin with. This makes the question moot rather than answered by a rule: every Ek variable is, by construction, stricter than even Rust's default-immutable binding, since Rust's immutable bindings can still be read many times, while Ek's linear values are consumed exactly once.</li>
         <li><strong>Void, not a unit type.</strong> A function that returns nothing uses <code>void</code> — a deliberate, familiar exception to Ek's "no special cases" rule, rather than Rust's approach of treating "nothing" as an ordinary, real type with exactly one value. The two approaches produce identical runtime performance; this was a familiarity-over-consistency tradeoff, made explicitly rather than by default, since <code>void</code> is the term developers coming from C-family languages already expect.</li>
@@ -575,7 +565,7 @@ strcpy(buffer, user_input); <span class="cm">// what if user_input is 10,000 byt
         <li><strong>Short-circuit logical evaluation.</strong> Ek's <code>&amp;</code> and <code>|</code> short-circuit, matching C and Rust: the right-hand side of <code>&amp;</code> is never evaluated if the left-hand side is already false, and likewise for <code>|</code> when the left-hand side is already true. This is a deliberate concession to universal convention over Ek's stricter "no implicit behavior" instinct — short-circuiting is itself a form of implicit, hidden control flow — and is flagged as revisitable later if the tension ever causes a real design conflict.</li>
       </ul>
 
-      <h3 id="open"><span class="sec-num">3.16</span> Open Research Questions</h3>
+      <h3 id="open"><span class="sec-num">3.15</span> Open Research Questions</h3>
       <p><strong>Capturing closures.</strong> A named, top-level, capability-free function can already be passed as a value — no new syntax needed. What remains unresolved is a closure that <em>captures</em> a variable from its enclosing scope: it is not yet clear whether a captured linear value or capability token should be considered consumed when the closure is created, or each time the closure is called. Deferred pending further design work, not excluded by decision.</p>
 
       <hr />
@@ -584,12 +574,12 @@ strcpy(buffer, user_input); <span class="cm">// what if user_input is 10,000 byt
       <p>Every computer starts in Assembly. At the very bottom of every Ek deployment is a <strong>Trusted Computing Base</strong> — a minimal layer written once in C or Assembly that handles the bare metal boot sequence, first syscall primitives, and hardware access. Everything above it is pure Ek.</p>
       <ul>
         <li>Target size: under 500 lines of C or Assembly</li>
-        <li>Written once, formally audited by external security researchers, never touched again</li>
+        <li>Written once, audited by external security researchers, never touched again</li>
         <li>Published in full — the surface area of trust is completely visible</li>
         <li>Smaller than any operating system, runtime, or language foundation in existence</li>
       </ul>
       <div class="callout">
-        <p>Ek's trusted computing base is the smallest in existence. Everything above it is formally proven safe. There is nowhere to hide a vulnerability.</p>
+        <p>Ek's trusted computing base is the smallest in existence. Everything above it is checked for safety at compile time. There is nowhere to hide a vulnerability.</p>
       </div>
       <p>The first Ek compiler is written in Rust. Once Ek exists and runs, the compiler is rewritten in Ek itself — the self-hosting milestone. The original Rust compiler is retired. The TCB remains, but everything above it — including the compiler — is Ek.</p>
 
@@ -622,15 +612,12 @@ strcpy(buffer, user_input); <span class="cm">// what if user_input is 10,000 byt
         source.ek<br>
         <span class="arrow">     ↓</span><br>
         Ek Compiler<br>
-        <span class="note">(type checker + capability verifier + bounds checker + effect system + formal verifier)</span><br>
-        <span class="arrow">     ↓</span><br>
-        Formal proof of correctness<br>
-        <span class="note">(covers memory safety, capability bounds, effect completeness, logic correctness)</span><br>
+        <span class="note">(type checker + capability verifier + bounds checker + effect system)</span><br>
         <span class="arrow">     ↓</span><br>
         LLVM IR<br>
         <span class="arrow">     ↓</span><br>
         Native binary — any platform: x86, ARM, RISC-V, WASM<br>
-        <span class="note">(no runtime safety overhead — all checks already proven at compile time)</span>
+        <span class="note">(no runtime safety overhead — all checks enforced at compile time)</span>
       </div>
       <p><strong>Why LLVM:</strong> Compiling to C means inheriting C's undefined behavior. Compiling to Assembly means writing a separate backend for every CPU architecture. Compiling to LLVM means one compiler, every platform, all of LLVM's decades of optimizations, and none of C's problems.</p>
 
@@ -665,35 +652,7 @@ strcpy(buffer, user_input); <span class="cm">// what if user_input is 10,000 byt
 
       <hr />
 
-      <h2 id="living"><span class="sec-num">9.</span>Living Codebase</h2>
-      <p>This is the feature that has no equivalent anywhere in software.</p>
-      <p>In every other language, when a new version releases with better libraries, safer primitives, or improved patterns — someone has to manually migrate the codebase. Most production codebases are stuck on old versions forever.</p>
-      <p>Because every Ek program has a <strong>formal proof of what it does</strong> — not just what it says — an agent can:</p>
-      <ol>
-        <li>Read the formal proof of existing code</li>
-        <li>Rewrite the implementation using new Ek features and better libraries</li>
-        <li>Formally verify the new version has exactly the same guarantees as the old version</li>
-        <li>Ship it</li>
-      </ol>
-      <div class="chain">
-        Ek v1 — parser.ek written by agent<br>
-        Formal proof: reads file, counts words, never crashes, bounded 64kb,<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;can fail: FileNotFound, Corrupted<br>
-        <span class="arrow">     ↓</span><br>
-        Ek v2 releases — better string library, improved bounds primitives, faster I/O<br>
-        <span class="arrow">     ↓</span><br>
-        Agent reads formal proof of parser.ek<br>
-        Agent rewrites parser.ek using Ek v2 features<br>
-        Formal verifier proves new version === old proof<br>
-        <span class="arrow">     ↓</span><br>
-        parser.ek is now on Ek v2.<br>
-        Faster. Safer. Better. Zero human involvement. Zero risk of regression.
-      </div>
-      <p>A company with 10 million lines of Ek code never has a legacy codebase. Every time Ek improves, every line of code improves. Automatically. Overnight. For free.</p>
-
-      <hr />
-
-      <h2 id="origin"><span class="sec-num">10.</span>Origin</h2>
+      <h2 id="origin"><span class="sec-num">9.</span>Origin</h2>
       <p>Ek was conceived in Graz, Austria by Faisal Ahmad who isxs from Lahore, Pakistan. The name comes from the Punjabi word meaning "one." The strictest language ever designed. One way. One standard. From the kernel to the browser.</p>
 
       <hr />
@@ -703,7 +662,10 @@ strcpy(buffer, user_input); <span class="cm">// what if user_input is 10,000 byt
   </div>
 
   <footer>
-    <span>ek v0.1</span>
+    <div style="display:flex; gap:16px; align-items:center;">
+      <span>ek v0.1</span>
+      <span>© 2026 Faisal Ahmad</span>
+    </div>
     <span>experimental — symbols subject to change</span>
   </footer>
 

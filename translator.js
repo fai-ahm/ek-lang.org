@@ -1,4 +1,4 @@
-const LENSES = ['real', 'dev', 'normie']
+const LENSES = ['real', 'dev', 'normie', 'chinese', 'hindi', 'german']
 
 let TO_REAL = {}
 let FROM_REAL = {}
@@ -42,6 +42,15 @@ function tokenize(code, lens) {
     if (code[i] === '/' && code[i + 1] === '/') {
       let comment = ''
       while (i < code.length && code[i] !== '\n') comment += code[i++]
+      tokens.push({ type: 'comment', value: comment })
+      continue
+    }
+
+    if (code[i] === '/' && code[i + 1] === '*') {
+      let comment = '/*'
+      i += 2
+      while (i < code.length && !(code[i] === '*' && code[i + 1] === '/')) comment += code[i++]
+      if (i < code.length) { comment += '*/'; i += 2 }
       tokens.push({ type: 'comment', value: comment })
       continue
     }

@@ -21,6 +21,9 @@
       --real:     #7c6fcd;
       --dev:      #2a9d6f;
       --normie:   #c07a2a;
+      --chinese:  #b5484d;
+      --hindi:    #6f8f3f;
+      --german:   #4a6fa5;
       --accent:   #e8632a;
       --c-color:  #c0404a;
       --ek-color: #7c6fcd;
@@ -72,6 +75,12 @@
     .hero-tagline {
       font-size: 28px; font-weight: 700; color: var(--text);
       letter-spacing: -0.6px; line-height: 1.3; max-width: 600px;
+    }
+    .hero-features { display: flex; flex-wrap: nowrap; gap: 8px; margin-top: 26px; }
+    .hero-feature {
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; white-space: nowrap;
+      color: var(--text); background: #fff; border: 1px solid var(--border);
+      padding: 8px 14px; border-radius: 20px; letter-spacing: 0.01em;
     }
 
     /* ── Features section ── */
@@ -129,12 +138,18 @@
       letter-spacing: 0.01em; margin-left: 10px; font-style: italic;
     }
 
-    .panel-wrap { flex: 1; display: flex; flex-direction: row; overflow: hidden; min-height: 720px; }
+    .panel-wrap { flex: 1; display: flex; flex-direction: row; overflow: hidden; min-height: 880px; }
+
+    .panel-rows { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+    .panel-row { flex: 1; display: flex; flex-direction: row; overflow: hidden; min-height: 0; }
 
     .panel { display: flex; flex: 1; flex-direction: column; min-width: 0; overflow: hidden; }
-    .panel[data-lens="real"]   { border-top: 2px solid var(--real); }
-    .panel[data-lens="dev"]    { border-top: 2px solid var(--dev); }
-    .panel[data-lens="normie"] { border-top: 2px solid var(--normie); }
+    .panel[data-lens="real"]    { border-top: 2px solid var(--real); }
+    .panel[data-lens="dev"]     { border-top: 2px solid var(--dev); }
+    .panel[data-lens="normie"]  { border-top: 2px solid var(--normie); }
+    .panel[data-lens="chinese"] { border-top: 2px solid var(--chinese); }
+    .panel[data-lens="hindi"]   { border-top: 2px solid var(--hindi); }
+    .panel[data-lens="german"]  { border-top: 2px solid var(--german); }
 
     .resize-handle {
       flex-shrink: 0; width: 4px; cursor: col-resize;
@@ -152,9 +167,12 @@
     .panel-label .label-sub {
       font-weight: 400; letter-spacing: 0.02em; opacity: 0.6; text-transform: none; margin-left: 4px;
     }
-    .panel[data-lens="real"]   .panel-label { color: var(--real);   background: rgba(124,111,205,0.04); }
-    .panel[data-lens="dev"]    .panel-label { color: var(--dev);    background: rgba(42,157,111,0.04); }
-    .panel[data-lens="normie"] .panel-label { color: var(--normie); background: rgba(192,122,42,0.04); }
+    .panel[data-lens="real"]    .panel-label { color: var(--real);    background: rgba(124,111,205,0.04); }
+    .panel[data-lens="dev"]     .panel-label { color: var(--dev);     background: rgba(42,157,111,0.04); }
+    .panel[data-lens="normie"]  .panel-label { color: var(--normie);  background: rgba(192,122,42,0.04); }
+    .panel[data-lens="chinese"] .panel-label { color: var(--chinese); background: rgba(181,72,77,0.04); }
+    .panel[data-lens="hindi"]   .panel-label { color: var(--hindi);   background: rgba(111,143,63,0.04); }
+    .panel[data-lens="german"]  .panel-label { color: var(--german);  background: rgba(74,111,165,0.04); }
 
     .panel-toolbar { display: none; }
 
@@ -164,9 +182,12 @@
       padding: 4px 8px; cursor: pointer;
       transition: color 0.15s, border-color 0.15s, background 0.15s; flex-shrink: 0;
     }
-    .panel[data-lens="real"]   .copy-btn:hover { color: var(--real);   border-color: var(--real);   background: rgba(124,111,205,0.06); }
-    .panel[data-lens="dev"]    .copy-btn:hover { color: var(--dev);    border-color: var(--dev);    background: rgba(42,157,111,0.06); }
-    .panel[data-lens="normie"] .copy-btn:hover { color: var(--normie); border-color: var(--normie); background: rgba(192,122,42,0.06); }
+    .panel[data-lens="real"]    .copy-btn:hover { color: var(--real);    border-color: var(--real);    background: rgba(124,111,205,0.06); }
+    .panel[data-lens="dev"]     .copy-btn:hover { color: var(--dev);     border-color: var(--dev);     background: rgba(42,157,111,0.06); }
+    .panel[data-lens="normie"]  .copy-btn:hover { color: var(--normie);  border-color: var(--normie);  background: rgba(192,122,42,0.06); }
+    .panel[data-lens="chinese"] .copy-btn:hover { color: var(--chinese); border-color: var(--chinese); background: rgba(181,72,77,0.06); }
+    .panel[data-lens="hindi"]   .copy-btn:hover { color: var(--hindi);   border-color: var(--hindi);   background: rgba(111,143,63,0.06); }
+    .panel[data-lens="german"]  .copy-btn:hover { color: var(--german);  border-color: var(--german);  background: rgba(74,111,165,0.06); }
     .copy-btn.copied { color: var(--dev); border-color: var(--dev); }
 
     .panel-editor { position: relative; flex: 1; overflow: hidden; background: var(--bg); }
@@ -227,7 +248,87 @@
   <section id="hero">
   <div class="hero-inner">
     <div class="hero-tagline">A Programming Language for the Age of AI Authorship</div>
+    <div class="hero-features">
+      <span class="hero-feature">Linear Types</span>
+      <span class="hero-feature">Capability Tokens</span>
+      <span class="hero-feature">Bounded Memory</span>
+      <span class="hero-feature">Effect System</span>
+      <span class="hero-feature">Lens System</span>
+      <span class="hero-feature">Reduced Testing</span>
+    </div>
   </div>
+  </section>
+
+  <!-- ── Split view ── -->
+  <section id="splitview">
+    <div class="lenses-header">
+      <span class="lenses-title">Lenses</span>
+      <span class="lenses-sub">One program, many readable forms. Real is what agents write and the compiler sees. Every other lens — Dev, Normie, Chinese, Hindi, German — is a view generated from it, never written directly.</span>
+      <span class="lenses-hint">hover over a keyword to highlight it across all lenses</span>
+    </div>
+    <div class="panel-wrap">
+      <div class="panel-rows">
+        <div class="panel-row">
+          <div class="panel active" data-lens="real">
+            <div class="panel-label"><span><span class="label-name">Real Lens</span><span class="label-sub">(for AI)</span><span class="real-lens-note">models will be trained on this code, not written by humans</span></span><button class="copy-btn" data-lens="real">⧉</button></div>
+            <div class="panel-toolbar"></div>
+            <div class="panel-editor">
+              <div class="hl-layer" data-lens="real"></div>
+              <textarea data-lens="real" placeholder="add hint code" spellcheck="false" readonly></textarea>
+            </div>
+          </div>
+          <div class="resize-handle" data-between="real-dev"></div>
+          <div class="panel" data-lens="dev">
+            <div class="panel-label"><span><span class="label-name">Dev Lens</span><span class="label-sub">(for engineers)</span></span><button class="copy-btn" data-lens="dev">⧉</button></div>
+            <div class="panel-toolbar"></div>
+            <div class="panel-editor">
+              <div class="hl-layer" data-lens="dev"></div>
+              <textarea data-lens="dev" placeholder="add hint code" spellcheck="false"></textarea>
+            </div>
+          </div>
+          <div class="resize-handle" data-between="dev-chinese"></div>
+          <div class="panel" data-lens="chinese">
+            <div class="panel-label"><span><span class="label-name">Chinese Lens</span><span class="label-sub">(中文)</span></span><button class="copy-btn" data-lens="chinese">⧉</button></div>
+            <div class="panel-toolbar"></div>
+            <div class="panel-editor">
+              <div class="hl-layer" data-lens="chinese"></div>
+              <textarea data-lens="chinese" placeholder="add hint code" spellcheck="false"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="panel-row">
+          <div class="panel" data-lens="normie">
+            <div class="panel-label"><span><span class="label-name">Normie Lens</span><span class="label-sub">(for humans)</span></span><button class="copy-btn" data-lens="normie">⧉</button></div>
+            <div class="panel-toolbar"></div>
+            <div class="panel-editor">
+              <div class="hl-layer" data-lens="normie"></div>
+              <textarea data-lens="normie" placeholder="add hint code" spellcheck="false"></textarea>
+            </div>
+          </div>
+          <div class="resize-handle" data-between="normie-hindi"></div>
+          <div class="panel" data-lens="hindi">
+            <div class="panel-label"><span><span class="label-name">Hindi Lens</span><span class="label-sub">(हिन्दी)</span></span><button class="copy-btn" data-lens="hindi">⧉</button></div>
+            <div class="panel-toolbar"></div>
+            <div class="panel-editor">
+              <div class="hl-layer" data-lens="hindi"></div>
+              <textarea data-lens="hindi" placeholder="add hint code" spellcheck="false"></textarea>
+            </div>
+          </div>
+          <div class="resize-handle" data-between="hindi-german"></div>
+          <div class="panel" data-lens="german">
+            <div class="panel-label"><span><span class="label-name">German Lens</span><span class="label-sub">(Deutsch)</span></span><button class="copy-btn" data-lens="german">⧉</button></div>
+            <div class="panel-toolbar"></div>
+            <div class="panel-editor">
+              <div class="hl-layer" data-lens="german"></div>
+              <textarea data-lens="german" placeholder="add hint code" spellcheck="false"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="shared-scrollbar" id="sharedScrollbar">
+        <div class="shared-scroll-thumb" id="sharedThumb"></div>
+      </div>
+    </div>
   </section>
 
   <!-- ── Features ── -->
@@ -266,53 +367,23 @@
       <span class="feature-num">05</span>
       <span class="feature-name">Lens System</span>
       <span class="feature-tag built">built</span>
-      <p class="feature-desc">One canonical AST with readable views generated from it. Dedicated symbols mean exactly one thing, always — reducing model ambiguity. See the lenses example below.</p>
+      <p class="feature-desc">One canonical AST with readable views generated from it. Dedicated symbols mean exactly one thing, always — reducing model ambiguity. See the lenses example above.</p>
+    </div>
+
+    <div class="feature-row">
+      <span class="feature-num">06</span>
+      <span class="feature-name">Reduced Testing</span>
+      <span class="feature-tag proposed">proposed</span>
+      <p class="feature-desc">Because linear types, bounded memory, and exhaustive effect handling are proven at compile time, whole categories of tests — leaks, out-of-bounds access, unhandled errors — become unnecessary. The compiler settles what a test suite would otherwise have to chase.</p>
     </div>
   </div>
   </section>
 
-  <!-- ── Split view ── -->
-  <section id="splitview">
-    <div class="lenses-header">
-      <span class="lenses-title">Lenses</span>
-      <span class="lenses-sub">One program, three readable forms. Real is what agents write and the compiler sees. Dev and Normie are views generated from it — never written directly.</span>
-      <span class="lenses-hint">hover over a keyword to highlight it across all lenses</span>
-    </div>
-    <div class="panel-wrap">
-      <div class="panel active" data-lens="real">
-        <div class="panel-label"><span><span class="label-name">Real Lens</span><span class="label-sub">(for AI)</span><span class="real-lens-note">models will be trained on this code, not written by humans</span></span><button class="copy-btn" data-lens="real">⧉</button></div>
-        <div class="panel-toolbar"></div>
-        <div class="panel-editor">
-          <div class="hl-layer" data-lens="real"></div>
-          <textarea data-lens="real" placeholder="add hint code" spellcheck="false" readonly></textarea>
-        </div>
-      </div>
-      <div class="resize-handle" data-between="real-dev"></div>
-      <div class="panel" data-lens="dev">
-        <div class="panel-label"><span><span class="label-name">Dev Lens</span><span class="label-sub">(for engineers)</span></span><button class="copy-btn" data-lens="dev">⧉</button></div>
-        <div class="panel-toolbar"></div>
-        <div class="panel-editor">
-          <div class="hl-layer" data-lens="dev"></div>
-          <textarea data-lens="dev" placeholder="add hint code" spellcheck="false"></textarea>
-        </div>
-      </div>
-      <div class="resize-handle" data-between="dev-normie"></div>
-      <div class="panel" data-lens="normie">
-        <div class="panel-label"><span><span class="label-name">Normie Lens</span><span class="label-sub">(for humans)</span></span><button class="copy-btn" data-lens="normie">⧉</button></div>
-        <div class="panel-toolbar"></div>
-        <div class="panel-editor">
-          <div class="hl-layer" data-lens="normie"></div>
-          <textarea data-lens="normie" placeholder="add hint code" spellcheck="false"></textarea>
-        </div>
-      </div>
-      <div class="shared-scrollbar" id="sharedScrollbar">
-        <div class="shared-scroll-thumb" id="sharedThumb"></div>
-      </div>
-    </div>
-  </section>
-
   <footer>
-    <span>ek v0.1</span>
+    <div style="display:flex; gap:16px; align-items:center;">
+      <span>ek v0.1</span>
+      <span>© 2026 Faisal Ahmad</span>
+    </div>
     <span>experimental — symbols subject to change</span>
   </footer>
 
@@ -766,7 +837,7 @@ function main(capability: FileReadCapability cap) returnType integer {
       }).join('')
     }
 
-    function renderAll() { ['real','dev','normie'].forEach(renderOverlay) }
+    function renderAll() { ['real','dev','normie','chinese','hindi','german'].forEach(renderOverlay) }
 
     document.addEventListener('mouseover', e => {
       const tok = e.target.closest('.tok')
@@ -791,6 +862,9 @@ function main(capability: FileReadCapability cap) returnType integer {
         document.querySelector('textarea[data-lens="real"]').value   = SAMPLE.real
         document.querySelector('textarea[data-lens="dev"]').value    = SAMPLE.dev
         document.querySelector('textarea[data-lens="normie"]').value = SAMPLE.normie
+        document.querySelector('textarea[data-lens="chinese"]').value = translate(SAMPLE.real, 'real', 'chinese')
+        document.querySelector('textarea[data-lens="hindi"]').value   = translate(SAMPLE.real, 'real', 'hindi')
+        document.querySelector('textarea[data-lens="german"]').value  = translate(SAMPLE.real, 'real', 'german')
         renderAll()
         textareas.forEach(ta => {
           ta.addEventListener('input', () => {

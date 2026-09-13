@@ -496,9 +496,7 @@
 
 ⊎ Outcome { Success(𝕊), Failure(FileNotFound) };
 
-equals User(a, b) -> 𝔹 {
-    ↵ a.name = b.name;
-}
+§ 𝔹 same <- (sam = alex);
 
 :: greet(§ User u) -> 𝕊 {
     § 𝕊 greeting <- ↯ join("Hello, ", u.name);
@@ -604,9 +602,7 @@ rec User { str: name, int: age };
 
 union Outcome { Success(str), Failure(FileNotFound) };
 
-equals User(a, b) -> bool {
-    ret a.name = b.name;
-}
+var: bool: same <- (sam = alex);
 
 fn greet(var: User u) -> str {
     var: str: greeting <- call join("Hello, ", u.name);
@@ -712,9 +708,7 @@ record User { string: name, integer: age };
 
 either Outcome { Success(string), Failure(FileNotFound) };
 
-equals User(a, b) returnType boolean {
-    return a.name = b.name;
-}
+container: boolean: same <- (sam = alex);
 
 function greet(container: User u) returnType string {
     container: string: greeting <- runFunction join("Hello, ", u.name);

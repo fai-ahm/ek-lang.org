@@ -297,7 +297,7 @@
             <tr><td>17</td><td>Array element access</td><td class="col-real"><code>users @ i</code></td><td class="col-dev"><code>users at i</code></td><td class="col-norm"><code>users at i</code></td></tr>
             <tr><td>18</td><td>Import</td><td class="col-real"><code>※ utils;</code></td><td class="col-dev"><code>import utils;</code></td><td class="col-norm"><code>import utils;</code></td></tr>
             <tr><td>19</td><td>Unary negation / not</td><td><code>-x / !flag</code></td><td><code>-x / !flag</code></td><td><code>-x / !flag</code></td></tr>
-            <tr><td>20</td><td>Record equality</td><td class="col-real"><code>equals User(a, b) -> 𝔹 { ↵ a.name = b.name; }</code></td><td class="col-dev"><code>equals User(a, b) -> bool { ret a.name = b.name; }</code></td><td class="col-norm"><code>equals User(a, b) returnType boolean { return a.name = b.name; }</code></td></tr>
+            <tr><td>20</td><td>Record equality (automatic)</td><td class="col-real"><code>§ 𝔹 same &lt;- (sam = alex);</code></td><td class="col-dev"><code>var: bool: same &lt;- (sam = alex);</code></td><td class="col-norm"><code>container: boolean: same &lt;- (sam = alex);</code></td></tr>
             <tr><td>21</td><td>String concatenation</td><td><code>join(a, b)</code></td><td><code>join(a, b)</code></td><td><code>join(a, b)</code></td></tr>
             <tr><td>22</td><td>Record construction</td><td class="col-real"><code>↳ User { name: "Sam", age: 25 };</code></td><td class="col-dev"><code>new User { name: "Sam", age: 25 };</code></td><td class="col-norm"><code>new User { name: "Sam", age: 25 };</code></td></tr>
             <tr><td>23</td><td>Capability token</td><td class="col-real"><code>⊙ FileReadCapability cap</code></td><td class="col-dev"><code>cap: FileReadCapability cap</code></td><td class="col-norm"><code>capability: FileReadCapability cap</code></td></tr>
@@ -534,9 +534,7 @@ a &amp; b | c          <span class="cm">// rejected — ambiguous</span></code><
 
 <span class="kw">⊎</span> Outcome { <span class="ty">Success</span>(<span class="ty">𝕊</span>), <span class="ty">Failure</span>(FileNotFound) };
 
-equals User(a, b) -> <span class="ty">𝔹</span> {
-    <span class="kw">↵</span> a.name <span class="op">=</span> b.name;
-}
+<span class="kw">§</span> <span class="ty">𝔹</span> same <span class="op">&lt;-</span> (sam <span class="op">=</span> alex);
 
 <span class="kw">::</span> greet(<span class="kw">§</span> User u) -> <span class="ty">𝕊</span> {
     <span class="kw">§</span> <span class="ty">𝕊</span> greeting <span class="op">&lt;-</span> join(<span class="st">"Hello, "</span>, u.name);
@@ -645,9 +643,7 @@ equals User(a, b) -> <span class="ty">𝔹</span> {
 
 <span class="kw">union</span> Outcome { <span class="ty">Success</span>(<span class="ty">str</span>), <span class="ty">Failure</span>(FileNotFound) };
 
-equals User(a, b) -> <span class="ty">bool</span> {
-    <span class="kw">ret</span> a.name <span class="op">=</span> b.name;
-}
+<span class="kw">var:</span> <span class="ty">bool:</span> same <span class="op">&lt;-</span> (sam <span class="op">=</span> alex);
 
 <span class="kw">fn</span> greet(<span class="kw">var:</span> User u) -> <span class="ty">str</span> {
     <span class="kw">var:</span> <span class="ty">str:</span> greeting <span class="op">&lt;-</span> join(<span class="st">"Hello, "</span>, u.name);
@@ -756,9 +752,7 @@ equals User(a, b) -> <span class="ty">bool</span> {
 
 <span class="kw">either</span> Outcome { <span class="ty">Success</span>(<span class="ty">string</span>), <span class="ty">Failure</span>(FileNotFound) };
 
-equals User(a, b) <span class="kw">returnType</span> <span class="ty">boolean</span> {
-    <span class="kw">return</span> a.name <span class="op">=</span> b.name;
-}
+<span class="kw">container:</span> <span class="ty">boolean:</span> same <span class="op">&lt;-</span> (sam <span class="op">=</span> alex);
 
 <span class="kw">function</span> greet(<span class="kw">container:</span> User u) <span class="kw">returnType</span> <span class="ty">string</span> {
     <span class="kw">container:</span> <span class="ty">string:</span> greeting <span class="op">&lt;-</span> join(<span class="st">&quot;Hello, &quot;</span>, u.name);

@@ -36,7 +36,7 @@
   "type_bool":             { "real": "𝔹",    "dev": "bool:",       "normie": "boolean:",      "chinese": "布尔:",    "hindi": "बूलियन:",       "german": "boolesch:"      },
   "type_str":              { "real": "𝕊",    "dev": "str:",        "normie": "string:",       "chinese": "文本:",    "hindi": "पाठ:",         "german": "text:"          },
   "type_char":             { "real": "ℂ",    "dev": "char:",       "normie": "character:",    "chinese": "字符:",    "hindi": "अक्षर:",        "german": "zeichen:"       },
-  "type_uint":             { "real": "ℕ",    "dev": "u32:",        "normie": "wholeNumber:",  "chinese": "自然数:",  "hindi": "प्राकृत:",       "german": "natürlich:"     },
+  "type_uint":             { "real": "ℕ",    "dev": "uint:",       "normie": "wholeNumber:",  "chinese": "自然数:",  "hindi": "प्राकृत:",       "german": "natürlich:"     },
   "null":                  { "real": "∅",    "dev": "null",        "normie": "null",          "chinese": "空",       "hindi": "खाली",         "german": "nichts"         },
   "add":                   { "real": "+",    "dev": "+",           "normie": "+",             "chinese": "+",        "hindi": "+",            "german": "+"              },
   "subtract":              { "real": "-",    "dev": "-",           "normie": "-",             "chinese": "-",        "hindi": "-",            "german": "-"              },

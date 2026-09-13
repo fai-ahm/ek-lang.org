@@ -481,6 +481,8 @@ strcpy(buffer, user_input); <span class="cm">// what if user_input is 10,000 byt
       <h4>Normie Lens</h4>
       <p>A readable form aimed at people with no programming background. It spells things out in full English words rather than short keywords or symbols, trading brevity for clarity.</p>
 
+      <p>In the Dev, Normie, and translated lenses, the six primitive type names gain a trailing colon when they label a declaration, parameter, or record field — for example, <code>int: count</code> and <code>integer: count</code>. Return types after <code>-&gt;</code> stay bare, such as <code>-&gt; int</code>, because the arrow already clearly introduces a type. Custom type names and types inside array or vector brackets are unchanged.</p>
+
       <blockquote>
         <p>All three are generated from and convert back to the same underlying program. Real Code is the only form agents write or the compiler natively reasons about. Dev Lens and Normie Lens are views generated from Real Code — never written directly — and can themselves be generated in any human language. The underlying program does not change between forms. The view does.</p>
       </blockquote>

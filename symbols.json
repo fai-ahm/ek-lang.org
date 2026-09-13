@@ -8,7 +8,7 @@
   "return_value":          { "real": "↵",    "dev": "ret",         "normie": "return",        "chinese": "返回",     "hindi": "वापस",         "german": "zurück"         },
   "function_call":         { "real": "↯",    "dev": "call",        "normie": "runFunction",   "chinese": "调用",     "hindi": "चलाओ",         "german": "rufe"           },
   "conditional":           { "real": "?",    "dev": "if",          "normie": "if",            "chinese": "如果",     "hindi": "अगर",          "german": "wenn"           },
-  "conditional_then":      { "real": ":",    "dev": "then",        "normie": "then",          "chinese": "那么",     "hindi": "तो",           "german": "dann"           },
+  "conditional_then":      { "real": "∴",    "dev": "then",        "normie": "then",          "chinese": "那么",     "hindi": "तो",           "german": "dann"           },
   "conditional_else":      { "real": "⋮",    "dev": "else",        "normie": "else",          "chinese": "否则",     "hindi": "वरना",         "german": "sonst"          },
   "statement_terminator":  { "real": ";",    "dev": ";",           "normie": ";",             "chinese": ";",        "hindi": ";",            "german": ";"              },
   "true":                  { "real": "⊤",    "dev": "true",        "normie": "true",          "chinese": "真",       "hindi": "सच",           "german": "wahr"           },

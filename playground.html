@@ -513,7 +513,7 @@ equals User(a, b) -> 𝔹 {
 }
 
 :: isAdult(§ User u) -> 𝔹 {
-    ? (u.age >= 18) : {
+    ? (u.age >= 18) ∴ {
         ↵ ⊤;
     } ⋮ {
         ↵ ⊥;
@@ -528,7 +528,7 @@ equals User(a, b) -> 𝔹 {
     § ℤ i <- 0;
 
     ⥁ (i < 5) {
-        ? (↯ isAdult(users @ i)) : {
+        ? (↯ isAdult(users @ i)) ∴ {
             ↵ (users @ i).name;
         } ⋮ {
             i <- i + 1;
@@ -543,13 +543,13 @@ equals User(a, b) -> 𝔹 {
     § ℤ i <- 0;
 
     ↻ i 0..10 {
-        ? ((word @ i) = 'a') : {
+        ? ((word @ i) = 'a') ∴ {
             count <- count + 1;
         } ⋮ {
             count <- count;
         }
 
-        ? (i = 9) : {
+        ? (i = 9) ∴ {
             ⏹;
         } ⋮ {
             ▶;
@@ -564,7 +564,7 @@ equals User(a, b) -> 𝔹 {
     § ℤ i <- 0;
 
     ↻ i 0..3 {
-        ? ((users @ i).age > (users @ oldestIndex).age) : {
+        ? ((users @ i).age > (users @ oldestIndex).age) ∴ {
             oldestIndex <- i;
         } ⋮ {
             oldestIndex <- oldestIndex;
@@ -589,7 +589,7 @@ equals User(a, b) -> 𝔹 {
     § 𝕊 greeting <- ↯ greet(sam);
     § 𝔹 samIsAdult <- ↯ isAdult(sam);
     § User oldest <- ↯ oldestUser(users);
-    § ℤ max <- ? (sam.age > alex.age) : { ↵ sam.age; } ⋮ { ↵ alex.age; };
+    § ℤ max <- ? (sam.age > alex.age) ∴ { ↵ sam.age; } ⋮ { ↵ alex.age; };
 
     ⋈ oldest.name {
         "Priya" → ↵ 1;

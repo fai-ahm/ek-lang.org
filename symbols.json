@@ -15,7 +15,6 @@
   "false":                 { "real": "⊥",    "dev": "false",       "normie": "false",         "chinese": "假",       "hindi": "झूठ",          "german": "falsch"         },
   "pattern_match":         { "real": "⋈",    "dev": "match",       "normie": "check",         "chinese": "检查",     "hindi": "जाँच",          "german": "prüfe"          },
   "loop":                  { "real": "↻",    "dev": "for",         "normie": "loop",          "chinese": "循环",     "hindi": "दोहराओ",       "german": "schleife"       },
-  "while_loop":            { "real": "⥁",    "dev": "while",       "normie": "whileLoop",     "chinese": "当",       "hindi": "जबतक",         "german": "solange"        },
   "break":                 { "real": "⏹",    "dev": "break",       "normie": "break",         "chinese": "中断",     "hindi": "रुको",          "german": "stopp"          },
   "continue":              { "real": "▶",    "dev": "continue",    "normie": "continue",      "chinese": "继续",     "hindi": "जारी",         "german": "weiter"         },
   "record_declaration":    { "real": "⊞",    "dev": "rec",         "normie": "record",        "chinese": "记录",     "hindi": "रिकॉर्ड",        "german": "datensatz"      },

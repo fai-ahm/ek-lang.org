@@ -253,8 +253,7 @@ DECLARATIONS
 CONTROL FLOW
   ? (cond) ∴ { ... } ⋮ { ... }      conditional (if/then/else)
   ⋈ x { val → ..., _ → ... }        pattern match
-  ↻ i 0..N { ... }                   bounded loop
-  ⥁ (cond) { ... }                   unbounded while loop
+  ↻ (cond) { ... }                   loop (condition-only)
   ↵ value;                           return value
   ▢                                  void (no return value)
   ⏹;                                 break

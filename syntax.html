@@ -278,7 +278,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td>1</td><td>Function declaration</td><td class="col-real"><code>:: add(ℤ a, ℤ b) -> ℤ {}</code></td><td class="col-dev"><code>fn add(int: a, int: b) -> int {}</code></td><td class="col-norm"><code>function add(integer: a, integer: b) returnType integer {}</code></td></tr>
+            <tr><td>1</td><td>Function declaration</td><td class="col-real"><code>:: add(§ ℤ a, § ℤ b) -> ℤ {}</code></td><td class="col-dev"><code>fn add(var: int a, var: int b) -> int {}</code></td><td class="col-norm"><code>function add(container: integer a, container: integer b) returnType integer {}</code></td></tr>
             <tr><td>2</td><td>Variable declaration <span class="exp">experimental</span></td><td class="col-real"><code>§ ℤ x</code></td><td class="col-dev"><code>var: int: x</code></td><td class="col-norm"><code>container: integer: x</code></td></tr>
             <tr><td>3</td><td>Assignment <span class="exp">experimental</span></td><td class="col-real"><code>§ ℤ x &lt;- 5;</code></td><td class="col-dev"><code>var: int: x &lt;- 5;</code></td><td class="col-norm"><code>container: integer: x &lt;- 5;</code></td></tr>
             <tr><td>4</td><td>Function call</td><td class="col-real"><code>↯ add(1, 2);</code></td><td class="col-dev"><code>call add(1, 2);</code></td><td class="col-norm"><code>runFunction add(1, 2);</code></td></tr>
@@ -286,7 +286,7 @@
             <tr><td>6</td><td>Return value</td><td class="col-real"><code>↵ x;</code></td><td class="col-dev"><code>ret x;</code></td><td class="col-norm"><code>return x;</code></td></tr>
             <tr><td>7</td><td>Conditional</td><td class="col-real"><code>? (x > 0) ∴ {} ⋮ {}</code></td><td class="col-dev"><code>if (x > 0) then {} else {}</code></td><td class="col-norm"><code>if (x > 0) then {} else {}</code></td></tr>
             <tr><td>8</td><td>Pattern match</td><td class="col-real"><code>⋈ x { 1 → ..., _ → ... }</code></td><td class="col-dev"><code>match x { 1 -> ..., _ -> ... }</code></td><td class="col-norm"><code>check x { 1 means ..., anything means ... }</code></td></tr>
-            <tr><td>9</td><td>Loop</td><td class="col-real"><code>↻ i 0..10 {}</code></td><td class="col-dev"><code>for i 0..10 {}</code></td><td class="col-norm"><code>loop i 0..10 {}</code></td></tr>
+            <tr><td>9</td><td>Loop</td><td class="col-real"><code>↻ (i < 10) {}</code></td><td class="col-dev"><code>for (i < 10) {}</code></td><td class="col-norm"><code>loop (i < 10) {}</code></td></tr>
             <tr><td>10</td><td>Record declaration</td><td class="col-real"><code>⊞ User { 𝕊 name, ℤ age }</code></td><td class="col-dev"><code>rec User { str: name, int: age }</code></td><td class="col-norm"><code>record User { string: name, integer: age }</code></td></tr>
             <tr><td>11</td><td>Union declaration</td><td class="col-real"><code>⊎ Status { Active, Banned(𝕊) }</code></td><td class="col-dev"><code>union Status { Active, Banned(str) }</code></td><td class="col-norm"><code>either Status { Active, Banned(string) }</code></td></tr>
             <tr><td>12</td><td>Array <span class="exp">experimental</span></td><td class="col-real"><code>⟦τ ℤ, σ 100⟧ arr;</code></td><td class="col-dev"><code>arr[type: int, size: 100] arr;</code></td><td class="col-norm"><code>list[type: integer, size: 100];</code></td></tr>
@@ -298,7 +298,7 @@
             <tr><td>18</td><td>Import</td><td class="col-real"><code>※ utils;</code></td><td class="col-dev"><code>import utils;</code></td><td class="col-norm"><code>import utils;</code></td></tr>
             <tr><td>19</td><td>Unary negation / not</td><td><code>-x / !flag</code></td><td><code>-x / !flag</code></td><td><code>-x / !flag</code></td></tr>
             <tr><td>20</td><td>Record equality (automatic)</td><td class="col-real"><code>§ 𝔹 same &lt;- (sam = alex);</code></td><td class="col-dev"><code>var: bool: same &lt;- (sam = alex);</code></td><td class="col-norm"><code>container: boolean: same &lt;- (sam = alex);</code></td></tr>
-            <tr><td>21</td><td>String concatenation</td><td><code>join(a, b)</code></td><td><code>join(a, b)</code></td><td><code>join(a, b)</code></td></tr>
+            <tr><td>21</td><td>String concatenation</td><td class="col-real"><code>↯ join(a, b)</code></td><td class="col-dev"><code>call join(a, b)</code></td><td class="col-norm"><code>runFunction join(a, b)</code></td></tr>
             <tr><td>22</td><td>Record construction</td><td class="col-real"><code>↳ User { name: "Sam", age: 25 };</code></td><td class="col-dev"><code>new User { name: "Sam", age: 25 };</code></td><td class="col-norm"><code>new User { name: "Sam", age: 25 };</code></td></tr>
             <tr><td>23</td><td>Capability token</td><td class="col-real"><code>⊙ FileReadCapability cap</code></td><td class="col-dev"><code>cap: FileReadCapability cap</code></td><td class="col-norm"><code>capability: FileReadCapability cap</code></td></tr>
             <tr><td>24</td><td>Array literal</td><td><code>[90, 85, 76]</code></td><td><code>[90, 85, 76]</code></td><td><code>[90, 85, 76]</code></td></tr>
@@ -306,16 +306,14 @@
             <tr><td>26</td><td>Block comment</td><td><code>/* comment */</code></td><td><code>/* comment */</code></td><td><code>/* comment */</code></td></tr>
             <tr><td>27</td><td>Break</td><td class="col-real"><code>⏹;</code></td><td class="col-dev"><code>break;</code></td><td class="col-norm"><code>break;</code></td></tr>
             <tr><td>28</td><td>Continue</td><td class="col-real"><code>▶;</code></td><td class="col-dev"><code>continue;</code></td><td class="col-norm"><code>continue;</code></td></tr>
-            <tr><td>29</td><td>While loop (unbounded)</td><td class="col-real"><code>⥁ (x > 0) {}</code></td><td class="col-dev"><code>while (x > 0) {}</code></td><td class="col-norm"><code>whileLoop (x > 0) {}</code></td></tr>
-            <tr><td>30</td><td>Void / no return value</td><td class="col-real"><code>▢ greet() {}</code></td><td class="col-dev"><code>void greet() {}</code></td><td class="col-norm"><code>void greet() {}</code></td></tr>
-            <tr><td>31</td><td>Char type usage</td><td class="col-real"><code>§ ℂ c &lt;- 'a';</code></td><td class="col-dev"><code>var: char: c &lt;- 'a';</code></td><td class="col-norm"><code>container: character: c &lt;- 'a';</code></td></tr>
-            <tr><td>32</td><td>Statement terminator</td><td><code>;</code></td><td><code>;</code></td><td><code>;</code></td></tr>
-            <tr><td>33</td><td>String escapes</td><td><code>"line\n\"quoted\""</code></td><td><code>"line\n\"quoted\""</code></td><td><code>"line\n\"quoted\""</code></td></tr>
-            <tr><td>34</td><td>Scientific notation</td><td><code>1e10</code></td><td><code>1e10</code></td><td><code>1e10</code></td></tr>
-            <tr><td>35</td><td>Hex / binary / octal</td><td><code>0x1F / 0b1010 / 0o17</code></td><td><code>0x1F / 0b1010 / 0o17</code></td><td><code>0x1F / 0b1010 / 0o17</code></td></tr>
-            <tr><td>36</td><td>Inline conditional expression</td><td class="col-real"><code>§ ℤ max &lt;- ? (a > b) ∴ { ↵ a } ⋮ { ↵ b };</code></td><td class="col-dev"><code>var: int: max &lt;- if (a > b) then { ret a } else { ret b };</code></td><td class="col-norm"><code>container: integer: max &lt;- if (a > b) then { return a } else { return b };</code></td></tr>
-            <tr><td>37</td><td>Multi-dimensional array</td><td class="col-real"><code>⟦τ ⟦τ ℤ, σ 10⟧, σ 10⟧ grid;</code></td><td class="col-dev"><code>arr[type: arr[type: int, size: 10], size: 10] grid;</code></td><td class="col-norm"><code>list[type: list[type: integer, size: 10], size: 10] grid;</code></td></tr>
-            <tr><td>38</td><td>Vector (growable) <span class="exp">experimental</span></td><td class="col-real"><code>⦃τ ℤ⦄ nums;</code></td><td class="col-dev"><code>vec[type: int] nums;</code></td><td class="col-norm"><code>vector[type: integer] nums;</code></td></tr>
+            <tr><td>29</td><td>Void / no return value</td><td class="col-real"><code>:: greet() -> ▢ {}</code></td><td class="col-dev"><code>fn greet() -> void {}</code></td><td class="col-norm"><code>function greet() returnType void {}</code></td></tr>
+            <tr><td>30</td><td>Char type usage</td><td class="col-real"><code>§ ℂ c &lt;- 'a';</code></td><td class="col-dev"><code>var: char: c &lt;- 'a';</code></td><td class="col-norm"><code>container: character: c &lt;- 'a';</code></td></tr>
+            <tr><td>31</td><td>Statement terminator</td><td><code>;</code></td><td><code>;</code></td><td><code>;</code></td></tr>
+            <tr><td>32</td><td>String escapes</td><td><code>"line\n\"quoted\""</code></td><td><code>"line\n\"quoted\""</code></td><td><code>"line\n\"quoted\""</code></td></tr>
+            <tr><td>33</td><td>Scientific notation</td><td><code>1e10</code></td><td><code>1e10</code></td><td><code>1e10</code></td></tr>
+            <tr><td>34</td><td>Hex / binary / octal</td><td><code>0x1F / 0b1010 / 0o17</code></td><td><code>0x1F / 0b1010 / 0o17</code></td><td><code>0x1F / 0b1010 / 0o17</code></td></tr>
+            <tr><td>35</td><td>Multi-dimensional array</td><td class="col-real"><code>⟦τ ⟦τ ℤ, σ 10⟧, σ 10⟧ grid;</code></td><td class="col-dev"><code>arr[type: arr[type: int, size: 10], size: 10] grid;</code></td><td class="col-norm"><code>list[type: list[type: integer, size: 10], size: 10] grid;</code></td></tr>
+            <tr><td>36</td><td>Vector (growable) <span class="exp">experimental</span></td><td class="col-real"><code>⦃τ ℤ⦄ nums;</code></td><td class="col-dev"><code>vec[type: int] nums;</code></td><td class="col-norm"><code>vector[type: integer] nums;</code></td></tr>
           </tbody>
         </table>
       </div>
@@ -426,8 +424,7 @@
             <tr><td>Else (conditional branch)</td><td class="col-real"><code>⋮</code></td><td class="col-dev"><code>else</code></td><td class="col-norm"><code>else</code></td></tr>
             <tr><td>Statement terminator</td><td><code>;</code></td><td><code>;</code></td><td><code>;</code></td></tr>
             <tr><td>Pattern match</td><td class="col-real"><code>⋈</code></td><td class="col-dev"><code>match</code></td><td class="col-norm"><code>check</code></td></tr>
-            <tr><td>Loop (bounded)</td><td class="col-real"><code>↻</code></td><td class="col-dev"><code>for</code></td><td class="col-norm"><code>loop</code></td></tr>
-            <tr><td>While loop (unbounded)</td><td class="col-real"><code>⥁</code></td><td class="col-dev"><code>while</code></td><td class="col-norm"><code>whileLoop</code></td></tr>
+            <tr><td>Loop</td><td class="col-real"><code>↻</code></td><td class="col-dev"><code>for</code></td><td class="col-norm"><code>loop</code></td></tr>
             <tr><td>Break</td><td class="col-real"><code>⏹</code></td><td class="col-dev"><code>break</code></td><td class="col-norm"><code>break</code></td></tr>
             <tr><td>Continue</td><td class="col-real"><code>▶</code></td><td class="col-dev"><code>continue</code></td><td class="col-norm"><code>continue</code></td></tr>
             <tr><td>Record declaration</td><td class="col-real"><code>⊞</code></td><td class="col-dev"><code>rec</code></td><td class="col-norm"><code>record</code></td></tr>
@@ -502,13 +499,15 @@
     <section id="precedence">
       <h2><span class="num">6</span>Operator Precedence</h2>
       <div class="callout">
-        <p>Ek has <strong>no implicit operator precedence table.</strong> Any expression mixing more than one category of operator (arithmetic, comparison, logical) must use explicit parentheses. This rule is identical across all three lenses.</p>
+        <p><strong>One operator per level of parentheses.</strong> Even <code>a + b - c</code> must be written <code>(a + b) - c</code>. Only repeated <code>&amp;</code> or repeated <code>|</code> may chain. This rule is identical across all three lenses.</p>
       </div>
       <pre><code>(a + b) > c        <span class="cm">// valid</span>
-a + b > c          <span class="cm">// rejected — ambiguous, no implicit precedence</span>
+a + b > c          <span class="cm">// rejected — one operator per level</span>
+a + b - c          <span class="cm">// rejected — write (a + b) - c</span>
+(a + b) - c        <span class="cm">// valid</span>
 
-(a &amp; b) | c        <span class="cm">// valid</span>
-a &amp; b | c          <span class="cm">// rejected — ambiguous</span></code></pre>
+a &amp; b &amp; c          <span class="cm">// valid — repeated &amp; may chain</span>
+a &amp; b | c          <span class="cm">// rejected — write (a &amp; b) | c</span></code></pre>
     </section>
 
     <hr />
@@ -537,7 +536,7 @@ a &amp; b | c          <span class="cm">// rejected — ambiguous</span></code><
 <span class="kw">§</span> <span class="ty">𝔹</span> same <span class="op">&lt;-</span> (sam <span class="op">=</span> alex);
 
 <span class="kw">::</span> greet(<span class="kw">§</span> User u) -> <span class="ty">𝕊</span> {
-    <span class="kw">§</span> <span class="ty">𝕊</span> greeting <span class="op">&lt;-</span> join(<span class="st">"Hello, "</span>, u.name);
+    <span class="kw">§</span> <span class="ty">𝕊</span> greeting <span class="op">&lt;-</span> <span class="kw">↯</span> join(<span class="st">"Hello, "</span>, u.name);
     <span class="kw">↵</span> greeting;
 }
 
@@ -563,7 +562,7 @@ a &amp; b | c          <span class="cm">// rejected — ambiguous</span></code><
 <span class="kw">::</span> firstAdultName(<span class="kw">§</span> <span class="ty">⟦τ User, σ 5⟧</span> users) -> <span class="ty">𝕊</span> {
     <span class="kw">§</span> <span class="ty">ℤ</span> i <span class="op">&lt;-</span> 0;
 
-    <span class="kw">⥁</span> (i <span class="op">&lt;</span> 5) {
+    <span class="kw">↻</span> (i <span class="op">&lt;</span> 5) {
         <span class="kw">?</span> (<span class="kw">↯</span> isAdult(users <span class="op">@</span> i)) <span class="kw">∴</span> {
             <span class="kw">↵</span> (users <span class="op">@</span> i).name;
         } <span class="kw">⋮</span> {
@@ -578,12 +577,12 @@ a &amp; b | c          <span class="cm">// rejected — ambiguous</span></code><
     <span class="kw">§</span> <span class="ty">ℤ</span> count <span class="op">&lt;-</span> 0;
     <span class="kw">§</span> <span class="ty">ℤ</span> i <span class="op">&lt;-</span> 0;
 
-    <span class="kw">↻</span> i 0..10 {
+    <span class="kw">↻</span> (i <span class="op">&lt;</span> 10) {
         <span class="kw">?</span> ((word <span class="op">@</span> i) <span class="op">=</span> <span class="st">'a'</span>) <span class="kw">∴</span> {
             count <span class="op">&lt;-</span> count <span class="op">+</span> 1;
-        } <span class="kw">⋮</span> {
-            count <span class="op">&lt;-</span> count;
-        }
+        } <span class="kw">⋮</span> { }
+
+        i <span class="op">&lt;-</span> i <span class="op">+</span> 1;
 
         <span class="kw">?</span> (i <span class="op">=</span> 9) <span class="kw">∴</span> {
             <span class="kw">⏹</span>;
@@ -599,12 +598,12 @@ a &amp; b | c          <span class="cm">// rejected — ambiguous</span></code><
     <span class="kw">§</span> <span class="ty">ℤ</span> oldestIndex <span class="op">&lt;-</span> 0;
     <span class="kw">§</span> <span class="ty">ℤ</span> i <span class="op">&lt;-</span> 0;
 
-    <span class="kw">↻</span> i 0..3 {
+    <span class="kw">↻</span> (i <span class="op">&lt;</span> 3) {
         <span class="kw">?</span> ((users <span class="op">@</span> i).age <span class="op">&gt;</span> (users <span class="op">@</span> oldestIndex).age) <span class="kw">∴</span> {
             oldestIndex <span class="op">&lt;-</span> i;
-        } <span class="kw">⋮</span> {
-            oldestIndex <span class="op">&lt;-</span> oldestIndex;
-        }
+        } <span class="kw">⋮</span> { }
+
+        i <span class="op">&lt;-</span> i <span class="op">+</span> 1;
     }
 
     <span class="kw">↵</span> users <span class="op">@</span> oldestIndex;
@@ -625,7 +624,6 @@ a &amp; b | c          <span class="cm">// rejected — ambiguous</span></code><
     <span class="kw">§</span> <span class="ty">𝕊</span> greeting <span class="op">&lt;-</span> <span class="kw">↯</span> greet(sam);
     <span class="kw">§</span> <span class="ty">𝔹</span> samIsAdult <span class="op">&lt;-</span> <span class="kw">↯</span> isAdult(sam);
     <span class="kw">§</span> User oldest <span class="op">&lt;-</span> <span class="kw">↯</span> oldestUser(users);
-    <span class="kw">§</span> <span class="ty">ℤ</span> max <span class="op">&lt;-</span> <span class="kw">?</span> (sam.age <span class="op">&gt;</span> alex.age) <span class="kw">∴</span> { <span class="kw">↵</span> sam.age; } <span class="kw">⋮</span> { <span class="kw">↵</span> alex.age; };
 
     <span class="kw">⋈</span> oldest.name {
         <span class="st">"Priya"</span> → <span class="kw">↵</span> 1;
@@ -646,7 +644,7 @@ a &amp; b | c          <span class="cm">// rejected — ambiguous</span></code><
 <span class="kw">var:</span> <span class="ty">bool:</span> same <span class="op">&lt;-</span> (sam <span class="op">=</span> alex);
 
 <span class="kw">fn</span> greet(<span class="kw">var:</span> User u) -> <span class="ty">str</span> {
-    <span class="kw">var:</span> <span class="ty">str:</span> greeting <span class="op">&lt;-</span> join(<span class="st">"Hello, "</span>, u.name);
+    <span class="kw">var:</span> <span class="ty">str:</span> greeting <span class="op">&lt;-</span> <span class="kw">call</span> join(<span class="st">"Hello, "</span>, u.name);
     <span class="kw">ret</span> greeting;
 }
 
@@ -672,7 +670,7 @@ a &amp; b | c          <span class="cm">// rejected — ambiguous</span></code><
 <span class="kw">fn</span> firstAdultName(<span class="kw">var:</span> arr[type: User, size: 5] users) -> <span class="ty">str</span> {
     <span class="kw">var:</span> <span class="ty">int:</span> i <span class="op">&lt;-</span> 0;
 
-    <span class="kw">while</span> (i <span class="op">&lt;</span> 5) {
+    <span class="kw">for</span> (i <span class="op">&lt;</span> 5) {
         <span class="kw">if</span> (<span class="kw">call</span> isAdult(users <span class="kw">at</span> i)) <span class="kw">then</span> {
             <span class="kw">ret</span> (users <span class="kw">at</span> i).name;
         } <span class="kw">else</span> {
@@ -687,12 +685,12 @@ a &amp; b | c          <span class="cm">// rejected — ambiguous</span></code><
     <span class="kw">var:</span> <span class="ty">int:</span> count <span class="op">&lt;-</span> 0;
     <span class="kw">var:</span> <span class="ty">int:</span> i <span class="op">&lt;-</span> 0;
 
-    <span class="kw">for</span> i 0..10 {
+    <span class="kw">for</span> (i <span class="op">&lt;</span> 10) {
         <span class="kw">if</span> ((word <span class="kw">at</span> i) <span class="op">=</span> <span class="st">'a'</span>) <span class="kw">then</span> {
             count <span class="op">&lt;-</span> count <span class="op">+</span> 1;
-        } <span class="kw">else</span> {
-            count <span class="op">&lt;-</span> count;
-        }
+        } <span class="kw">else</span> { }
+
+        i <span class="op">&lt;-</span> i <span class="op">+</span> 1;
 
         <span class="kw">if</span> (i <span class="op">=</span> 9) <span class="kw">then</span> {
             <span class="kw">break</span>;
@@ -708,12 +706,12 @@ a &amp; b | c          <span class="cm">// rejected — ambiguous</span></code><
     <span class="kw">var:</span> <span class="ty">int:</span> oldestIndex <span class="op">&lt;-</span> 0;
     <span class="kw">var:</span> <span class="ty">int:</span> i <span class="op">&lt;-</span> 0;
 
-    <span class="kw">for</span> i 0..3 {
+    <span class="kw">for</span> (i <span class="op">&lt;</span> 3) {
         <span class="kw">if</span> ((users <span class="kw">at</span> i).age <span class="op">&gt;</span> (users <span class="kw">at</span> oldestIndex).age) <span class="kw">then</span> {
             oldestIndex <span class="op">&lt;-</span> i;
-        } <span class="kw">else</span> {
-            oldestIndex <span class="op">&lt;-</span> oldestIndex;
-        }
+        } <span class="kw">else</span> { }
+
+        i <span class="op">&lt;-</span> i <span class="op">+</span> 1;
     }
 
     <span class="kw">ret</span> users <span class="kw">at</span> oldestIndex;
@@ -734,7 +732,6 @@ a &amp; b | c          <span class="cm">// rejected — ambiguous</span></code><
     <span class="kw">var:</span> <span class="ty">str:</span> greeting <span class="op">&lt;-</span> <span class="kw">call</span> greet(sam);
     <span class="kw">var:</span> <span class="ty">bool:</span> samIsAdult <span class="op">&lt;-</span> <span class="kw">call</span> isAdult(sam);
     <span class="kw">var:</span> User oldest <span class="op">&lt;-</span> <span class="kw">call</span> oldestUser(users);
-    <span class="kw">var:</span> <span class="ty">int:</span> max <span class="op">&lt;-</span> <span class="kw">if</span> (sam.age <span class="op">&gt;</span> alex.age) <span class="kw">then</span> { <span class="kw">ret</span> sam.age; } <span class="kw">else</span> { <span class="kw">ret</span> alex.age; };
 
     <span class="kw">match</span> oldest.name {
         <span class="st">"Priya"</span> -> <span class="kw">ret</span> 1;
@@ -755,7 +752,7 @@ a &amp; b | c          <span class="cm">// rejected — ambiguous</span></code><
 <span class="kw">container:</span> <span class="ty">boolean:</span> same <span class="op">&lt;-</span> (sam <span class="op">=</span> alex);
 
 <span class="kw">function</span> greet(<span class="kw">container:</span> User u) <span class="kw">returnType</span> <span class="ty">string</span> {
-    <span class="kw">container:</span> <span class="ty">string:</span> greeting <span class="op">&lt;-</span> join(<span class="st">&quot;Hello, &quot;</span>, u.name);
+    <span class="kw">container:</span> <span class="ty">string:</span> greeting <span class="op">&lt;-</span> <span class="kw">runFunction</span> join(<span class="st">&quot;Hello, &quot;</span>, u.name);
     <span class="kw">return</span> greeting;
 }
 
@@ -781,7 +778,7 @@ a &amp; b | c          <span class="cm">// rejected — ambiguous</span></code><
 <span class="kw">function</span> firstAdultName(<span class="kw">container:</span> list[type: User, size: 5] users) <span class="kw">returnType</span> <span class="ty">string</span> {
     <span class="kw">container:</span> <span class="ty">integer:</span> i <span class="op">&lt;-</span> 0;
 
-    <span class="kw">whileLoop</span> (i <span class="op">&lt;</span> 5) {
+    <span class="kw">loop</span> (i <span class="op">&lt;</span> 5) {
         <span class="kw">if</span> (<span class="kw">runFunction</span> isAdult(users <span class="kw">at</span> i)) <span class="kw">then</span> {
             <span class="kw">return</span> (users <span class="kw">at</span> i).name;
         } <span class="kw">else</span> {
@@ -796,12 +793,12 @@ a &amp; b | c          <span class="cm">// rejected — ambiguous</span></code><
     <span class="kw">container:</span> <span class="ty">integer:</span> count <span class="op">&lt;-</span> 0;
     <span class="kw">container:</span> <span class="ty">integer:</span> i <span class="op">&lt;-</span> 0;
 
-    <span class="kw">loop</span> i 0..10 {
+    <span class="kw">loop</span> (i <span class="op">&lt;</span> 10) {
         <span class="kw">if</span> ((word <span class="kw">at</span> i) <span class="op">=</span> <span class="st">&apos;a&apos;</span>) <span class="kw">then</span> {
             count <span class="op">&lt;-</span> count <span class="op">+</span> 1;
-        } <span class="kw">else</span> {
-            count <span class="op">&lt;-</span> count;
-        }
+        } <span class="kw">else</span> { }
+
+        i <span class="op">&lt;-</span> i <span class="op">+</span> 1;
 
         <span class="kw">if</span> (i <span class="op">=</span> 9) <span class="kw">then</span> {
             <span class="kw">break</span>;
@@ -817,12 +814,12 @@ a &amp; b | c          <span class="cm">// rejected — ambiguous</span></code><
     <span class="kw">container:</span> <span class="ty">integer:</span> oldestIndex <span class="op">&lt;-</span> 0;
     <span class="kw">container:</span> <span class="ty">integer:</span> i <span class="op">&lt;-</span> 0;
 
-    <span class="kw">loop</span> i 0..3 {
+    <span class="kw">loop</span> (i <span class="op">&lt;</span> 3) {
         <span class="kw">if</span> ((users <span class="kw">at</span> i).age <span class="op">&gt;</span> (users <span class="kw">at</span> oldestIndex).age) <span class="kw">then</span> {
             oldestIndex <span class="op">&lt;-</span> i;
-        } <span class="kw">else</span> {
-            oldestIndex <span class="op">&lt;-</span> oldestIndex;
-        }
+        } <span class="kw">else</span> { }
+
+        i <span class="op">&lt;-</span> i <span class="op">+</span> 1;
     }
 
     <span class="kw">return</span> users <span class="kw">at</span> oldestIndex;
@@ -843,7 +840,6 @@ a &amp; b | c          <span class="cm">// rejected — ambiguous</span></code><
     <span class="kw">container:</span> <span class="ty">string:</span> greeting <span class="op">&lt;-</span> <span class="kw">runFunction</span> greet(sam);
     <span class="kw">container:</span> <span class="ty">boolean:</span> samIsAdult <span class="op">&lt;-</span> <span class="kw">runFunction</span> isAdult(sam);
     <span class="kw">container:</span> User oldest <span class="op">&lt;-</span> <span class="kw">runFunction</span> oldestUser(users);
-    <span class="kw">container:</span> <span class="ty">integer:</span> max <span class="op">&lt;-</span> <span class="kw">if</span> (sam.age <span class="op">&gt;</span> alex.age) <span class="kw">then</span> { <span class="kw">return</span> sam.age; } <span class="kw">else</span> { <span class="kw">return</span> alex.age; };
 
     <span class="kw">check</span> oldest.name {
         <span class="st">&quot;Priya&quot;</span> means <span class="kw">return</span> 1;
@@ -869,7 +865,7 @@ a &amp; b | c          <span class="cm">// rejected — ambiguous</span></code><
         <li><span class="rule-num">4</span><span>Conditionals use <code>then</code> before the block — <code>if (x > 0) then {} else {}</code> — Dev Lens shares this same <code>then</code>/<code>else</code> structure</span></li>
         <li><span class="rule-num">5</span><span>Types are full English words — <code>integer</code>, <code>string</code>, <code>float</code>, <code>boolean</code>, <code>null</code>, <code>character</code></span></li>
         <li><span class="rule-num">6</span><span>Capability tokens use the label <code>capability:</code> (Dev uses the shorter <code>cap:</code>)</span></li>
-        <li><span class="rule-num">7</span><span><code>whileLoop</code> is the Normie keyword for the unbounded loop; <code>loop</code> remains the keyword for bounded range iteration</span></li>
+        <li><span class="rule-num">7</span><span><code>loop</code> is the only Normie loop keyword — one condition-only loop, written <code>loop (cond) {}</code></span></li>
       </ul>
 
       <div id="rules-all" class="section-label">Rules that apply across all three lenses</div>
@@ -877,36 +873,38 @@ a &amp; b | c          <span class="cm">// rejected — ambiguous</span></code><
         <li><span class="rule-num">8</span><span><code>{}</code>, <code>()</code>, and <code>//</code> are kept as-is across all lenses</span></li>
         <li><span class="rule-num">9</span><span>No <code>any</code> or wildcard types — unknown types are a compile error, not a wildcard</span></li>
         <li><span class="rule-num">10</span><span>Bitwise operators are experimental, pending final design and model testing</span></li>
-        <li><span class="rule-num">11</span><span>No implicit operator precedence — mixed-category expressions (<code>a + b > c</code>) require explicit parentheses (<code>(a + b) > c</code>) in every lens</span></li>
+        <li><span class="rule-num">11</span><span>One operator per level of parentheses. Even <code>a + b - c</code> must be written <code>(a + b) - c</code>. Only repeated <code>&amp;</code> or repeated <code>|</code> may chain. Identical in every lens.</span></li>
         <li><span class="rule-num">12</span><span><code>-</code> and <code>!</code> double as unary prefix operators (<code>-x</code>, <code>!flag</code>) in addition to their binary forms — unambiguous from grammatical position</span></li>
         <li><span class="rule-num">13</span><span>Imports are resolved at compile time, never as text substitution</span></li>
         <li><span class="rule-num">14</span><span>Record construction uses <code>new TypeName { field: value, ... }</code> (<code>↳</code> in Real Code) — named fields, mandatory declaration order, no positional shorthand</span></li>
         <li><span class="rule-num">15</span><span>Capability tokens are declared like any typed parameter, but with their own dedicated label/symbol (<code>⊙</code> in Real Code) to flag that the function touches the outside world</span></li>
         <li><span class="rule-num">16</span><span>Array literals use plain <code>[ ]</code> with comma-separated values — identical across all three lenses</span></li>
         <li><span class="rule-num">17</span><span>Block comments use <code>/* ... */</code>, identical across all three lenses; <code>//</code> remains for single-line comments</span></li>
-        <li><span class="rule-num">18</span><span><strong>Every statement ends with <code>;</code></strong> — the universal statement terminator, identical across all three lenses. Two constructs are exempt because they are <em>definitions</em>, not statements: a <strong>function declaration</strong> (<code>::</code>/<code>fn</code>/<code>function</code>) and a <strong>standalone control-flow block</strong> (<code>if</code>/<code>while</code>/<code>for</code>/<code>verify</code>/<code>match</code>) used in statement position — both self-terminate at <code>}</code> with no additional <code>;</code>. Everything else that is a statement ends in <code>;</code>, including <code>record</code>/<code>union</code> declarations and any statement whose right-hand side happens to end in <code>}</code> such as an inline conditional used as a value.</span></li>
+        <li><span class="rule-num">18</span><span><strong>Every statement ends with <code>;</code></strong> — the universal statement terminator, identical across all three lenses. Two constructs are exempt because they are <em>definitions</em>, not statements: a <strong>function declaration</strong> (<code>::</code>/<code>fn</code>/<code>function</code>) and a <strong>standalone control-flow block</strong> (<code>if</code>/<code>for</code>/<code>verify</code>/<code>match</code>) used in statement position — both self-terminate at <code>}</code> with no additional <code>;</code>. Everything else that is a statement ends in <code>;</code>, including <code>record</code>/<code>union</code> declarations.</span></li>
         <li><span class="rule-num">19</span><span><code>&amp;</code> and <code>|</code> short-circuit, matching C/Rust convention — the right side is skipped once the left side already determines the result</span></li>
         <li><span class="rule-num">20</span><span><code>break</code> and <code>continue</code> only affect the single nearest enclosing loop — no labeled/multi-level jump</span></li>
         <li><span class="rule-num">21</span><span><code>void</code> marks a function that returns nothing (<code>▢</code> in Real Code) — a deliberate, familiar exception to the "no special cases" rule</span></li>
-        <li><span class="rule-num">22</span><span><code>character</code> (<code>ℂ</code>) is a distinct type from <code>string</code> — needed for kernel/firmware/device-driver layer coverage where single-byte precision matters</span></li>
+        <li><span class="rule-num">22</span><span><code>ℂ</code> is one Unicode code point (4 bytes). Raw bytes use <code>ℕ8</code>.</span></li>
         <li><span class="rule-num">23</span><span>No function overloading — one name, one function, always</span></li>
         <li><span class="rule-num">24</span><span><code>main</code> is the required, fixed-name program entry point, identical across all three lenses</span></li>
         <li><span class="rule-num">25</span><span>Declaration before use is required — a function or type must be declared before any point in the file where it is referenced, unlike Rust's order-independence</span></li>
         <li><span class="rule-num">26</span><span>Whitespace and indentation are purely cosmetic and never affect meaning — block delimiters (<code>{}</code>) already make indentation-based structure unnecessary</span></li>
         <li><span class="rule-num">27</span><span>A declared array size of <code>0</code> is a compile error</span></li>
-        <li><span class="rule-num">28</span><span>String literals support backslash escapes (<code>\n</code>, <code>\t</code>, <code>\"</code>, <code>\\</code>), scientific notation (<code>1e10</code>), and hex/binary/octal integer literals (<code>0x1F</code>, <code>0b1010</code>, <code>0o17</code>)</span></li>
+        <li><span class="rule-num">28</span><span>String literals support backslash escapes (<code>\n</code>, <code>\t</code>, <code>\"</code>, <code>\'</code>, <code>\\</code>), scientific notation (<code>1e10</code>), and hex/binary/octal integer literals (<code>0x1F</code>, <code>0b1010</code>, <code>0o17</code>)</span></li>
         <li><span class="rule-num">29</span><span>String literals may span multiple lines directly in the source</span></li>
-        <li><span class="rule-num">30</span><span>Inline conditional expressions reuse the existing <code>if</code>/<code>then</code>/<code>else</code> construct as a value — no separate ternary operator</span></li>
-        <li><span class="rule-num">31</span><span>There is no separate mutable/immutable distinction — linear types mean every value is used exactly once and never reassigned</span></li>
+        <li><span class="rule-num">30</span><span>No inline conditionals, ever. A conditional is always a statement; a value that depends on a condition comes from a function.</span></li>
+        <li><span class="rule-num">31</span><span>Values never change. Exception: inside a loop body, <code>&lt;-</code> on a name declared before that loop sets its value for the next round.</span></li>
         <li><span class="rule-num">32</span><span>Multi-dimensional arrays and nested records require no new syntax</span></li>
         <li><span class="rule-num">33</span><span>Recursion requires no new syntax — a function calling itself is an ordinary function call</span></li>
         <li><span class="rule-num">34</span><span>Integers default to signed, 32-bit (<code>ℤ</code> = <code>ℤ32</code>); unsigned integers use a distinct base symbol (<code>ℕ</code>); floats default to 32-bit (<code>ℝ</code> = <code>ℝ32</code>)</span></li>
         <li><span class="rule-num">35</span><span><strong>Vector</strong> (<code>⦃ ⦄</code>) is the one place unbounded allocation is permitted. A record's "next" or "children" field is a plain integer index into a Vector, not a pointer. Growth happens through one audited reallocation mechanism in the standard library.</span></li>
+        <li><span class="rule-num">36</span><span>Every conditional has an <code>else</code>; an empty else is written <code>⋮ { }</code> (<code>else { }</code> in Dev and Normie).</span></li>
+        <li><span class="rule-num">37</span><span>Names may use any Unicode letter. Lenses will later translate names through a per-project name dictionary.</span></li>
       </ul>
 
       <div id="rules-open" class="section-label">Open research questions</div>
       <ul class="rules-list">
-        <li><span class="rule-num">36</span><span><strong>Capturing closures.</strong> Whether a closure can capture a variable from its enclosing scope is undecided. The core difficulty is the interaction with linear types and capability tokens — it's unclear whether a captured linear value or capability token should be considered consumed when the closure is created, or each time the closure is called. Deferred pending further design work.</span></li>
+        <li><span class="rule-num">38</span><span><strong>Capturing closures.</strong> Whether a closure can capture a variable from its enclosing scope is undecided. The core difficulty is the interaction with linear types and capability tokens — it's unclear whether a captured linear value or capability token should be considered consumed when the closure is created, or each time the closure is called. Deferred pending further design work.</span></li>
       </ul>
 
     </section>

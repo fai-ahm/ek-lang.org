@@ -118,6 +118,57 @@
       font-size: 13px; color: var(--muted); line-height: 1.7; flex: 1; padding-left: 32px;
     }
 
+    /* ── Phases section ── */
+    #phases {
+      border-bottom: 1px solid var(--border);
+      display: flex; justify-content: center;
+    }
+    .phases-inner {
+      padding: 40px 32px 36px; max-width: 920px; width: 100%;
+    }
+    .phases-title {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted2); margin-bottom: 8px;
+    }
+    .phases-sub {
+      font-size: 13px; color: var(--muted); line-height: 1.6; max-width: 620px; margin-bottom: 26px;
+    }
+    .phase-progress { margin-bottom: 28px; }
+    .phase-progress-bar { display: flex; gap: 6px; }
+    .phase-progress-bar .seg {
+      flex: 1; height: 6px; border-radius: 3px; background: var(--bg2);
+    }
+    .phase-progress-bar .seg.done { background: var(--dev); }
+    .phase-progress-bar .seg.next { background: var(--normie); }
+    .phase-progress-text {
+      font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: 0.04em; margin-top: 10px;
+    }
+    .phase-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;
+    }
+    .phase-card {
+      background: #fff; border: 1px solid var(--border); border-radius: 8px;
+      padding: 12px 14px; display: flex; flex-direction: column;
+    }
+    .phase-card-top {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px;
+    }
+    .phase-card .feature-num { width: auto; }
+    .phase-card .feature-tag { width: auto; }
+    .feature-tag.done    { background: rgba(42,157,111,0.1); color: var(--dev); }
+    .feature-tag.next    { background: rgba(192,122,42,0.1); color: var(--normie); }
+    .feature-tag.planned { background: var(--bg2); color: var(--muted); }
+    .phase-name {
+      font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 5px;
+    }
+    .phase-desc {
+      font-size: 12px; color: var(--muted); line-height: 1.55; flex: 1;
+    }
+
+    @media (max-width: 520px) {
+      .phase-grid { grid-template-columns: 1fr; }
+    }
+
     /* ── Split view section ── */
     #splitview {
       flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 700px;
@@ -379,6 +430,82 @@
   </div>
   </section>
 
+  <!-- ── Building the Compiler ── -->
+  <section id="phases">
+  <div class="phases-inner">
+    <div class="phases-title">Building the Compiler</div>
+    <div class="phases-sub">Subset 0: the first slice of Ek that compiles end to end. Written in Dart, compiled through LLVM.</div>
+
+    <div class="phase-progress">
+      <div class="phase-progress-bar">
+        <span class="seg done"></span>
+        <span class="seg next"></span>
+        <span class="seg"></span>
+        <span class="seg"></span>
+        <span class="seg"></span>
+        <span class="seg"></span>
+      </div>
+      <div class="phase-progress-text">1 of 6 phases complete</div>
+    </div>
+
+    <div class="phase-grid">
+      <div class="phase-card">
+        <div class="phase-card-top">
+          <span class="feature-num">01</span>
+          <span class="feature-tag done">done</span>
+        </div>
+        <div class="phase-name">Grammar</div>
+        <p class="phase-desc">A precise written grammar for Subset 0, every ambiguity settled before any code.</p>
+      </div>
+
+      <div class="phase-card">
+        <div class="phase-card-top">
+          <span class="feature-num">02</span>
+          <span class="feature-tag next">next</span>
+        </div>
+        <div class="phase-name">Lexer</div>
+        <p class="phase-desc">Reads Real Code and splits it into tokens, handling symbols like ℤ 𝕊 ↻ ∴.</p>
+      </div>
+
+      <div class="phase-card">
+        <div class="phase-card-top">
+          <span class="feature-num">03</span>
+          <span class="feature-tag planned">planned</span>
+        </div>
+        <div class="phase-name">Parser</div>
+        <p class="phase-desc">Turns tokens into a syntax tree, one function per grammar rule.</p>
+      </div>
+
+      <div class="phase-card">
+        <div class="phase-card-top">
+          <span class="feature-num">04</span>
+          <span class="feature-tag planned">planned</span>
+        </div>
+        <div class="phase-name">Checker</div>
+        <p class="phase-desc">Enforces Ek's rules before anything runs: exact types, values that never change, names declared before use.</p>
+      </div>
+
+      <div class="phase-card">
+        <div class="phase-card-top">
+          <span class="feature-num">05</span>
+          <span class="feature-tag planned">planned</span>
+        </div>
+        <div class="phase-name">Interpreter</div>
+        <p class="phase-desc">Runs Ek programs directly to prove the design works.</p>
+      </div>
+
+      <div class="phase-card">
+        <div class="phase-card-top">
+          <span class="feature-num">06</span>
+          <span class="feature-tag planned">planned</span>
+        </div>
+        <div class="phase-name">LLVM backend</div>
+        <p class="phase-desc">Emits LLVM IR, which clang turns into a native program.</p>
+      </div>
+    </div>
+  </div>
+  </section>
+
   <footer>
     <div style="display:flex; gap:16px; align-items:center;">
       <span>ek v0.1</span>
@@ -430,7 +557,7 @@
 :: firstAdultName(§ ⟦τ User, σ 5⟧ users) -> 𝕊 {
     § ℤ i <- 0;
 
-    ⥁ (i < 5) {
+    ↻ (i < 5) {
         ? (↯ isAdult(users @ i)) ∴ {
             ↵ (users @ i).name;
         } ⋮ {
@@ -445,12 +572,12 @@
     § ℤ count <- 0;
     § ℤ i <- 0;
 
-    ↻ i 0..10 {
+    ↻ (i < 10) {
         ? ((word @ i) = 'a') ∴ {
             count <- count + 1;
-        } ⋮ {
-            count <- count;
-        }
+        } ⋮ { }
+
+        i <- i + 1;
 
         ? (i = 9) ∴ {
             ⏹;
@@ -466,12 +593,12 @@
     § ℤ oldestIndex <- 0;
     § ℤ i <- 0;
 
-    ↻ i 0..3 {
+    ↻ (i < 3) {
         ? ((users @ i).age > (users @ oldestIndex).age) ∴ {
             oldestIndex <- i;
-        } ⋮ {
-            oldestIndex <- oldestIndex;
-        }
+        } ⋮ { }
+
+        i <- i + 1;
     }
 
     ↵ users @ oldestIndex;
@@ -492,7 +619,6 @@
     § 𝕊 greeting <- ↯ greet(sam);
     § 𝔹 samIsAdult <- ↯ isAdult(sam);
     § User oldest <- ↯ oldestUser(users);
-    § ℤ max <- ? (sam.age > alex.age) ∴ { ↵ sam.age; } ⋮ { ↵ alex.age; };
 
     ⋈ oldest.name {
         "Priya" → ↵ 1;
@@ -536,7 +662,7 @@ fn printVoid() -> void {
 fn firstAdultName(var: arr[type: User, size: 5] users) -> str {
     var: int: i <- 0;
 
-    while (i < 5) {
+    for (i < 5) {
         if (call isAdult(users at i)) then {
             ret (users at i).name;
         } else {
@@ -551,12 +677,12 @@ fn countVowels(var: str: word) -> int {
   var: int: count <- 0;
   var: int: i <- 0;
 
-    for i 0..10 {
+    for (i < 10) {
         if ((word at i) = 'a') then {
             count <- count + 1;
-        } else {
-            count <- count;
-        }
+        } else { }
+
+        i <- i + 1;
 
         if (i = 9) then {
             break;
@@ -572,12 +698,12 @@ fn oldestUser(var: arr[type: User, size: 3] users) -> User {
     var: int: oldestIndex <- 0;
     var: int: i <- 0;
 
-    for i 0..3 {
+    for (i < 3) {
         if ((users at i).age > (users at oldestIndex).age) then {
             oldestIndex <- i;
-        } else {
-            oldestIndex <- oldestIndex;
-        }
+        } else { }
+
+        i <- i + 1;
     }
 
     ret users at oldestIndex;
@@ -598,7 +724,6 @@ fn main(cap: FileReadCapability cap) -> int {
     var: str: greeting <- call greet(sam);
     var: bool: samIsAdult <- call isAdult(sam);
     var: User oldest <- call oldestUser(users);
-    var: int: max <- if (sam.age > alex.age) then { ret sam.age; } else { ret alex.age; };
 
     match oldest.name {
         "Priya" -> ret 1;
@@ -642,7 +767,7 @@ function printVoid() returnType void {
 function firstAdultName(container: list[type: User, size: 5] users) returnType string {
     container: integer: i <- 0;
 
-    whileLoop (i < 5) {
+    loop (i < 5) {
         if (runFunction isAdult(users at i)) then {
             return (users at i).name;
         } else {
@@ -657,12 +782,12 @@ function countVowels(container: string: word) returnType integer {
   container: integer: count <- 0;
   container: integer: i <- 0;
 
-    loop i 0..10 {
+    loop (i < 10) {
         if ((word at i) = 'a') then {
             count <- count + 1;
-        } else {
-            count <- count;
-        }
+        } else { }
+
+        i <- i + 1;
 
         if (i = 9) then {
             break;
@@ -678,12 +803,12 @@ function oldestUser(container: list[type: User, size: 3] users) returnType User 
     container: integer: oldestIndex <- 0;
     container: integer: i <- 0;
 
-    loop i 0..3 {
+    loop (i < 3) {
         if ((users at i).age > (users at oldestIndex).age) then {
             oldestIndex <- i;
-        } else {
-            oldestIndex <- oldestIndex;
-        }
+        } else { }
+
+        i <- i + 1;
     }
 
     return users at oldestIndex;
@@ -704,7 +829,6 @@ function main(capability: FileReadCapability cap) returnType integer {
     container: string: greeting <- runFunction greet(sam);
     container: boolean: samIsAdult <- runFunction isAdult(sam);
     container: User oldest <- runFunction oldestUser(users);
-    container: integer: max <- if (sam.age > alex.age) then { return sam.age; } else { return alex.age; };
 
     check oldest.name {
         "Priya" means return 1;
